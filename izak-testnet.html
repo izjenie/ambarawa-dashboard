@@ -30,7 +30,6 @@
   .stats-row-5 { grid-template-columns:repeat(5,1fr); }
   .stats-row-4 { grid-template-columns:repeat(4,1fr); }
   .stats-row-3 { grid-template-columns:repeat(3,1fr); }
-  .stats-row-2 { grid-template-columns:repeat(2,1fr); }
   .stat-card { background:var(--card); border:1px solid #334155; border-radius:12px; padding:14px 16px; }
   .stat-label { color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
   .stat-big { font-size:1.5rem; font-weight:700; }
@@ -77,7 +76,7 @@
   .badge-soon { background:var(--warn); color:#1e293b; }
   .badge-mode { background:#334155; color:var(--muted); }
   .badge-trail-on { background:var(--up); color:#fff; }
-  @media (max-width:640px) { .stats-row-5, .stats-row-4, .stats-row-3, .stats-row-2 { grid-template-columns:repeat(2,1fr); } .profit-table { font-size:0.78rem; } .blocks-table { font-size:0.7rem; } .blocks-bot-stats { font-size:0.7rem; } }
+  @media (max-width:640px) { .stats-row-5, .stats-row-4, .stats-row-3 { grid-template-columns:repeat(2,1fr); } .profit-table { font-size:0.78rem; } .blocks-table { font-size:0.7rem; } .blocks-bot-stats { font-size:0.7rem; } }
 </style>
 </head>
 <body>
@@ -100,7 +99,7 @@
     <div class="seg" id="overlaySeg">
       <button data-overlay="equity" class="active">equity</button>
       <button data-overlay="usdt">usdt</button>
-      <button data-overlay="wc">usage</button>
+      <button data-overlay="wc">working capital</button>
       <button data-overlay="usdc">usdc</button>
     </div>
   </div>
@@ -149,31 +148,20 @@
       <div class="stat-sub" id="athSub">—</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Total usage</div>
-      <div class="stat-big warn" id="usageVal">—</div>
-      <div class="stat-sub" id="usageSub">—</div>
+      <div class="stat-label">Working Capital</div>
+      <div class="stat-big warn" id="wcVal">—</div>
+      <div class="stat-sub" id="wcSub">—</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Total USDT</div>
-      <div class="stat-big up" id="usdtVal">—</div>
-      <div class="stat-sub" id="usdtSub">—</div>
+      <div class="stat-label">Total USDC</div>
+      <div class="stat-big up" id="usdcVal">—</div>
+      <div class="stat-sub" id="usdcSub">—</div>
+      <div class="stat-sub" id="usdcChange">—</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Force Sell (USDT)</div>
       <div class="stat-big down" id="fsVal">—</div>
       <div class="stat-sub" id="fsSub">—</div>
-    </div>
-  </div>
-  <div class="stats-row stats-row-2">
-    <div class="stat-card">
-      <div class="stat-label">Total Capital</div>
-      <div class="stat-big up" id="capVal">—</div>
-      <div class="stat-sub" id="capSub">—</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Extra Capital</div>
-      <div class="stat-big warn" id="extraVal">—</div>
-      <div class="stat-sub" id="extraSub">—</div>
     </div>
   </div>
 
@@ -234,13 +222,14 @@
   </div>
 </div>
 
-<script>window.__SNAPSHOT__ = {"accounts": ["izak-testnet"], "account": "izak-testnet", "exchanges": {"azel": "Binance", "izak": "Binance", "izak-testnet": "Binance", "vennia": "Binance"}, "per_account": {"izak-testnet": {"coins": [], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "d3": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "monthly": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "ytd": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time": {"pct": 0.0, "usd": 0.0, "from": 100.0, "to": null}, "all_time_gross": {"pct": 0.0, "usd": 0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": null, "ts": null, "age_days": null, "lookback_days": 30}, "usdt_total": {"value": null, "ts": null, "total_capital": 100.0}, "total_usage": {"value": null, "ts": null}, "total_capital_card": {"value": 100.0}, "extra_capital_card": {"value": 0.0}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}}}, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "month": {"range": "month", "label": "This Month", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "all": {"range": "all", "label": "All Time", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}}, "blocks": {"bots": [], "totals": {"bot_count": 0, "active_blocks": 0, "active_spent": 0, "active_value": 0, "unrealized_total": 0, "realized_total": 0, "expired_days_threshold": 0}}}}, "generated_at": "2026-08-29 07:34 WIB"};</script>
+<script>window.__SNAPSHOT__ = {"accounts": ["izak-testnet"], "account": "izak-testnet", "exchanges": {"azel": "Binance", "izak": "Binance", "izak-testnet": "Binance", "vennia": "Binance"}, "per_account": {"izak-testnet": {"coins": [], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "d3": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "monthly": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "ytd": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time": {"pct": 0.0, "usd": 0.0, "from": 100.0, "to": null}, "all_time_gross": {"pct": 0.0, "usd": 0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": null, "ts": null, "age_days": null, "lookback_days": 30}, "usdc_total": {"value": null, "ts": null, "total_capital": 100.0}, "working_capital": {"value": null, "ts": null}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}}}, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "month": {"range": "month", "label": "This Month", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "all": {"range": "all", "label": "All Time", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}}, "blocks": {"bots": [], "totals": {"bot_count": 0, "active_blocks": 0, "active_spent": 0, "active_value": 0, "unrealized_total": 0, "realized_total": 0, "expired_days_threshold": 0}}}}, "generated_at": "2026-08-29 08:00 WIB"};</script>
 <script>
 let chart = null;
 let chart2 = null;
 let deltas = [];
 let state = { range: "3d", coin: "total", overlay: "equity", account: "", buyCoin: "BTC" };
 let profitOpen = false;
+let usdcTotalCapital = 0;
 let fsByIndex = {};
 const SNAP = window.__SNAPSHOT__ || null;
 const RANGE_SUB = {today:"today", "3d":"last 3 days", "1m":"last 30 days", "month":"this month (calendar)", "all":"all time"};
@@ -420,58 +409,57 @@ async function fetchStats() {
       athSub.textContent = "at " + fmtTimeLabel(ath.ts) + ageTxt;
     }
 
-    const usdt = d.usdt_total || {value: null, ts: null};
-    const usdtVal = document.getElementById("usdtVal");
-    const usdtSub = document.getElementById("usdtSub");
-    if (usdt.value == null) {
-      usdtVal.textContent = "—";
-      usdtVal.className = "stat-big flat";
-      usdtSub.textContent = "no data";
+    const usdc = d.usdc_total || {value: null, ts: null};
+    usdcTotalCapital = usdc.total_capital || 0;
+    const usdcVal = document.getElementById("usdcVal");
+    const usdcSub = document.getElementById("usdcSub");
+    if (usdc.value == null) {
+      usdcVal.textContent = "—";
+      usdcVal.className = "stat-big flat";
+      usdcSub.textContent = "no data";
     } else {
-      usdtVal.textContent = fmtUsd(usdt.value);
-      usdtVal.className = "stat-big up";   // USDT balance → green
-      usdtSub.textContent = "hourly snapshot · " + fmtTimeLabel(usdt.ts);
+      usdcVal.textContent = fmtUsd(usdc.value);
+      usdcVal.className = "stat-big up";   // parked USDC profit → green
+      usdcSub.textContent = "hourly snapshot · " + fmtTimeLabel(usdc.ts);
     }
 
-    // Total capital (green) + extra capital (yellow) from account.yaml.
-    const tc = d.total_capital_card || {value: 0};
-    const capVal = document.getElementById("capVal");
-    const capSub = document.getElementById("capSub");
-    if (tc.value > 0) {
-      capVal.textContent = fmtUsd(tc.value);
-      capVal.className = "stat-big up";   // total capital → green
-      capSub.textContent = "account.yaml";
+    const wc = d.working_capital || {value: null, ts: null};
+    const wcVal = document.getElementById("wcVal");
+    const wcSub = document.getElementById("wcSub");
+    if (wc.value == null) {
+      wcVal.textContent = "—";
+      wcVal.className = "stat-big flat";
+      wcSub.textContent = "no data";
     } else {
-      capVal.textContent = "—";
-      capVal.className = "stat-big flat";
-      capSub.textContent = "no single account";
-    }
-    const ec = d.extra_capital_card || {value: 0};
-    const extraVal = document.getElementById("extraVal");
-    const extraSub = document.getElementById("extraSub");
-    if (ec.value > 0) {
-      extraVal.textContent = fmtUsd(ec.value);
-      extraVal.className = "stat-big warn";   // extra capital → yellow
-      extraSub.textContent = "account.yaml";
-    } else {
-      extraVal.textContent = "—";
-      extraVal.className = "stat-big flat";
-      extraSub.textContent = "0 / not set";
-    }
-
-    const usage = d.total_usage || {value: null, ts: null};
-    const usageVal = document.getElementById("usageVal");
-    const usageSub = document.getElementById("usageSub");
-    if (usage.value == null) {
-      usageVal.textContent = "—";
-      usageVal.className = "stat-big flat";
-      usageSub.textContent = "no data";
-    } else {
-      usageVal.textContent = fmtUsd(usage.value);
-      usageVal.className = "stat-big warn";   // equity − USDT → yellow
-      usageSub.textContent = "hourly snapshot · " + fmtTimeLabel(usage.ts);
+      wcVal.textContent = fmtUsd(wc.value);
+      wcVal.className = "stat-big warn";   // equity − USDC → yellow
+      wcSub.textContent = "hourly snapshot · " + fmtTimeLabel(wc.ts);
     }
   } catch (e) { console.warn("stats", e); }
+}
+
+// USDC change over the currently-selected range (Today/3D/30D/Month/All),
+// shown under the Total USDC card as "+$X.XX (label) ±pct%" where pct is
+// relative to the account's total_capital (account.yaml).
+async function updateUsdcChange() {
+  const el = document.getElementById("usdcChange");
+  if (!el) return;
+  try {
+    if (SNAP) {
+      const per = perSnap();
+      if (!per.equity || !per.equity["USDC"] || !per.equity["USDC"][state.range]) {
+        el.textContent = "—";  // no USDC data for this range yet — don't fall back to total
+        return;
+      }
+    }
+    const d = await fetchJson("/api/equity?coin=USDC&range=" + state.range);
+    if (d.first == null || d.last == null || d.change_usd == null) {
+      el.textContent = "—";
+      return;
+    }
+    const pct = usdcTotalCapital > 0 ? (d.change_usd / usdcTotalCapital * 100) : 0;
+    el.textContent = fmtUsd(d.change_usd) + " (" + (RANGE_SUB[state.range] || state.range) + ") " + fmtPct(pct);
+  } catch (e) { el.textContent = "—"; }
 }
 
 // Total force-sell (fund_sell) P&L over the selected range, shown red on the
@@ -674,8 +662,8 @@ function resetCharts() {
   if (b1) b1.style.height = "";
 }
 
-// Total usage tab: two separate charts stacked vertically — USDT on top
-// (green), Total usage below (yellow). Each has its own Y axis.
+// Working Capital tab: two separate charts stacked vertically — USDC on top
+// (green), Working Capital below (yellow). Each has its own Y axis.
 function renderWcSplit(d) {
   const labels = d.points.map(p => p.label);
   const mkChart = (canvasId, label, data, color) => new Chart(document.getElementById(canvasId).getContext("2d"), {
@@ -715,15 +703,15 @@ function renderWcSplit(d) {
       }
     }
   });
-  chart = mkChart("chart", "USDT", d.points.map(p => (p.usdt || 0)), "#16a34a");
-  chart2 = mkChart("chart2", "Total usage", d.points.map(p => ((p.value != null ? p.value : 0) - (p.usdt || 0))), "#f59e0b");
+  chart = mkChart("chart", "USDC", d.points.map(p => (p.usdc || 0)), "#16a34a");
+  chart2 = mkChart("chart2", "Working Capital", d.points.map(p => ((p.value != null ? p.value : 0) - (p.usdc || 0))), "#f59e0b");
 }
 
 async function render() {
   resetCharts();
   if (state.overlay === "usdc") { return renderBuys(); }
   const d = await fetchJson("/api/equity?range=" + state.range + "&coin=" + encodeURIComponent(state.coin));
-  // Total usage tab = two separate charts (USDT top, usage bottom) on Total.
+  // Working Capital tab = two separate charts (USDC top, WC bottom) on Total.
   const split = state.overlay === "wc" && d.coin === "total";
   deltas = d.points.map(p => p.delta_pct);
   const color = d.direction === "up" ? "#16a34a" : (d.direction === "down" ? "#dc2626" : "#6b7280");
@@ -734,7 +722,7 @@ async function render() {
   cntEl.textContent = d.count > 0 ? (d.count + " pts · $" + (d.last != null ? d.last.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—")) : "no data";
   const coinLabel = d.coin === "total" ? "Total equity" : d.coin + " value";
   subEl.textContent = (split
-      ? "USDT (top) · Total usage (bottom) per hour (USDT)"
+      ? "USDC (top) · Working Capital (bottom) per hour (USDT)"
       : coinLabel + " per hour (USDT)") + " · " + (RANGE_SUB[d.range] || d.range);
   legendEl.textContent = d.count > 0
     ? ("First $" + (d.first != null ? d.first.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—")
@@ -1119,6 +1107,7 @@ document.getElementById("rangeSeg").addEventListener("click", e => {
   b.classList.add("active");
   state.range = b.dataset.range;
   render().catch(err => console.error(err));
+  updateUsdcChange().catch(err => console.error("usdcChange", err));
   updateForceSell().catch(err => console.error("forceSell", err));
   if (profitOpen) { fetchProfit(state.range).catch(function(e){ console.error("profit", e); }); }
 });
@@ -1150,6 +1139,7 @@ document.getElementById("buyCoinSel").addEventListener("change", e => {
   await loadBuyCoins();
   await fetchStats();
   await render();
+  await updateUsdcChange();
   await updateForceSell();
   if (SNAP) {
     legendEl.textContent += "  ·  📸 snapshot " + (SNAP.generated_at || "");
