@@ -58,6 +58,15 @@
   .blocks-controls { display:flex; padding:14px 20px 6px; }
   .blocks-head { padding:4px 20px 12px; color:var(--muted); font-size:0.88rem; }
   .blocks-list { padding:0 20px 8px; }
+  .snap-controls { display:flex; align-items:center; gap:12px; padding:14px 20px 6px; flex-wrap:wrap; }
+  .snap-list { padding:6px 20px 8px; }
+  .snap-head { color:var(--muted); font-size:0.85rem; margin-bottom:8px; }
+  .snap-files { display:flex; flex-wrap:wrap; gap:6px; }
+  .snap-file { background:#1e293b; border:1px solid #334155; color:#e2e8f0; border-radius:6px; padding:3px 9px; font-size:0.76rem; cursor:pointer; }
+  .snap-file.active { background:#334155; border-color:#0ea5e9; }
+  .snap-pre { display:none; margin:8px 20px 12px; background:#0b1120; border:1px solid #334155; border-radius:8px; padding:10px 12px; font-size:0.72rem; color:#cbd5e1; white-space:pre-wrap; word-break:break-all; max-height:320px; overflow:auto; }
+  .snap-pre.open { display:block; }
+  .snapDiffBtn, #snapDiffBtn { background:#1e293b; border:1px solid #334155; color:#e2e8f0; border-radius:6px; padding:4px 10px; font-size:0.76rem; cursor:pointer; }
   .blocks-bot { background:#0f172a; border:1px solid #334155; border-radius:10px; margin-bottom:12px; }
   .blocks-bot-head { padding:10px 14px; background:#243349; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
   .blocks-bot-name { font-weight:600; font-size:0.92rem; }
@@ -243,9 +252,52 @@
       <div class="profit-note" id="blocksNote"></div>
     </div>
   </div>
+
+  <div class="card snapshots-card">
+    <button class="profit-toggle" id="snapToggle" aria-expanded="false">
+      <span>📜 Config Snapshots</span>
+      <span class="chevron" id="snapChevron">▸</span>
+    </button>
+    <div class="blocks-collapse" id="snapCollapse">
+      <div class="snap-controls">
+        <div class="period-wrap">
+          <label for="snapPeriodSel">Periode</label>
+          <select id="snapPeriodSel"><option value="">Semua</option></select>
+        </div>
+        <div class="seg" id="snapBoundarySeg">
+          <button data-b="all" class="active">All</button>
+          <button data-b="open">Open</button>
+          <button data-b="close">Close</button>
+        </div>
+        <button id="snapDiffBtn" title="bandingkan open vs close (versi terakhir)">Diff open↔close</button>
+      </div>
+      <div class="snap-list" id="snapList"></div>
+      <pre class="snap-pre" id="snapPre"></pre>
+      <div class="profit-note" id="snapNote"></div>
+    </div>
+  </div>
+
+  <div class="card pnl-card">
+    <button class="profit-toggle" id="pnlToggle" aria-expanded="false">
+      <span>📊 Periode P&L</span>
+      <span class="chevron" id="pnlChevron">▸</span>
+    </button>
+    <div class="blocks-collapse" id="pnlCollapse">
+      <table class="blocks-table" id="pnlTable">
+        <thead><tr>
+          <th>Periode</th><th>Status</th><th>Tanggal</th>
+          <th class="r">Beli</th><th class="r">Sold</th>
+          <th class="r">Realized</th><th class="r">Unrealized</th>
+          <th class="r">Net P/L</th><th class="r">Net %</th>
+        </tr></thead>
+        <tbody id="pnlBody"></tbody>
+      </table>
+      <div class="profit-note" id="pnlNote"></div>
+    </div>
+  </div>
 </div>
 
-<script>window.__SNAPSHOT__ = {"accounts": ["izak-testnet"], "account": "izak-testnet", "exchanges": {"azel": "Binance", "izak": "Binance", "izak-testnet": "Binance", "vennia": "Binance"}, "per_account": {"izak-testnet": {"coins": [], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "d3": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "monthly": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "ytd": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time": {"pct": 0.0, "usd": 0.0, "from": 100.0, "to": null}, "all_time_gross": {"pct": 0.0, "usd": 0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": null, "ts": null, "age_days": null, "lookback_days": 30}, "usdt_total": {"value": null, "ts": null, "total_capital": 100.0}, "total_usage": {"value": null, "ts": null}, "total_capital_card": {"value": 100.0}, "extra_capital_card": {"value": 0.0}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}}}, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "month": {"range": "month", "label": "This Month", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "all": {"range": "all", "label": "All Time", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}}, "blocks": {"bots": [], "totals": {"bot_count": 0, "active_blocks": 0, "active_spent": 0, "active_value": 0, "unrealized_total": 0, "realized_total": 0, "expired_days_threshold": 0}}, "periods": [{"account": "izak-testnet", "period_no": 1, "start_date": "2026-07-01", "end_date": null, "status": "open", "start_equity": null, "closed_equity": null, "realized_pnl": null, "extra_returned": null, "profit_returned": null, "bought": 0, "sold": 0, "period_realized": 0.0}]}}, "generated_at": "2026-08-30 15:38 WIB"};</script>
+<script>window.__SNAPSHOT__ = {"accounts": ["izak-testnet"], "account": "izak-testnet", "exchanges": {"azel": "Binance", "izak": "Binance", "izak-testnet": "Binance", "vennia": "Binance"}, "per_account": {"izak-testnet": {"coins": [], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "d3": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "monthly": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "ytd": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time": {"pct": 0.0, "usd": 0.0, "from": 100.0, "to": null}, "all_time_gross": {"pct": 0.0, "usd": 0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": null, "ts": null, "age_days": null, "lookback_days": 30}, "usdt_total": {"value": null, "ts": null, "total_capital": 100.0}, "total_usage": {"value": null, "ts": null}, "total_capital_card": {"value": 100.0}, "extra_capital_card": {"value": 0.0}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}}}, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "month": {"range": "month", "label": "This Month", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "all": {"range": "all", "label": "All Time", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}}, "blocks": {"bots": [], "totals": {"bot_count": 0, "active_blocks": 0, "active_spent": 0, "active_value": 0, "unrealized_total": 0, "realized_total": 0, "expired_days_threshold": 0}}, "periods": [{"account": "izak-testnet", "period_no": 1, "start_date": "2026-07-01", "end_date": null, "status": "open", "start_equity": null, "start_equity_eff": 100.0, "closed_equity": null, "realized_pnl": null, "extra_returned": null, "profit_returned": null, "bought": 0, "sold": 0, "period_realized": 0.0, "unrealized": 0.0, "net": 0.0, "net_pct": 0.0}]}}, "generated_at": "2026-08-30 15:46 WIB"};</script>
 <script>
 let chart = null;
 let chart2 = null;
@@ -311,6 +363,9 @@ async function fetchJson(url) {
     }
     if (url === "/api/periods") {
       return { periods: per.periods || [], current: {} };
+    }
+    if (url.indexOf("/api/period_snapshots") === 0) {
+      return { snapshots: [] };
     }
     return {};
   }
@@ -1127,9 +1182,158 @@ function renderActiveRow(blk) {
   + '</tr>';
 }
 
+let snapData = [];
+let snapBoundary = "all";
+
+async function renderSnapshots() {
+  try {
+    const url = "/api/period_snapshots" + (state.account ? "?account=" + encodeURIComponent(state.account) : "");
+    const d = await fetchJson(url);
+    snapData = d.snapshots || [];
+    const sel = document.getElementById("snapPeriodSel");
+    const periods = {};
+    snapData.forEach(function(s){ periods[s.period_no] = 1; });
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Semua</option>' + Object.keys(periods).sort().reverse().map(function(p){ return '<option value="' + p + '">Periode ' + p + '</option>'; }).join("");
+    if (cur && periods[cur]) sel.value = cur;
+    drawSnap();
+  } catch (e) { console.error("snapshots", e); }
+}
+
+function snapRows() {
+  const per = document.getElementById("snapPeriodSel").value;
+  let rows = snapData;
+  if (per) rows = rows.filter(function(s){ return String(s.period_no) === per; });
+  if (snapBoundary !== "all") rows = rows.filter(function(s){ return s.boundary === snapBoundary; });
+  return rows;
+}
+
+function drawSnap() {
+  const list = document.getElementById("snapList");
+  const pre = document.getElementById("snapPre");
+  const note = document.getElementById("snapNote");
+  pre.textContent = "";
+  let rows = snapRows();
+  if (!rows.length) { list.innerHTML = '<div class="blocks-empty">Belum ada snapshot (terjadi saat periode open/close).</div>'; note.textContent=""; return; }
+  // latest row = highest period/boundary/version
+  const latest = rows.slice().sort(function(a,b){ return (b.period_no-a.period_no) || (a.boundary===b.boundary?0:(a.boundary==="open"?-1:1)) || (b.version-a.version); })[0];
+  const batch = rows.filter(function(s){ return s.period_no===latest.period_no && s.boundary===latest.boundary && s.version===latest.version; });
+  const groupKey = latest.period_no + " [" + latest.boundary + "] v" + latest.version;
+  list.innerHTML = '<div class="snap-head">Periode ' + groupKey + ' · ' + batch.length + ' file</div>'
+    + '<div class="snap-files">' + batch.map(function(s){
+        return '<button class="snap-file" data-idx="' + snapData.indexOf(s) + '">' + s.env_name + '</button>';
+      }).join(" ") + '</div>';
+  list.querySelectorAll(".snap-file").forEach(function(b){
+    b.addEventListener("click", function(){
+      const s = snapData[parseInt(b.dataset.idx, 10)];
+      pre.textContent = (s ? s.content : "");
+      pre.classList.add("open");
+      b.classList.add("active");
+    });
+  });
+  note.textContent = "klik file untuk lihat isi (menampilkan versi terakhir di filter saat ini).";
+}
+
+function snapDiff() {
+  const pre = document.getElementById("snapPre");
+  const per = document.getElementById("snapPeriodSel").value;
+  const open = snapRows().filter(function(s){ return s.boundary==="open" && (!per || String(s.period_no)===per); });
+  const close = snapRows().filter(function(s){ return s.boundary==="close" && (!per || String(s.period_no)===per); });
+  if (!open.length || !close.length) { pre.textContent = "Butuh snapshot open & close untuk periode ini."; pre.classList.add("open"); return; }
+  const ov = open[0].version, cv = close[0].version;
+  const byName = function(rows, v){ const m={}; rows.forEach(function(s){ if(s.version===v) m[s.env_name]=s.content; }); return m; };
+  const o = byName(open, ov), c = byName(close, cv);
+  let out = "";
+  Object.keys(o).concat(Object.keys(c)).sort().forEach(function(name){
+    if (!(name in o)) { out += "
+[" + name + "] hanya di CLOSE (ditambahkan)
+"; return; }
+    if (!(name in c)) { out += "
+[" + name + "] hanya di OPEN (dihapus)
+"; return; }
+    if (o[name] === c[name]) return;
+    out += "
+── " + name + " (BERUBAH) ──
+";
+    const al = o[name].split("
+"), bl = c[name].split("
+");
+    const n = Math.max(al.length, bl.length);
+    for (let i=0;i<n;i++){
+      const a = i<al.length ? al[i] : "", b = i<bl.length ? bl[i] : "";
+      if (a !== b) out += "- " + a + "
++ " + b + "
+";
+    }
+  });
+  pre.textContent = out || "open v" + ov + " dan close v" + cv + " IDENTIK.";
+  pre.classList.add("open");
+}
+
+async function renderPeriodPnl() {
+  try {
+    const d = await fetchJson("/api/periods");
+    const list = d.periods || [];
+    const acct = state.account || (list.length ? list[0].account : "");
+    const my = list.filter(function(p){ return p.account === acct; });
+    const body = document.getElementById("pnlBody");
+    if (!my.length) {
+      body.innerHTML = '<tr><td colspan="9" class="blocks-empty">Belum ada periode.</td></tr>';
+      document.getElementById("pnlNote").textContent = "";
+      return;
+    }
+    body.innerHTML = my.map(function(p){
+      const net = p.net != null ? p.net : 0;
+      const netCls = net > 0 ? "pos" : (net < 0 ? "neg" : "");
+      const netPct = p.net_pct != null ? (p.net_pct > 0 ? "+" : "") + p.net_pct.toFixed(2) + "%" : "—";
+      const unrel = p.unrealized != null ? (p.unrealized > 0 ? "+" : "") + p.unrealized.toFixed(2) : "—";
+      const rel = "+" + (p.period_realized || 0).toFixed(2);
+      const dates = (p.start_date || "?") + " → " + (p.end_date || "sekarang");
+      return '<tr>'
+        + '<td>Periode ' + p.period_no + '</td>'
+        + '<td>' + p.status + '</td>'
+        + '<td>' + dates + '</td>'
+        + '<td class="r">' + p.bought + '</td>'
+        + '<td class="r">' + p.sold + '</td>'
+        + '<td class="r">' + rel + '</td>'
+        + '<td class="r">' + unrel + '</td>'
+        + '<td class="r ' + netCls + '">' + (net>0?"+":"") + net.toFixed(2) + '</td>'
+        + '<td class="r ' + netCls + '">' + netPct + '</td>'
+        + '</tr>';
+    }).join("");
+    const cap = my[0].start_equity_eff != null ? "$" + Number(my[0].start_equity_eff).toFixed(2) : "?";
+    document.getElementById("pnlNote").textContent =
+      "Net = realized + unrealized (block-based). Net % = Net / start_equity (" + cap + "). Merah = rugi.";
+  } catch (e) { console.error("pnl", e); }
+}
+
+document.getElementById("pnlToggle").addEventListener("click", function() {
+  const col = document.getElementById("pnlCollapse");
+  const open = this.classList.toggle("open");
+  this.setAttribute("aria-expanded", open ? "true" : "false");
+  col.classList.toggle("open", open);
+  if (open) renderPeriodPnl().catch(function(e){ console.error("pnl", e); });
+});
+
+document.getElementById("snapToggle").addEventListener("click", function() {
+  const col = document.getElementById("snapCollapse");
+  const open = this.classList.toggle("open");
+  this.setAttribute("aria-expanded", open ? "true" : "false");
+  col.classList.toggle("open", open);
+  if (open && !snapData.length) renderSnapshots().catch(function(e){ console.error("snap", e); });
+});
+document.getElementById("snapBoundarySeg").addEventListener("click", function(e) {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#snapBoundarySeg button").forEach(function(x){ x.classList.remove("active"); });
+  b.classList.add("active");
+  snapBoundary = b.dataset.b;
+  drawSnap();
+});
+document.getElementById("snapPeriodSel").addEventListener("change", function(){ drawSnap(); });
+document.getElementById("snapDiffBtn").addEventListener("click", function(){ snapDiff(); });
+
 function renderSoldRow(blk) {
-  const pnlCls = blk.pnl_usdc >= 0 ? "pos" : "neg";
-  return '<tr>'
+  const pnlCls = blk.pnl_usdc >= 0 ? "pos" : "neg";  return '<tr>'
     + '<td>' + blk.id + '</td>'
     + '<td><span class="badge badge-mode">' + (blk.sold_reason_label || blk.sold_reason || '?') + '</span></td>'
     + '<td class="r">' + fmtPrice(blk.entry_price) + '</td>'
@@ -1207,6 +1411,16 @@ document.getElementById("periodSel").addEventListener("change", e => {
   await render();
   await updateForceSell();
   await renderPeriods();
+  await renderSnapshots();
+  await renderPeriodPnl();
+  // Auto-expand the Periode P&L card so per-period profit/loss is visible
+  // without clicking (closed accounts especially).
+  try {
+    const pnlBtn = document.getElementById("pnlToggle");
+    pnlBtn.classList.add("open");
+    pnlBtn.setAttribute("aria-expanded", "true");
+    document.getElementById("pnlCollapse").classList.add("open");
+  } catch (e) { console.warn("pnl autopen", e); }
   if (SNAP) {
     legendEl.textContent += "  ·  📸 snapshot " + (SNAP.generated_at || "");
   } else {
