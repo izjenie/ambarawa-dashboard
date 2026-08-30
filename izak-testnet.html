@@ -164,7 +164,7 @@
       <div class="stat-sub" id="fsSub">—</div>
     </div>
   </div>
-  <div class="stats-row stats-row-2">
+  <div class="stats-row stats-row-3">
     <div class="stat-card">
       <div class="stat-label">Total Capital</div>
       <div class="stat-big up" id="capVal">—</div>
@@ -174,6 +174,11 @@
       <div class="stat-label">Extra Capital</div>
       <div class="stat-big warn" id="extraVal">—</div>
       <div class="stat-sub" id="extraSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" id="perLabel">📅 Periode</div>
+      <div class="stat-big flat" id="perVal">—</div>
+      <div class="stat-sub" id="perSub">—</div>
     </div>
   </div>
 
@@ -226,6 +231,12 @@
           <button data-filter="active">Active only</button>
           <button data-filter="idle">Idle only</button>
         </div>
+        <div class="period-wrap">
+          <label for="periodSel">Periode</label>
+          <select id="periodSel">
+            <option value="">Semua</option>
+          </select>
+        </div>
       </div>
       <div class="blocks-head" id="blocksHead">📦 Blocks — —</div>
       <div class="blocks-list" id="blocksList"></div>
@@ -234,12 +245,12 @@
   </div>
 </div>
 
-<script>window.__SNAPSHOT__ = {"accounts": ["izak-testnet"], "account": "izak-testnet", "exchanges": {"azel": "Binance", "izak": "Binance", "izak-testnet": "Binance", "vennia": "Binance"}, "per_account": {"izak-testnet": {"coins": [], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "d3": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "monthly": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "ytd": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time": {"pct": 0.0, "usd": 0.0, "from": 100.0, "to": null}, "all_time_gross": {"pct": 0.0, "usd": 0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": null, "ts": null, "age_days": null, "lookback_days": 30}, "usdt_total": {"value": null, "ts": null, "total_capital": 100.0}, "total_usage": {"value": null, "ts": null}, "total_capital_card": {"value": 100.0}, "extra_capital_card": {"value": 0.0}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}}}, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "month": {"range": "month", "label": "This Month", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "all": {"range": "all", "label": "All Time", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}}, "blocks": {"bots": [], "totals": {"bot_count": 0, "active_blocks": 0, "active_spent": 0, "active_value": 0, "unrealized_total": 0, "realized_total": 0, "expired_days_threshold": 0}}}}, "generated_at": "2026-08-30 14:00 WIB"};</script>
+<script>window.__SNAPSHOT__ = {"accounts": ["izak-testnet"], "account": "izak-testnet", "exchanges": {"azel": "Binance", "izak": "Binance", "izak-testnet": "Binance", "vennia": "Binance"}, "per_account": {"izak-testnet": {"coins": [], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "d3": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "monthly": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "ytd": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time": {"pct": 0.0, "usd": 0.0, "from": 100.0, "to": null}, "all_time_gross": {"pct": 0.0, "usd": 0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": null, "ts": null, "age_days": null, "lookback_days": 30}, "usdt_total": {"value": null, "ts": null, "total_capital": 100.0}, "total_usage": {"value": null, "ts": null}, "total_capital_card": {"value": 100.0}, "extra_capital_card": {"value": 0.0}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [], "first": null, "last": null, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 0, "force_sells": [], "force_sell_total": 0.0}}}, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "month": {"range": "month", "label": "This Month", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "all": {"range": "all", "label": "All Time", "rankings": [], "totals": {"realized": 0, "unrealized": 0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}}, "blocks": {"bots": [], "totals": {"bot_count": 0, "active_blocks": 0, "active_spent": 0, "active_value": 0, "unrealized_total": 0, "realized_total": 0, "expired_days_threshold": 0}}, "periods": [{"account": "izak-testnet", "period_no": 1, "start_date": "2026-07-01", "end_date": null, "status": "open", "start_equity": null, "closed_equity": null, "realized_pnl": null, "extra_returned": null, "profit_returned": null, "bought": 0, "sold": 0, "period_realized": 0.0}]}}, "generated_at": "2026-08-30 15:00 WIB"};</script>
 <script>
 let chart = null;
 let chart2 = null;
 let deltas = [];
-let state = { range: "3d", coin: "total", overlay: "equity", account: "", buyCoin: "BTC" };
+let state = { range: "3d", coin: "total", overlay: "equity", account: "", buyCoin: "BTC", period: "" };
 let profitOpen = false;
 let fsByIndex = {};
 const SNAP = window.__SNAPSHOT__ || null;
@@ -297,6 +308,9 @@ async function fetchJson(url) {
     }
     if (url.indexOf("/api/blocks") === 0) {
       return (per.blocks) || {bots: [], totals: {bot_count:0, active_blocks:0, active_spent:0, active_value:0, unrealized_total:0, realized_total:0}};
+    }
+    if (url === "/api/periods") {
+      return { periods: per.periods || [], current: {} };
     }
     return {};
   }
@@ -965,8 +979,45 @@ function fmtTimeAgo(iso) {
 }
 
 async function fetchBlocks() {
-  blocksData = await fetchJson("/api/blocks");
+  const url = "/api/blocks" + (state.period ? "?period=" + encodeURIComponent(state.period) : "");
+  blocksData = await fetchJson(url);
   renderBlocks();
+}
+
+async function renderPeriods() {
+  try {
+    const d = await fetchJson("/api/periods");
+    const list = d.periods || [];
+    const cur = d.current || {};
+    const acct = state.account || (list.length ? list[0].account : "");
+    const my = list.filter(function(p) { return p.account === acct; });
+    const open = my.find(function(p) { return p.status === "open"; }) || null;
+    // Periode card
+    const perVal = document.getElementById("perVal");
+    const perSub = document.getElementById("perSub");
+    if (!open) {
+      perVal.textContent = "—";
+      perVal.className = "stat-big flat";
+      perSub.textContent = "tidak ada periode open";
+    } else {
+      perVal.textContent = "Periode " + open.period_no;
+      perVal.className = "stat-big " + (open.period_realized >= 0 ? "up" : "down");
+      const capTxt = open.start_equity != null ? "$" + Number(open.start_equity).toFixed(2) : "?";
+      perSub.textContent = "start " + (open.start_date || "?") +
+        " · capital " + capTxt +
+        " · realized " + fmtSigned(open.period_realized, 4) + " · " + open.bought + " blk";
+    }
+    // Period dropdown (blocks filter)
+    const sel = document.getElementById("periodSel");
+    const prev = state.period;
+    sel.innerHTML = '<option value="">Semua</option>' + my.map(function(p) {
+      const label = "Periode " + p.period_no + (p.end_date ? " (closed " + p.end_date + ")" : " (open)");
+      return '<option value="' + p.period_no + '">' + label + '</option>';
+    }).join("");
+    state.period = (prev && my.some(function(p) { return String(p.period_no) === prev; })) ? prev : "";
+    sel.value = state.period;
+    if (blocksData && state.period !== prev) { fetchBlocks().catch(function(e){ console.error("blocks", e); }); }
+  } catch (e) { console.error("periods", e); }
 }
 
 function renderBlocks() {
@@ -1143,6 +1194,10 @@ document.getElementById("buyCoinSel").addEventListener("change", e => {
   state.buyCoin = e.target.value;
   render().catch(err => console.error(err));
 });
+document.getElementById("periodSel").addEventListener("change", e => {
+  state.period = e.target.value;
+  fetchBlocks().catch(err => console.error("blocks", err));
+});
 
 (async function init() {
   await resolveAccount();
@@ -1151,6 +1206,7 @@ document.getElementById("buyCoinSel").addEventListener("change", e => {
   await fetchStats();
   await render();
   await updateForceSell();
+  await renderPeriods();
   if (SNAP) {
     legendEl.textContent += "  ·  📸 snapshot " + (SNAP.generated_at || "");
   } else {
