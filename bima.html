@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ambarawa Capital Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root { --up:#16a34a; --down:#dc2626; --flat:#6b7280; --warn:#f59e0b; --bg:#0f172a; --card:#1e293b; --txt:#e2e8f0; --muted:#94a3b8; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  .wrap { max-width:1100px; margin:0 auto; padding:24px 16px 60px; }
+  h1 { font-size:1.25rem; margin:0 0 4px; font-weight:600; }
+  .sub { color:var(--muted); font-size:0.85rem; margin-bottom:18px; }
+  .controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
+  .seg { display:inline-flex; background:var(--card); border-radius:8px; overflow:hidden; border:1px solid #334155; }
+  .seg button { background:transparent; color:var(--muted); border:0; padding:8px 14px; cursor:pointer; font-size:0.85rem; }
+  .seg button.active { background:#334155; color:var(--txt); }
+  select, .seg button { font-family:inherit; }
+  select { background:var(--card); color:var(--txt); border:1px solid #334155; border-radius:8px; padding:8px 10px; font-size:0.85rem; }
+  .card { background:var(--card); border:1px solid #334155; border-radius:12px; padding:18px 20px; }
+  .headline { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+  .big { font-size:2rem; font-weight:700; }
+  .usd { font-size:1.05rem; color:var(--muted); }
+  .up { color:var(--up); } .down { color:var(--down); } .flat { color:var(--flat); } .warn { color:var(--warn); }
+  .chartbox { position:relative; height:420px; }
+  .empty { text-align:center; color:var(--muted); padding:60px 0; }
+  .legend { color:var(--muted); font-size:0.8rem; margin-top:10px; }
+  .stats-row { display:grid; gap:12px; margin-bottom:16px; }
+  .stats-row-5 { grid-template-columns:repeat(5,1fr); }
+  .stats-row-4 { grid-template-columns:repeat(4,1fr); }
+  .stats-row-3 { grid-template-columns:repeat(3,1fr); }
+  .stats-row-2 { grid-template-columns:repeat(2,1fr); }
+  .stat-card { background:var(--card); border:1px solid #334155; border-radius:12px; padding:14px 16px; }
+  .stat-label { color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+  .stat-big { font-size:1.5rem; font-weight:700; }
+  .stat-sub { color:var(--muted); font-size:0.8rem; margin-top:4px; }
+  .profit-card { padding:0; overflow:hidden; margin-top:16px; }
+  .profit-toggle { width:100%; background:transparent; border:0; color:var(--txt); padding:15px 20px; cursor:pointer; font-size:1rem; font-weight:600; display:flex; justify-content:space-between; align-items:center; font-family:inherit; }
+  .profit-toggle:hover { background:#243349; }
+  .profit-toggle .chevron { color:var(--muted); transition:transform .2s; font-size:0.8rem; }
+  .profit-toggle.open .chevron { transform:rotate(90deg); }
+  .profit-collapse { max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .profit-collapse.open { max-height:1400px; }
+  .profit-head { padding:4px 20px 12px; color:var(--muted); font-size:0.88rem; }
+  .profit-scroll { overflow-x:auto; padding:0 20px 8px; }
+  .profit-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+  .profit-table th, .profit-table td { padding:7px 8px; text-align:left; white-space:nowrap; border-bottom:1px solid #334155; }
+  .profit-table th { color:var(--muted); font-weight:600; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .profit-table th.r, .profit-table td.r { text-align:right; }
+  .profit-table tbody tr:hover { background:#243349; }
+  .profit-table tfoot td { font-weight:700; border-top:2px solid #475569; border-bottom:0; padding-top:9px; }
+  .pos { color:var(--up); } .neg { color:var(--down); } .td-mute { color:var(--muted); }
+  .profit-note { padding:0 20px 14px; color:var(--muted); font-size:0.73rem; line-height:1.4; }
+  .blocks-card { padding:0; overflow:hidden; margin-top:16px; }
+  .blocks-collapse { max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .blocks-collapse.open { max-height:6000px; }
+  .blocks-controls { display:flex; padding:14px 20px 6px; }
+  .blocks-head { padding:4px 20px 12px; color:var(--muted); font-size:0.88rem; }
+  .blocks-list { padding:0 20px 8px; }
+  .snap-controls { display:flex; align-items:center; gap:12px; padding:14px 20px 6px; flex-wrap:wrap; }
+  .snap-list { padding:6px 20px 8px; }
+  .snap-head { color:var(--muted); font-size:0.85rem; margin-bottom:8px; }
+  .snap-files { display:flex; flex-wrap:wrap; gap:6px; }
+  .snap-file { background:#1e293b; border:1px solid #334155; color:#e2e8f0; border-radius:6px; padding:3px 9px; font-size:0.76rem; cursor:pointer; }
+  .snap-file.active { background:#334155; border-color:#0ea5e9; }
+  .snap-pre { display:none; margin:8px 20px 12px; background:#0b1120; border:1px solid #334155; border-radius:8px; padding:10px 12px; font-size:0.72rem; color:#cbd5e1; white-space:pre-wrap; word-break:break-all; max-height:320px; overflow:auto; }
+  .snap-pre.open { display:block; }
+  .snapDiffBtn, #snapDiffBtn { background:#1e293b; border:1px solid #334155; color:#e2e8f0; border-radius:6px; padding:4px 10px; font-size:0.76rem; cursor:pointer; }
+  .blocks-bot { background:#0f172a; border:1px solid #334155; border-radius:10px; margin-bottom:12px; }
+  .blocks-bot-head { padding:10px 14px; background:#243349; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
+  .blocks-bot-name { font-weight:600; font-size:0.92rem; }
+  .blocks-bot-stats { color:var(--muted); font-size:0.76rem; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .blocks-bot-stats .upnl { font-weight:600; }
+  .blocks-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+  .blocks-table th, .blocks-table td { padding:6px 8px; text-align:left; white-space:nowrap; border-bottom:1px solid #1e293b; }
+  .blocks-table th { color:var(--muted); font-weight:600; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .blocks-table th.r, .blocks-table td.r { text-align:right; }
+  .blocks-table tbody tr:hover { background:#1e293b; }
+  .blocks-sub { font-size:0.66rem; color:var(--muted); }
+  .blocks-recent { padding:8px 14px 12px; border-top:1px solid #1e293b; }
+  .blocks-recent-title { color:var(--muted); font-size:0.66rem; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.04em; }
+  .blocks-empty { padding:12px 14px; color:var(--muted); font-size:0.82rem; }
+  .badge { display:inline-block; padding:1px 6px; border-radius:4px; font-size:0.66rem; font-weight:600; vertical-align:middle; }
+  .badge-expired { background:var(--down); color:#fff; }
+  .badge-soon { background:var(--warn); color:#1e293b; }
+  .badge-mode { background:#334155; color:var(--muted); }
+  .badge-trail-on { background:var(--up); color:#fff; }
+  @media (max-width:640px) { .stats-row-5, .stats-row-4, .stats-row-3, .stats-row-2 { grid-template-columns:repeat(2,1fr); } .profit-table { font-size:0.78rem; } .blocks-table { font-size:0.7rem; } .blocks-bot-stats { font-size:0.7rem; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="titleEl">Ambarawa Capital Dashboard</h1>
+  <div class="sub" id="subtext">Account equity per hour (USDT)</div>
+  <div class="sub" id="periodBanner" style="display:none; color:var(--warn); font-weight:600;"></div>
+
+  <div class="controls">
+    <div class="seg" id="rangeSeg">
+      <button data-range="today">Today</button>
+      <button data-range="3d" class="active">3 Days</button>
+      <button data-range="1m">30 Days</button>
+      <button data-range="month">Month</button>
+      <button data-range="all">All Time</button>
+    </div>
+    <select id="coinSel"><option value="total">Total Equity</option></select>
+  </div>
+
+  <div class="controls" id="overlayControls">
+    <div class="seg" id="overlaySeg">
+      <button data-overlay="equity" class="active">equity</button>
+      <button data-overlay="usdt">usdt</button>
+      <button data-overlay="wc">usage</button>
+      <button data-overlay="usdc">usdc</button>
+    </div>
+  </div>
+
+  <div class="controls" id="buyCoinControls" style="display:none">
+    <select id="buyCoinSel"><option value="BTC">BTC</option></select>
+  </div>
+
+  <div class="stats-row stats-row-5" id="statsRow">
+    <div class="stat-card">
+      <div class="stat-label">Today</div>
+      <div class="stat-big flat" id="todayPct">—</div>
+      <div class="stat-sub" id="todaySub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">3 Days</div>
+      <div class="stat-big flat" id="d3Pct">—</div>
+      <div class="stat-sub" id="d3Sub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">MTD</div>
+      <div class="stat-big flat" id="monthPct">—</div>
+      <div class="stat-sub" id="monthSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">YTD</div>
+      <div class="stat-big flat" id="ytdPct">—</div>
+      <div class="stat-sub" id="ytdSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">All-Time (with fee)</div>
+      <div class="stat-big flat" id="allPct">—</div>
+      <div class="stat-sub" id="allSub">—</div>
+    </div>
+  </div>
+  <div class="stats-row stats-row-5">
+    <div class="stat-card">
+      <div class="stat-label">Block Success Rate</div>
+      <div class="stat-big flat" id="srPct">—</div>
+      <div class="stat-sub" id="srSub">—</div>
+      <div class="stat-sub" id="srOldest">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" id="athLabel">ATH Equity (30d)</div>
+      <div class="stat-big flat" id="athVal">—</div>
+      <div class="stat-sub" id="athSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total usage</div>
+      <div class="stat-big warn" id="usageVal">—</div>
+      <div class="stat-sub" id="usageSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total USDT</div>
+      <div class="stat-big up" id="usdtVal">—</div>
+      <div class="stat-sub" id="usdtSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Force Sell (USDT)</div>
+      <div class="stat-big down" id="fsVal">—</div>
+      <div class="stat-sub" id="fsSub">—</div>
+    </div>
+  </div>
+  <div class="stats-row stats-row-5">
+    <div class="stat-card">
+      <div class="stat-label">Total Capital</div>
+      <div class="stat-big up" id="capVal">—</div>
+      <div class="stat-sub" id="capSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Block Size</div>
+      <div class="stat-big flat" id="bsVal">—</div>
+      <div class="stat-sub" id="bsSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Extra Capital</div>
+      <div class="stat-big warn" id="extraVal">—</div>
+      <div class="stat-sub" id="extraSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">💰 Funding Balance</div>
+      <div class="stat-big flat" id="fundVal">—</div>
+      <div class="stat-sub" id="fundSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" id="perLabel">📅 Periode</div>
+      <div class="stat-big flat" id="perVal">—</div>
+      <div class="stat-sub" id="perSub">—</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="headline">
+      <span class="big" id="pct">—</span>
+      <span class="usd" id="usd">—</span>
+      <span class="usd" id="count">—</span>
+    </div>
+    <div class="chartbox"><canvas id="chart"></canvas></div>
+    <div class="chartbox" id="chartbox2" style="display:none; height:210px;"><canvas id="chart2"></canvas></div>
+    <div class="legend" id="legend">Loading…</div>
+  </div>
+
+  <div class="card profit-card">
+    <button class="profit-toggle" id="profitToggle" aria-expanded="false">
+      <span>💰 Profit</span>
+      <span class="chevron" id="profitChevron">▸</span>
+    </button>
+    <div class="profit-collapse" id="profitCollapse">
+      <div class="profit-head" id="profitHead">💰 Profit — —</div>
+      <div class="profit-scroll">
+        <table class="profit-table" id="profitTable">
+          <thead>
+            <tr>
+              <th>#</th><th>Coin</th>
+              <th class="r">Realized</th><th class="r">Realized %</th>
+              <th class="r">Unrealized</th><th class="r">Unrealized %</th>
+              <th class="r">Total</th><th class="r">Total %</th>
+              <th class="r">Sold</th><th class="r">Active</th>
+            </tr>
+          </thead>
+          <tbody id="profitBody"></tbody>
+          <tfoot id="profitFoot"></tfoot>
+        </table>
+      </div>
+      <div class="profit-note" id="profitNote"></div>
+    </div>
+  </div>
+
+  <div class="card blocks-card">
+    <button class="profit-toggle" id="blocksToggle" aria-expanded="false">
+      <span>📦 Blocks</span>
+      <span class="chevron" id="blocksChevron">▸</span>
+    </button>
+    <div class="blocks-collapse" id="blocksCollapse">
+      <div class="blocks-controls">
+        <div class="seg" id="blocksFilterSeg">
+          <button data-filter="all" class="active">All</button>
+          <button data-filter="active">Active only</button>
+          <button data-filter="idle">Idle only</button>
+        </div>
+        <div class="period-wrap">
+          <label for="periodSel">Periode</label>
+          <select id="periodSel">
+            <option value="">Semua</option>
+          </select>
+        </div>
+      </div>
+      <div class="blocks-head" id="blocksHead">📦 Blocks — —</div>
+      <div class="blocks-list" id="blocksList"></div>
+      <div class="profit-note" id="blocksNote"></div>
+    </div>
+  </div>
+
+  <div class="card snapshots-card">
+    <button class="profit-toggle" id="snapToggle" aria-expanded="false">
+      <span>📜 Config Snapshots</span>
+      <span class="chevron" id="snapChevron">▸</span>
+    </button>
+    <div class="blocks-collapse" id="snapCollapse">
+      <div class="snap-controls">
+        <div class="period-wrap">
+          <label for="snapPeriodSel">Periode</label>
+          <select id="snapPeriodSel"><option value="">Semua</option></select>
+        </div>
+        <div class="seg" id="snapBoundarySeg">
+          <button data-b="all" class="active">All</button>
+          <button data-b="open">Open</button>
+          <button data-b="close">Close</button>
+        </div>
+        <button id="snapDiffBtn" title="bandingkan open vs close (versi terakhir)">Diff open↔close</button>
+      </div>
+      <div class="snap-list" id="snapList"></div>
+      <pre class="snap-pre" id="snapPre"></pre>
+      <div class="profit-note" id="snapNote"></div>
+    </div>
+  </div>
+
+  <div class="card pnl-card">
+    <button class="profit-toggle" id="pnlToggle" aria-expanded="false">
+      <span>📊 Periode P&L</span>
+      <span class="chevron" id="pnlChevron">▸</span>
+    </button>
+    <div class="blocks-collapse" id="pnlCollapse">
+      <table class="blocks-table" id="pnlTable">
+        <thead><tr>
+          <th>Periode</th><th>Status</th><th>Tanggal</th>
+          <th class="r">Beli</th><th class="r">Sold</th>
+          <th class="r">Days</th><th class="r">Success</th>
+          <th class="r">Equity akhir</th>
+          <th class="r">Net P/L</th><th class="r">Net %</th>
+        </tr></thead>
+        <tbody id="pnlBody"></tbody>
+      </table>
+      <div class="profit-note" id="pnlNote"></div>
+    </div>
+  </div>
+</div>
+
+<script>window.__SNAPSHOT__ = {"accounts": ["bima"], "account": "bima", "exchanges": {"azel": "Binance", "bima": "Binance", "imelda": "Binance", "izak": "Binance", "vennia": "Binance"}, "per_account": {"bima": {"coins": ["USDT"], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": 400.0, "to": 400.0}, "d3": {"pct": 0.0, "usd": 0.0, "from": 400.0, "to": 400.0}, "monthly": {"pct": 0.0, "usd": 0.0, "from": 400.0, "to": 400.0}, "ytd": {"pct": 0.0, "usd": 0.0, "from": 400.0, "to": 400.0}, "all_time": {"pct": 0.0, "usd": 0.0, "from": 400.0, "to": 400.0}, "all_time_gross": {"pct": 0.0, "usd": 0.0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": 400.0, "ts": "2026-09-05T04:00:00+00:00", "age_days": 0.0347, "lookback_days": 30}, "usdt_total": {"value": 400.0, "ts": "2026-09-05T04:00:00+00:00", "total_capital": 400.0}, "total_usage": {"value": 0.0, "ts": "2026-09-05T04:00:00+00:00"}, "total_capital_card": {"value": 400.0}, "extra_capital_card": {"value": 0.0}, "block_size_card": {"value": 40.0}, "funding_card": {"value": null, "ts": null}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [{"ts": "2026-09-05", "label": "05 Sep 07:00", "value": 400.0, "cash": 400.0, "delta_pct": 0.0, "usdt": 400.0}, {"ts": "2026-09-05T04:00:00+00:00", "label": "05 Sep 11:00", "value": 400.0, "cash": 400.0, "delta_pct": 0.0, "usdt": 400.0}], "first": 400.0, "last": 400.0, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 2, "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [{"ts": "2026-09-05", "label": "05 Sep 07:00", "value": 400.0, "cash": 400.0, "delta_pct": 0.0, "usdt": 400.0}, {"ts": "2026-09-05T04:00:00+00:00", "label": "05 Sep 11:00", "value": 400.0, "cash": 400.0, "delta_pct": 0.0, "usdt": 400.0}], "first": 400.0, "last": 400.0, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 2, "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [{"ts": "2026-09-05", "label": "05 Sep 07:00", "value": 400.0, "cash": 400.0, "delta_pct": 0.0, "usdt": 400.0}, {"ts": "2026-09-05T04:00:00+00:00", "label": "05 Sep 11:00", "value": 400.0, "cash": 400.0, "delta_pct": 0.0, "usdt": 400.0}], "first": 400.0, "last": 400.0, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 2, "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [{"ts": "2026-09-05", "label": "05 Sep 07:00", "value": 400.0, "cash": 400.0, "delta_pct": 0.0, "usdt": 400.0}, {"ts": "2026-09-05T04:00:00+00:00", "label": "05 Sep 11:00", "value": 400.0, "cash": 400.0, "delta_pct": 0.0, "usdt": 400.0}], "first": 400.0, "last": 400.0, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 2, "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [{"ts": "2026-09-05", "label": "05 Sep 07:00", "value": 400.0, "cash": 400.0, "delta_pct": 0.0, "usdt": 400.0}, {"ts": "2026-09-05T04:00:00+00:00", "label": "05 Sep 11:00", "value": 400.0, "cash": 400.0, "delta_pct": 0.0, "usdt": 400.0}], "first": 400.0, "last": 400.0, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 2, "force_sells": [], "force_sell_total": 0.0}}, "USDT": {"today": {"coin": "USDT", "range": "today", "points": [{"ts": "2026-09-05T04:00:00+00:00", "label": "05 Sep 11:00", "value": 400.0, "cash": null, "delta_pct": 0.0}], "first": 400.0, "last": 400.0, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 1, "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "USDT", "range": "3d", "points": [{"ts": "2026-09-05T04:00:00+00:00", "label": "05 Sep 11:00", "value": 400.0, "cash": null, "delta_pct": 0.0}], "first": 400.0, "last": 400.0, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 1, "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "USDT", "range": "1m", "points": [{"ts": "2026-09-05T04:00:00+00:00", "label": "05 Sep 11:00", "value": 400.0, "cash": null, "delta_pct": 0.0}], "first": 400.0, "last": 400.0, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 1, "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "USDT", "range": "month", "points": [{"ts": "2026-09-05T04:00:00+00:00", "label": "05 Sep 11:00", "value": 400.0, "cash": null, "delta_pct": 0.0}], "first": 400.0, "last": 400.0, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 1, "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "USDT", "range": "all", "points": [{"ts": "2026-09-05T04:00:00+00:00", "label": "05 Sep 11:00", "value": 400.0, "cash": null, "delta_pct": 0.0}], "first": 400.0, "last": 400.0, "change_pct": 0.0, "change_usd": 0.0, "direction": "flat", "count": 1, "force_sells": [], "force_sell_total": 0.0}}}, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [{"bot_name": "bima-aaveusdt", "base_asset": "AAVE", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-btcusdt", "base_asset": "BTC", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-nearusdt", "base_asset": "NEAR", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-trxusdt", "base_asset": "TRX", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-wldusdt", "base_asset": "WLD", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-xrpusdt", "base_asset": "XRP", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 6}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [{"bot_name": "bima-aaveusdt", "base_asset": "AAVE", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-btcusdt", "base_asset": "BTC", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-nearusdt", "base_asset": "NEAR", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-trxusdt", "base_asset": "TRX", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-wldusdt", "base_asset": "WLD", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-xrpusdt", "base_asset": "XRP", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 6}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [{"bot_name": "bima-aaveusdt", "base_asset": "AAVE", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-btcusdt", "base_asset": "BTC", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-nearusdt", "base_asset": "NEAR", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-trxusdt", "base_asset": "TRX", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-wldusdt", "base_asset": "WLD", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-xrpusdt", "base_asset": "XRP", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 6}}, "month": {"range": "month", "label": "This Month", "rankings": [{"bot_name": "bima-aaveusdt", "base_asset": "AAVE", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-btcusdt", "base_asset": "BTC", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-nearusdt", "base_asset": "NEAR", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-trxusdt", "base_asset": "TRX", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-wldusdt", "base_asset": "WLD", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-xrpusdt", "base_asset": "XRP", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 6}}, "all": {"range": "all", "label": "All Time", "rankings": [{"bot_name": "bima-aaveusdt", "base_asset": "AAVE", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-btcusdt", "base_asset": "BTC", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-nearusdt", "base_asset": "NEAR", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-trxusdt", "base_asset": "TRX", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-wldusdt", "base_asset": "WLD", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}, {"bot_name": "bima-xrpusdt", "base_asset": "XRP", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 400.0}], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 6}}}, "blocks": {"bots": [{"bot_name": "bima-aaveusdt", "base_asset": "AAVE", "symbol": "AAVEUSDT", "current_price": null, "start_price": 129.56, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 400.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}, {"bot_name": "bima-btcusdt", "base_asset": "BTC", "symbol": "BTCUSDT", "current_price": null, "start_price": 79512.84, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 400.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}, {"bot_name": "bima-nearusdt", "base_asset": "NEAR", "symbol": "NEARUSDT", "current_price": null, "start_price": 2.216, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 400.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}, {"bot_name": "bima-trxusdt", "base_asset": "TRX", "symbol": "TRXUSDT", "current_price": null, "start_price": 0.3318, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 400.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}, {"bot_name": "bima-wldusdt", "base_asset": "WLD", "symbol": "WLDUSDT", "current_price": null, "start_price": 0.3864, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 400.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}, {"bot_name": "bima-xrpusdt", "base_asset": "XRP", "symbol": "XRPUSDT", "current_price": null, "start_price": 1.3963, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 400.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}], "totals": {"bot_count": 6, "active_blocks": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_total": 0, "expired_days_threshold": 0}}, "periods": [{"account": "bima", "period_no": 1, "start_date": "2026-09-05", "end_date": null, "status": "open", "start_equity": 400.0, "start_equity_eff": 400.0, "closed_equity": null, "realized_pnl": null, "extra_returned": null, "profit_returned": null, "bought": 0, "sold": 0, "days": 0, "success_pct": null, "period_realized": 0.0, "unrealized": 0.0, "end_equity": 400.0, "extra_used": 0.0, "net": 0.0, "net_pct": 0.0}]}}, "generated_at": "2026-09-05 11:50 WIB"};</script>
+<script>
+let chart = null;
+let chart2 = null;
+let deltas = [];
+let state = { range: "3d", coin: "total", overlay: "equity", account: "", buyCoin: "BTC", period: "" };
+let profitOpen = false;
+let fsByIndex = {};
+const SNAP = window.__SNAPSHOT__ || null;
+const RANGE_SUB = {today:"today", "3d":"last 3 days", "1m":"last 30 days", "month":"this month (calendar)", "all":"all time"};
+
+const pctEl = document.getElementById("pct");
+const usdEl = document.getElementById("usd");
+const cntEl = document.getElementById("count");
+const legendEl = document.getElementById("legend");
+const subEl = document.getElementById("subtext");
+
+function fmtUsd(v) {
+  const sign = v < 0 ? "-" : "+";
+  return sign + "$" + Math.abs(v).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtPct(v) { return (v >= 0 ? "+" : "") + v.toFixed(2) + "%"; }
+
+// Per-account snapshot resolution: SNAP.per_account[state.account].
+function perSnap() {
+  if (!SNAP || !SNAP.per_account) return {};
+  return SNAP.per_account[state.account] || {};
+}
+
+async function fetchJson(url) {
+  if (SNAP) {
+    if (url === "/api/accounts") return { accounts: SNAP.accounts || [], exchanges: SNAP.exchanges || {} };
+    const per = perSnap();
+    if (url === "/api/coins") return { coins: per.coins || [], buy_coins: per.buy_coins || [] };
+    if (url.indexOf("/api/buys") === 0) {
+      const params = new URLSearchParams(url.split("?")[1] || "");
+      const coin = params.get("coin") || "BTC";
+      const range = params.get("range") || "3d";
+      return (per.buys && per.buys[coin] && per.buys[coin][range]) || {
+        coin: coin, range: range, points: [], sells: [], count: 0, first: null, last: null
+      };
+    }
+    if (url === "/api/stats") return per.stats || {success_rate:{pct:0,profitable:0,total_sold:0}};
+    if (url.indexOf("/api/equity") === 0) {
+      const params = new URLSearchParams(url.split("?")[1] || "");
+      const range = params.get("range") || "3d";
+      const coin = params.get("coin") || "total";
+      const byCoin = (per.equity && per.equity[coin]) || (per.equity && per.equity["total"]) || {};
+      return byCoin[range] || byCoin["3d"] || {
+        coin: coin, range: range, points: [], first: null, last: null,
+        change_pct: 0, change_usd: 0, direction: "flat", count: 0
+      };
+    }
+    if (url.indexOf("/api/profit") === 0) {
+      const params = new URLSearchParams(url.split("?")[1] || "");
+      const range = params.get("range") || "3d";
+      return (per.profit && per.profit[range]) || {
+        range: range, label: range, rankings: [],
+        totals: {realized: 0, unrealized: 0, realized_pct: 0, unrealized_pct: 0, total_pct: 0, bot_count: 0}
+      };
+    }
+    if (url.indexOf("/api/blocks") === 0) {
+      return (per.blocks) || {bots: [], totals: {bot_count:0, active_blocks:0, active_spent:0, active_value:0, unrealized_total:0, realized_total:0}};
+    }
+    if (url === "/api/periods") {
+      return { periods: per.periods || [], current: {} };
+    }
+    if (url.indexOf("/api/period_snapshots") === 0) {
+      return { snapshots: [] };
+    }
+    return {};
+  }
+  const sep = url.indexOf("?") >= 0 ? "&" : "?";
+  const r = await fetch(url + sep + "account=" + encodeURIComponent(state.account || ""));
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+async function resolveAccount() {
+  // Single-account dashboard: resolve the account from the baked snapshot or
+  // (live mode) the first discovered account, and set the page title to
+  // "Account <NAME> (<EXCHANGE>)".
+  let account = "";
+  let exchange = "";
+  try {
+    if (SNAP) {
+      account = SNAP.account || (SNAP.accounts || [])[0] || "";
+      exchange = (SNAP.exchanges || {})[account] || "";
+    } else {
+      const d = await fetchJson("/api/accounts");
+      const accounts = d.accounts || [];
+      account = accounts[0] || "";
+      exchange = (d.exchanges || {})[account] || "";
+    }
+  } catch (e) { console.warn("account", e); }
+  state.account = account;
+  const titleEl = document.getElementById("titleEl");
+  if (titleEl) {
+    if (account) {
+      titleEl.textContent = "Account " + account + (exchange ? " (" + exchange + ")" : "");
+    } else {
+      titleEl.textContent = "Ambarawa Capital Dashboard";
+    }
+  }
+}
+
+async function loadCoins() {
+  try {
+    const d = await fetchJson("/api/coins");
+    const sel = document.getElementById("coinSel");
+    const cur = state.coin;
+    sel.innerHTML = '<option value="total">Total Equity</option>';
+    (d.coins || []).forEach(a => {
+      const o = document.createElement("option");
+      o.value = a; o.textContent = a;
+      sel.appendChild(o);
+    });
+    if (cur === "total" || (d.coins || []).indexOf(cur) === -1) {
+      sel.value = "total"; state.coin = "total";
+    } else {
+      sel.value = cur;
+    }
+  } catch (e) { console.warn("coins", e); }
+}
+
+function setProfitCard(prefix, data) {
+  const pctEl = document.getElementById(prefix + "Pct");
+  const subEl = document.getElementById(prefix + "Sub");
+  if (data.from == null || data.to == null) {
+    pctEl.textContent = "—";
+    pctEl.className = "stat-big flat";
+    subEl.textContent = "no data";
+    return;
+  }
+  pctEl.textContent = fmtPct(data.pct);
+  const dir = data.pct > 0 ? "up" : (data.pct < 0 ? "down" : "flat");
+  pctEl.className = "stat-big " + dir;
+  subEl.textContent = fmtUsd(data.usd);
+}
+
+async function fetchStats() {
+  try {
+    const d = await fetchJson("/api/stats");
+    const sr = d.success_rate;
+    const srPct = sr.total_sold > 0 ? sr.pct.toFixed(1) + "%" : "—";
+    const srEl = document.getElementById("srPct");
+    srEl.textContent = srPct;
+    srEl.className = "stat-big " + (sr.pct >= 50 ? "up" : "down");
+    document.getElementById("srSub").textContent =
+      sr.total_sold > 0 ? sr.profitable + "/" + sr.total_sold + " blocks profitable" : "no sold blocks";
+    setProfitCard("today", d.today);
+    setProfitCard("d3", d.d3);
+    setProfitCard("month", d.monthly);
+    setProfitCard("ytd", d.ytd);
+    setProfitCard("all", d.all_time);
+    // All-Time card: the big % is equity-based (net, with fee). Annotate the
+    // sub with the gross blocks-based % (without fee) for comparison.
+    const ag = d.all_time_gross || {pct: 0, usd: 0};
+    if (d.all_time && d.all_time.to != null) {
+      document.getElementById("allSub").textContent =
+        fmtUsd(d.all_time.usd) + " · without fee: " + fmtPct(ag.pct);
+    }
+
+    // Oldest active block — shown as a sub-line on the Block Success Rate card.
+    const ob = d.oldest_block;
+    const srOldest = document.getElementById("srOldest");
+    if (ob.bot_name == null) {
+      srOldest.textContent = "oldest: none";
+    } else {
+      const label = ob.status === "expired" ? "EXPIRED"
+        : ob.status === "expiring_soon" ? "Expiring soon"
+        : ob.status === "never_expires" ? "Never expires" : "Active";
+      srOldest.textContent = "Oldest: " + ob.bot_name + " #" + ob.block_id
+        + " · " + fmtAge(ob.age_days) + " · " + label;
+    }
+
+    const ath = d.ath;
+    const athLabel = document.getElementById("athLabel");
+    const athVal = document.getElementById("athVal");
+    const athSub = document.getElementById("athSub");
+    // fresh = ATH tercapai < 1 jam yang lalu
+    const athRecent = ath.value != null && ath.age_days != null && ath.age_days < 1 / 24;
+    if (athLabel) {
+      athLabel.textContent = (athRecent ? "🔥 " : "") + "ATH Equity (" + ath.lookback_days + "d)";
+    }
+    if (ath.value == null) {
+      athVal.textContent = "—";
+      athVal.className = "stat-big flat";
+      athSub.textContent = "no data";
+    } else {
+      athVal.textContent = fmtUsd(ath.value);
+      athVal.className = "stat-big " + (athRecent ? "warn" : "flat");
+      const ageTxt = ath.age_days != null ? " · " + fmtAgeAgo(ath.age_days) : "";
+      athSub.textContent = "at " + fmtTimeLabel(ath.ts) + ageTxt;
+    }
+
+    const usdt = d.usdt_total || {value: null, ts: null};
+    const usdtVal = document.getElementById("usdtVal");
+    const usdtSub = document.getElementById("usdtSub");
+    if (usdt.value == null) {
+      usdtVal.textContent = "—";
+      usdtVal.className = "stat-big flat";
+      usdtSub.textContent = "no data";
+    } else {
+      usdtVal.textContent = fmtUsd(usdt.value);
+      usdtVal.className = "stat-big up";   // USDT balance → green
+      usdtSub.textContent = "hourly snapshot · " + fmtTimeLabel(usdt.ts);
+    }
+
+    // Total capital (green) + extra capital (yellow) from accounts.yaml.
+    const tc = d.total_capital_card || {value: 0};
+    const capVal = document.getElementById("capVal");
+    const capSub = document.getElementById("capSub");
+    if (tc.value > 0) {
+      capVal.textContent = fmtUsd(tc.value);
+      capVal.className = "stat-big up";   // total capital → green
+      capSub.textContent = "accounts.yaml";
+    } else {
+      capVal.textContent = "—";
+      capVal.className = "stat-big flat";
+      capSub.textContent = "no single account";
+    }
+    // Block size (accounts.yaml ambarawa_block_size_usdc).
+    const bs = d.block_size_card || {value: 0};
+    const bsVal = document.getElementById("bsVal");
+    const bsSub = document.getElementById("bsSub");
+    if (bs.value > 0) {
+      bsVal.textContent = fmtUsd(bs.value);
+      bsVal.className = "stat-big flat";
+      bsSub.textContent = "per block · accounts.yaml";
+    } else {
+      bsVal.textContent = "—";
+      bsVal.className = "stat-big flat";
+      bsSub.textContent = "not set";
+    }
+    const ec = d.extra_capital_card || {value: 0};
+    const extraVal = document.getElementById("extraVal");
+    const extraSub = document.getElementById("extraSub");
+    if (ec.value > 0) {
+      extraVal.textContent = fmtUsd(ec.value);
+      extraVal.className = "stat-big warn";   // extra capital → yellow
+      extraSub.textContent = "accounts.yaml";
+    } else {
+      extraVal.textContent = "—";
+      extraVal.className = "stat-big flat";
+      extraSub.textContent = "0 / not set";
+    }
+    // Funding balance card (dispatcher's hourly funding_hourly snapshot).
+    const fc = d.funding_card || {value: null, ts: null};
+    const fundVal = document.getElementById("fundVal");
+    const fundSub = document.getElementById("fundSub");
+    if (fc.value != null) {
+      fundVal.textContent = fmtUsd(fc.value);
+      fundVal.className = "stat-big flat";
+      const fts = fc.ts ? String(fc.ts).slice(0, 16).replace("T", " ") + " UTC" : "—";
+      fundSub.textContent = "per " + fts;
+    } else {
+      fundVal.textContent = "—";
+      fundVal.className = "stat-big flat";
+      fundSub.textContent = "no funding snapshot yet";
+    }
+
+    const usage = d.total_usage || {value: null, ts: null};
+    const usageVal = document.getElementById("usageVal");
+    const usageSub = document.getElementById("usageSub");
+    if (usage.value == null) {
+      usageVal.textContent = "—";
+      usageVal.className = "stat-big flat";
+      usageSub.textContent = "no data";
+    } else {
+      usageVal.textContent = fmtUsd(usage.value);
+      usageVal.className = "stat-big warn";   // equity − USDT → yellow
+      usageSub.textContent = "hourly snapshot · " + fmtTimeLabel(usage.ts);
+    }
+  } catch (e) { console.warn("stats", e); }
+}
+
+// Total force-sell (fund_sell) P&L over the selected range, shown red on the
+// Force Sell card. Updates when the range selector changes.
+async function updateForceSell() {
+  const el = document.getElementById("fsVal");
+  const sub = document.getElementById("fsSub");
+  if (!el || !sub) return;
+  try {
+    const d = await fetchJson("/api/equity?coin=total&range=" + state.range);
+    const fs = d.force_sells || [];
+    const total = d.force_sell_total || 0;
+    if (!fs.length) {
+      el.textContent = "—";
+      el.className = "stat-big flat";
+      sub.textContent = "no force sells";
+      return;
+    }
+    el.textContent = fmtUsd(total);
+    el.className = "stat-big down";   // red — forced sells are losses
+    sub.textContent = fs.length + " force sell(s) · " + (RANGE_SUB[state.range] || state.range);
+  } catch (e) { el.textContent = "—"; }
+}
+
+// Buy-history chart (usdc tab): per-coin buy price ladder with markers colored
+// by the block's final outcome. X = entry time, Y = entry price. Green =
+// profitable, red = force sell (fund_sell), blue = active, gray = other loss.
+const BUY_STATUS_COLOR = { active: "#f59e0b", profit: "#16a34a", force_sell: "#dc2626", loss: "#94a3b8" };
+const BUY_STATUS_LABEL = { active: "ACTIVE", profit: "PROFIT", force_sell: "FORCE SELL", loss: "LOSS" };
+
+async function renderBuys() {
+  const d = await fetchJson("/api/buys?coin=" + encodeURIComponent(state.buyCoin) + "&range=" + state.range);
+  const pts = d.points || [];
+  const sells = d.sells || [];
+  const chg = (pts.length >= 2) ? (pts[pts.length - 1].price - pts[0].price) : 0;
+  const dir = chg > 0 ? "up" : (chg < 0 ? "down" : "flat");
+  pctEl.textContent = pts.length && pts[0].price ? fmtPct(chg / pts[0].price * 100) : "—";
+  pctEl.className = "big " + dir;
+  usdEl.textContent = pts.length ? fmtUsd(chg) : "—";
+  usdEl.className = "usd " + dir;
+  cntEl.textContent = (pts.length || sells.length)
+    ? (pts.length + " buys · " + sells.length + " sells · $" + (d.last != null ? d.last.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—"))
+    : "no buys";
+  subEl.textContent = d.coin + " buy/sell price (entry/sold) · " + (RANGE_SUB[d.range] || d.range);
+  legendEl.textContent = (pts.length || sells.length)
+    ? ("First buy $" + (d.first != null ? d.first.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—")
+       + "  →  Last buy $" + (d.last != null ? d.last.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—"))
+    : "No activity in this range.";
+
+  if (chart) { chart.destroy(); chart = null; }
+  const ctx = document.getElementById("chart").getContext("2d");
+  if (!pts.length && !sells.length) return;
+
+  // Combined timeline: unique entry + sold timestamps, sorted.
+  const times = {};
+  pts.forEach(p => { times[p.ts] = p.label; });
+  sells.forEach(s => { times[s.ts] = s.label; });
+  const tsList = Object.keys(times).sort();
+  const labels = tsList.map(t => times[t]);
+  const tsIdx = {};
+  tsList.forEach((t, i) => { tsIdx[t] = i; });
+
+  const buyData = new Array(labels.length).fill(null);
+  const buyStatus = new Array(labels.length).fill(null);
+  const buyId = new Array(labels.length).fill(null);
+  pts.forEach(p => { const i = tsIdx[p.ts]; if (i != null) { buyData[i] = p.price; buyStatus[i] = p.status; buyId[i] = p.block_id; } });
+
+  const sellData = new Array(labels.length).fill(null);
+  const sellStatus = new Array(labels.length).fill(null);
+  const sellId = new Array(labels.length).fill(null);
+  sells.forEach(s => { const i = tsIdx[s.ts]; if (i != null) { sellData[i] = s.price; sellStatus[i] = s.status; sellId[i] = s.block_id; } });
+
+  const datasets = [{
+    label: "Buy",
+    data: buyData,
+    borderColor: "#94a3b8",
+    backgroundColor: "#94a3b822",
+    fill: false,
+    tension: 0.2,
+    pointRadius: 6,
+    pointHoverRadius: 9,
+    pointBorderWidth: 2,
+    pointStyle: "rectRot",
+    pointBorderColor: buyStatus.map(s => BUY_STATUS_COLOR[s] || "#94a3b8"),
+    pointBackgroundColor: buyStatus.map(s => BUY_STATUS_COLOR[s] || "#94a3b8"),
+    borderWidth: 1.5,
+    spanGaps: true,
+  }, {
+    label: "Sell",
+    data: sellData,
+    showLine: false,
+    pointRadius: 4,
+    pointHoverRadius: 7,
+    pointBorderWidth: 1,
+    pointStyle: "circle",
+    pointBorderColor: sellStatus.map(s => BUY_STATUS_COLOR[s] || "#94a3b8"),
+    pointBackgroundColor: sellStatus.map(s => BUY_STATUS_COLOR[s] || "#94a3b8"),
+    borderWidth: 0,
+    spanGaps: true,
+  }];
+  // Connector: dashed thin line from a block's buy point to its sell point
+  // (only when both endpoints fall inside the range).
+  pts.forEach(p => {
+    if (!p.sold) return;
+    const s = sells.find(x => x.block_id === p.block_id);
+    if (!s) return;
+    const bi = tsIdx[p.ts], si = tsIdx[s.ts];
+    if (bi == null || si == null || bi === si) return;
+    const conn = new Array(labels.length).fill(null);
+    conn[bi] = p.price;
+    conn[si] = s.price;
+    datasets.push({
+      data: conn,
+      showLine: true,
+      spanGaps: true,
+      borderColor: "#475569",
+      borderDash: [4, 3],
+      borderWidth: 1,
+      pointRadius: 0,
+      fill: false,
+      tension: 0,
+    });
+  });
+
+  chart = new Chart(ctx, {
+    type: "line",
+    data: { labels: labels, datasets: datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: "#94a3b8",
+            boxWidth: 12,
+            font: { size: 0.78 * 16 },
+            generateLabels: function() {
+              return [
+                { text: "Buy", fillStyle: "#94a3b8", strokeStyle: "#94a3b8", pointStyle: "rectRot" },
+                { text: "Sell", fillStyle: "#94a3b8", strokeStyle: "#94a3b8", pointStyle: "circle" },
+              ];
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const i = ctx.dataIndex;
+              if (ctx.datasetIndex === 0 && buyId[i] != null) {
+                const st = BUY_STATUS_LABEL[buyStatus[i]] || buyStatus[i];
+                return "Buy #" + buyId[i] + " @" + buyData[i].toLocaleString(undefined,{maximumFractionDigits:2}) + " (" + st + ")";
+              }
+              if (ctx.datasetIndex === 1 && sellId[i] != null) {
+                const st = BUY_STATUS_LABEL[sellStatus[i]] || sellStatus[i];
+                return "Sell #" + sellId[i] + " @" + sellData[i].toLocaleString(undefined,{maximumFractionDigits:2}) + " (" + st + ")";
+              }
+              return "";
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { maxTicksLimit: 12, color: "#94a3b8" }, grid: { color: "#1e293b" } },
+        y: { ticks: { color: "#94a3b8", callback: v => "$" + v }, grid: { color: "#334155" } }
+      }
+    }
+  });
+}
+
+async function loadBuyCoins() {
+  const sel = document.getElementById("buyCoinSel");
+  if (!sel) return;
+  try {
+    const d = await fetchJson("/api/coins");
+    const list = d.buy_coins || [];
+    if (!list.length) {
+      sel.innerHTML = '<option value="BTC">BTC</option>';
+      state.buyCoin = "BTC";
+      return;
+    }
+    sel.innerHTML = "";
+    list.forEach(c => {
+      const o = document.createElement("option");
+      o.value = c; o.textContent = c;
+      sel.appendChild(o);
+    });
+    state.buyCoin = (list.indexOf("BTC") !== -1) ? "BTC" : list[0];
+    sel.value = state.buyCoin;
+  } catch (e) { console.warn("buycoins", e); }
+}
+
+function resetCharts() {
+  if (chart) { chart.destroy(); chart = null; }
+  if (chart2) { chart2.destroy(); chart2 = null; }
+  const b2 = document.getElementById("chartbox2");
+  if (b2) b2.style.display = "none";
+  const b1 = document.getElementById("chartbox");
+  if (b1) b1.style.height = "";
+}
+
+// Total usage tab: two separate charts stacked vertically — USDT on top
+// (green), Total usage below (yellow). Each has its own Y axis.
+function renderWcSplit(d) {
+  const labels = d.points.map(p => p.label);
+  const mkChart = (canvasId, label, data, color) => new Chart(document.getElementById(canvasId).getContext("2d"), {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: label,
+        data: data,
+        borderColor: color,
+        backgroundColor: color,
+        fill: true,
+        tension: 0.25,
+        pointRadius: 2,
+        pointHoverRadius: 4,
+        borderWidth: 2,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { display: true, labels: { color: "#94a3b8", boxWidth: 12, font: { size: 0.78 * 16 } } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const v = ctx.parsed.y;
+              return (ctx.dataset.label || "") + ": $" + (v != null ? v.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}) : "—");
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { maxTicksLimit: 10, color: "#94a3b8" }, grid: { color: "#1e293b" } },
+        y: { ticks: { color: "#94a3b8", callback: v => "$" + v }, grid: { color: "#334155" } }
+      }
+    }
+  });
+  chart = mkChart("chart", "USDT", d.points.map(p => (p.usdt || 0)), "#16a34a");
+  chart2 = mkChart("chart2", "Total usage", d.points.map(p => ((p.value != null ? p.value : 0) - (p.usdt || 0))), "#f59e0b");
+}
+
+async function render() {
+  resetCharts();
+  if (state.overlay === "usdc") { return renderBuys(); }
+  const d = await fetchJson("/api/equity?range=" + state.range + "&coin=" + encodeURIComponent(state.coin));
+  // Total usage tab = two separate charts (USDT top, usage bottom) on Total.
+  const split = state.overlay === "wc" && d.coin === "total";
+  deltas = d.points.map(p => p.delta_pct);
+  const color = d.direction === "up" ? "#16a34a" : (d.direction === "down" ? "#dc2626" : "#6b7280");
+  pctEl.textContent = d.count > 0 ? fmtPct(d.change_pct) : "—";
+  pctEl.className = "big " + d.direction;
+  usdEl.textContent = d.count > 0 ? fmtUsd(d.change_usd) : "—";
+  usdEl.className = "usd " + d.direction;
+  cntEl.textContent = d.count > 0 ? (d.count + " pts · $" + (d.last != null ? d.last.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—")) : "no data";
+  const coinLabel = d.coin === "total" ? "Total equity" : d.coin + " value";
+  subEl.textContent = (split
+      ? "USDT (top) · Total usage (bottom) per hour (USDT)"
+      : coinLabel + " per hour (USDT)") + " · " + (RANGE_SUB[d.range] || d.range);
+  legendEl.textContent = d.count > 0
+    ? ("First $" + (d.first != null ? d.first.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—")
+       + "  →  Last $" + (d.last != null ? d.last.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—"))
+    : "No data yet. Wait for the first hourly snapshot.";
+
+  if (d.count === 0) return;
+  if (split) {
+    const b1 = document.getElementById("chartbox");
+    const b2 = document.getElementById("chartbox2");
+    if (b1) b1.style.height = "210px";
+    if (b2) b2.style.display = "";
+    renderWcSplit(d);
+    return;
+  }
+  const ctx = document.getElementById("chart").getContext("2d");
+  let datasets = [{
+    label: "Equity",
+    data: d.points.map(p => p.value),
+    borderColor: color,
+    backgroundColor: color + "22",
+    fill: true,
+    tension: 0.25,
+    pointRadius: 2,
+    pointHoverRadius: 4,
+    borderWidth: 2,
+  }];
+  // USDT overlay (cash_usdt) — only on Total Equity view AND when the usdt
+  // sub-tab is active. cash is account-wide, not meaningful per-coin.
+  if (state.overlay === "usdt" && d.coin === "total") {
+    datasets.push({
+      label: "Available USDT",
+      data: d.points.map(p => p.cash),
+      borderColor: "#f59e0b",
+      backgroundColor: "#f59e0b",
+      fill: false,
+      tension: 0.25,
+      borderDash: [6, 4],
+      pointRadius: 1,
+      pointHoverRadius: 4,
+      borderWidth: 2,
+      spanGaps: true,
+    });
+    // Force-sell (fund_sell) markers — red diamond at the nearest snapshot.
+    fsByIndex = {};
+    if (d.force_sells && d.force_sells.length) {
+      d.force_sells.forEach(fs => {
+        if (fs.index != null && fs.index >= 0 && fs.index < d.points.length) fsByIndex[fs.index] = fs;
+      });
+      const markerData = new Array(d.points.length).fill(null);
+      d.force_sells.forEach(fs => {
+        if (fs.index != null && fs.index >= 0 && fs.index < d.points.length) {
+          markerData[fs.index] = (d.points[fs.index].cash != null ? d.points[fs.index].cash : 0);
+        }
+      });
+      datasets.push({
+        label: "Force Sell",
+        data: markerData,
+        borderColor: "#dc2626",
+        backgroundColor: "#dc2626",
+        pointRadius: 6,
+        pointHoverRadius: 9,
+        pointStyle: "rectRot",
+        showLine: false,
+        order: 1,
+      });
+    }
+  } else {
+    fsByIndex = {};
+  }
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: d.points.map(p => p.label),
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { display: datasets.length > 1, labels: { color: "#94a3b8", boxWidth: 12, font: { size: 0.78 * 16 } } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const i = ctx.dataIndex;
+              const v = ctx.parsed.y;
+              if (v == null) return ctx.dataset.label + ": —";
+              const lbl = ctx.dataset.label ? ctx.dataset.label + ": " : "";
+              if (ctx.dataset.label === "Force Sell" && fsByIndex[i]) {
+                return "🔴 Force sell " + fsByIndex[i].coin + " — " + fmtSigned(fsByIndex[i].pnl, 2);
+              }
+              if (ctx.datasetIndex === 0) {
+                const dp = deltas[i];
+                const dStr = (dp != null && i > 0) ? "  (Δ" + (dp >= 0 ? "+" : "") + dp.toFixed(2) + "%)" : "";
+                return lbl + "$" + v.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}) + dStr;
+              }
+              return lbl + "$" + v.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { maxTicksLimit: 12, color: "#94a3b8" }, grid: { color: "#1e293b" } },
+        y: { ticks: { color: "#94a3b8", callback: v => "$" + v }, grid: { color: "#334155" } }
+      }
+    }
+  });
+}
+
+function fmtSigned(v, dec) {
+  const sign = v < 0 ? "-" : "+";
+  return sign + "$" + Math.abs(v).toFixed(dec);
+}
+function clsSign(v) { return v >= 0 ? "pos" : "neg"; }
+function fmtPctSigned(v) { return (v >= 0 ? "+" : "") + v.toFixed(2) + "%"; }
+
+async function fetchProfit(range) {
+  const d = await fetchJson("/api/profit?range=" + range);
+  renderProfit(d);
+}
+
+function renderProfit(d) {
+  const head = document.getElementById("profitHead");
+  const body = document.getElementById("profitBody");
+  const foot = document.getElementById("profitFoot");
+  const note = document.getElementById("profitNote");
+  head.textContent = "💰 Profit — " + (d.label || d.range || "—");
+  if (!d.rankings || d.rankings.length === 0) {
+    body.innerHTML = '<tr><td colspan="10" class="td-mute" style="text-align:center;padding:26px">No bots with data</td></tr>';
+    foot.innerHTML = "";
+    note.textContent = "";
+    return;
+  }
+  body.innerHTML = d.rankings.map(function(r, i) {
+    const tot = r.realized + r.unrealized;
+    return "<tr>"
+      + "<td>" + (i + 1) + "</td>"
+      + "<td>" + r.base_asset + "</td>"
+      + '<td class="r ' + clsSign(r.realized) + '">' + fmtSigned(r.realized, 4) + "</td>"
+      + '<td class="r ' + clsSign(r.pnl_pct) + '">' + fmtPctSigned(r.pnl_pct) + "</td>"
+      + '<td class="r ' + clsSign(r.unrealized) + '">' + fmtSigned(r.unrealized, 4) + "</td>"
+      + '<td class="r ' + clsSign(r.unrealized_pct) + '">' + fmtPctSigned(r.unrealized_pct) + "</td>"
+      + '<td class="r ' + clsSign(tot) + '">' + fmtSigned(tot, 4) + "</td>"
+      + '<td class="r ' + clsSign(r.total_pct) + '">' + fmtPctSigned(r.total_pct) + "</td>"
+      + '<td class="r">' + r.sold_count + "</td>"
+      + '<td class="r">' + r.active_count + "</td>"
+      + "</tr>";
+  }).join("");
+  const t = d.totals;
+  const totAll = t.realized + t.unrealized;
+  foot.innerHTML = "<tr>"
+    + '<td colspan="2">Σ Total</td>'
+    + '<td class="r ' + clsSign(t.realized) + '">' + fmtSigned(t.realized, 4) + "</td>"
+    + '<td class="r ' + clsSign(t.realized_pct) + '">' + fmtPctSigned(t.realized_pct) + "</td>"
+    + '<td class="r ' + clsSign(t.unrealized) + '">' + fmtSigned(t.unrealized, 4) + "</td>"
+    + '<td class="r ' + clsSign(t.unrealized_pct) + '">' + fmtPctSigned(t.unrealized_pct) + "</td>"
+    + '<td class="r ' + clsSign(totAll) + '">' + fmtSigned(totAll, 4) + "</td>"
+    + '<td class="r ' + clsSign(t.total_pct) + '">' + fmtPctSigned(t.total_pct) + "</td>"
+    + '<td class="r td-mute" colspan="2">' + t.bot_count + " bots</td>"
+    + "</tr>";
+  note.textContent = "Realized = sold blocks in period · Unrealized valued at latest hourly snapshot price (up to 1h stale) · Ranked by realized";
+}
+
+document.getElementById("profitToggle").addEventListener("click", function() {
+  const btn = this;
+  const col = document.getElementById("profitCollapse");
+  profitOpen = !profitOpen;
+  btn.classList.toggle("open", profitOpen);
+  btn.setAttribute("aria-expanded", profitOpen ? "true" : "false");
+  col.classList.toggle("open", profitOpen);
+  if (profitOpen) { fetchProfit(state.range).catch(function(e){ console.error("profit", e); }); }
+});
+
+let blocksOpen = false;
+let blocksFilter = "all";
+let blocksData = null;
+
+function fmtPrice(v) {
+  if (v == null) return "—";
+  const a = Math.abs(v);
+  if (a < 1) return v.toFixed(6);
+  if (a < 100) return v.toFixed(4);
+  return v.toLocaleString(undefined, {maximumFractionDigits:2, minimumFractionDigits:2});
+}
+function fmtTimeLabel(iso) {
+  if (!iso) return "?";
+  try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mi = String(d.getMinutes()).padStart(2, "0");
+    return mm + "-" + dd + " " + hh + ":" + mi;
+  } catch { return iso; }
+}
+function fmtAge(days) {
+  if (days == null) return "—";
+  if (days >= 1) return Math.floor(days) + "d";
+  if (days * 24 >= 1) return Math.floor(days * 24) + "h";
+  if (days * 1440 >= 1) return Math.floor(days * 1440) + "m";
+  return "just now";
+}
+function fmtAgeAgo(days) {
+  const s = fmtAge(days);
+  return s === "—" ? "" : (s === "just now" ? s : s + " ago");
+}
+function fmtTimeAgo(iso) {
+  if (!iso) return "?";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const sec = Math.floor((Date.now() - d.getTime()) / 1000);
+  if (sec < 0) return "just now";
+  if (sec < 60) return "just now";
+  const mins = Math.floor(sec / 60);
+  if (mins < 60) return mins + " min" + (mins === 1 ? "" : "s") + " ago";
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + " hour" + (hrs === 1 ? "" : "s") + " ago";
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return days + " day" + (days === 1 ? "" : "s") + " ago";
+  const weeks = Math.floor(days / 7);
+  if (weeks < 5) return weeks + " week" + (weeks === 1 ? "" : "s") + " ago";
+  const months = Math.floor(days / 30);
+  if (months < 12) return months + " month" + (months === 1 ? "" : "s") + " ago";
+  const years = Math.floor(days / 365);
+  return years + " year" + (years === 1 ? "" : "s") + " ago";
+}
+
+async function fetchBlocks() {
+  const url = "/api/blocks" + (state.period ? "?period=" + encodeURIComponent(state.period) : "");
+  blocksData = await fetchJson(url);
+  renderBlocks();
+}
+
+async function renderPeriods() {
+  try {
+    const d = await fetchJson("/api/periods");
+    const list = d.periods || [];
+    const cur = d.current || {};
+    const acct = state.account || (list.length ? list[0].account : "");
+    const my = list.filter(function(p) { return p.account === acct; });
+    const open = my.find(function(p) { return p.status === "open"; }) || null;
+    // Periode card + banner
+    const perVal = document.getElementById("perVal");
+    const perSub = document.getElementById("perSub");
+    const banner = document.getElementById("periodBanner");
+    if (!open) {
+      perVal.textContent = "—";
+      perVal.className = "stat-big flat";
+      perSub.textContent = "tidak ada periode open";
+      banner.textContent = "🆕 Belum ada periode open — akun mulai dari awal. Buka periode: ./scripts/periode_open.sh";
+      banner.style.display = "";
+    } else {
+      perVal.textContent = "Periode " + open.period_no;
+      perVal.className = "stat-big " + (open.period_realized >= 0 ? "up" : "down");
+      const capTxt = open.start_equity != null ? "$" + Number(open.start_equity).toFixed(2) : "?";
+      perSub.textContent = "start " + (open.start_date || "?") +
+        " · capital " + capTxt +
+        " · realized " + fmtSigned(open.period_realized, 4) + " · " + open.bought + " blk";
+      banner.style.display = "none";
+    }
+    // Period dropdown (blocks filter) — default = the active open period
+    const sel = document.getElementById("periodSel");
+    const prev = state.period;
+    sel.innerHTML = '<option value="">Semua</option>' + my.map(function(p) {
+      const label = "Periode " + p.period_no + (p.end_date ? " (closed " + p.end_date + ")" : " (open)");
+      return '<option value="' + p.period_no + '">' + label + '</option>';
+    }).join("");
+    const defaultPeriod = open ? String(open.period_no) : "";
+    state.period = (prev && my.some(function(p) { return String(p.period_no) === prev; })) ? prev : defaultPeriod;
+    sel.value = state.period;
+    if (blocksData && state.period !== prev) { fetchBlocks().catch(function(e){ console.error("blocks", e); }); }
+  } catch (e) { console.error("periods", e); }
+}
+
+function renderBlocks() {
+  const d = blocksData;
+  if (!d) return;
+  const head = document.getElementById("blocksHead");
+  const list = document.getElementById("blocksList");
+  const note = document.getElementById("blocksNote");
+  const t = d.totals || {};
+  const expDays = t.expired_days_threshold;
+  const expTxt = expDays && expDays > 0 ? " · expiry after " + expDays + "d" : "";
+  head.textContent = "📦 Blocks — " + (t.bot_count || 0) + " bots · " + (t.active_blocks || 0) + " active · unrealized " + fmtSigned(t.unrealized_total || 0, 4) + expTxt;
+
+  let bots = (d.bots || []).slice();
+  if (blocksFilter === "active") bots = bots.filter(function(b) { return b.active_count > 0; });
+  else if (blocksFilter === "idle") bots = bots.filter(function(b) { return b.active_count === 0; });
+
+  if (bots.length === 0) {
+    list.innerHTML = '<div class="blocks-empty">No bots match this filter.</div>';
+    note.textContent = "";
+    return;
+  }
+  list.innerHTML = bots.map(renderBotSection).join("");
+  note.textContent = "Valued at latest hourly snapshot price (up to 1h stale) · Sorted by worst unrealized P&L · Recent sold = last 3";
+}
+
+function renderBotSection(b) {
+  const upnlCls = b.unrealized_total >= 0 ? "pos" : "neg";
+  const realCls = b.realized_pnl >= 0 ? "pos" : "neg";
+  const header = '<div class="blocks-bot-head">'
+    + '<span class="blocks-bot-name">' + b.bot_name + ' · ' + b.base_asset + '</span>'
+    + '<span class="blocks-bot-stats">'
+      + '<span>' + b.active_count + ' active / ' + b.sold_count + ' sold</span>'
+      + '<span class="upnl ' + upnlCls + '">unreal ' + fmtSigned(b.unrealized_total, 4) + '</span>'
+      + '<span class="' + realCls + '">realized ' + fmtSigned(b.realized_pnl, 4) + '</span>'
+    + '</span>'
+  + '</div>';
+
+  let body;
+  if (b.active_count === 0) {
+    body = '<div class="blocks-empty">Idle (no active blocks) · start price ' + fmtPrice(b.start_price) + ' · current ' + fmtPrice(b.current_price) + '</div>';
+  } else {
+    body = '<table class="blocks-table">'
+      + '<thead><tr>'
+        + '<th>#</th><th>Mode</th>'
+        + '<th class="r">Entry</th><th class="r">Now</th><th class="r">Unreal</th>'
+        + '<th class="r">Max ↑</th><th class="r">Min ↓</th>'
+        + '<th class="r">Value</th><th class="r">Age</th><th>Time</th>'
+      + '</tr></thead>'
+      + '<tbody>' + b.active_blocks.map(renderActiveRow).join('') + '</tbody>'
+    + '</table>';
+  }
+
+  let recent = "";
+  if (b.recent_sold && b.recent_sold.length > 0) {
+    recent = '<div class="blocks-recent">'
+      + '<div class="blocks-recent-title">Recent sold (last ' + b.recent_sold.length + ')</div>'
+      + '<table class="blocks-table">'
+        + '<thead><tr>'
+          + '<th>#</th><th>Reason</th>'
+          + '<th class="r">Entry</th><th class="r">Sold</th><th class="r">P&L</th>'
+          + '<th class="r">Age</th><th>Sold at</th>'
+        + '</tr></thead>'
+        + '<tbody>' + b.recent_sold.map(renderSoldRow).join('') + '</tbody>'
+      + '</table>'
+    + '</div>';
+  }
+
+  return '<div class="blocks-bot">' + header + body + recent + '</div>';
+}
+
+function renderActiveRow(blk) {
+  let modeCell;
+  if (blk.tp_mode === "trailing") {
+    modeCell = blk.trail_active
+      ? '<span class="badge badge-trail-on">TRAIL ON</span>'
+      : '<span class="badge badge-mode">trail</span>';
+  } else {
+    modeCell = '<span class="badge badge-mode">fixed</span>';
+  }
+  let badge = "";
+  if (blk.status === "expired") badge = ' <span class="badge badge-expired">EXPIRED</span>';
+  else if (blk.status === "expiring_soon") badge = ' <span class="badge badge-soon">SOON</span>';
+  const upnlCls = (blk.unreal_usd == null) ? "td-mute" : (blk.unreal_usd >= 0 ? "pos" : "neg");
+  const maxCls = (blk.max_pct == null) ? "td-mute" : (blk.max_pct >= 0 ? "pos" : "neg");
+  const minCls = (blk.min_pct == null) ? "td-mute" : (blk.min_pct >= 0 ? "pos" : "neg");
+  const unrealCell = blk.unreal_usd == null
+    ? '<span class="td-mute">—</span>'
+    : fmtSigned(blk.unreal_usd, 4) + '<br><span class="blocks-sub">' + fmtPctSigned(blk.unreal_pct) + '</span>';
+  const maxCell = blk.max_price == null
+    ? '<span class="td-mute">—</span>'
+    : fmtPrice(blk.max_price) + '<br><span class="blocks-sub">' + fmtPctSigned(blk.max_pct) + '</span>';
+  const minCell = blk.min_price == null
+    ? '<span class="td-mute">—</span>'
+    : fmtPrice(blk.min_price) + '<br><span class="blocks-sub">' + fmtPctSigned(blk.min_pct) + '</span>';
+  return '<tr>'
+    + '<td>' + blk.id + badge + '</td>'
+    + '<td>' + modeCell + '</td>'
+    + '<td class="r">' + fmtPrice(blk.entry_price) + '</td>'
+    + '<td class="r">' + fmtPrice(blk.now_price) + '</td>'
+    + '<td class="r ' + upnlCls + '">' + unrealCell + '</td>'
+    + '<td class="r ' + maxCls + '">' + maxCell + '</td>'
+    + '<td class="r ' + minCls + '">' + minCell + '</td>'
+    + '<td class="r">$' + (blk.value || 0).toFixed(2) + '</td>'
+    + '<td class="r">' + (blk.age_days != null ? fmtAge(blk.age_days) : '—') + '</td>'
+    + '<td>' + fmtTimeLabel(blk.entry_time) + '</td>'
+  + '</tr>';
+}
+
+let snapData = [];
+let snapBoundary = "all";
+
+async function renderSnapshots() {
+  try {
+    const url = "/api/period_snapshots" + (state.account ? "?account=" + encodeURIComponent(state.account) : "");
+    const d = await fetchJson(url);
+    snapData = d.snapshots || [];
+    const sel = document.getElementById("snapPeriodSel");
+    const periods = {};
+    snapData.forEach(function(s){ periods[s.period_no] = 1; });
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Semua</option>' + Object.keys(periods).sort().reverse().map(function(p){ return '<option value="' + p + '">Periode ' + p + '</option>'; }).join("");
+    if (cur && periods[cur]) sel.value = cur;
+    drawSnap();
+  } catch (e) { console.error("snapshots", e); }
+}
+
+function snapRows() {
+  const per = document.getElementById("snapPeriodSel").value;
+  let rows = snapData;
+  if (per) rows = rows.filter(function(s){ return String(s.period_no) === per; });
+  if (snapBoundary !== "all") rows = rows.filter(function(s){ return s.boundary === snapBoundary; });
+  return rows;
+}
+
+function drawSnap() {
+  const list = document.getElementById("snapList");
+  const pre = document.getElementById("snapPre");
+  const note = document.getElementById("snapNote");
+  pre.textContent = "";
+  let rows = snapRows();
+  if (!rows.length) { list.innerHTML = '<div class="blocks-empty">Belum ada snapshot (terjadi saat periode open/close).</div>'; note.textContent=""; return; }
+  // latest row = highest period/boundary/version
+  const latest = rows.slice().sort(function(a,b){ return (b.period_no-a.period_no) || (a.boundary===b.boundary?0:(a.boundary==="open"?-1:1)) || (b.version-a.version); })[0];
+  const batch = rows.filter(function(s){ return s.period_no===latest.period_no && s.boundary===latest.boundary && s.version===latest.version; });
+  const groupKey = latest.period_no + " [" + latest.boundary + "] v" + latest.version;
+  list.innerHTML = '<div class="snap-head">Periode ' + groupKey + ' · ' + batch.length + ' file</div>'
+    + '<div class="snap-files">' + batch.map(function(s){
+        return '<button class="snap-file" data-idx="' + snapData.indexOf(s) + '">' + s.env_name + '</button>';
+      }).join(" ") + '</div>';
+  list.querySelectorAll(".snap-file").forEach(function(b){
+    b.addEventListener("click", function(){
+      const s = snapData[parseInt(b.dataset.idx, 10)];
+      pre.textContent = (s ? s.content : "");
+      pre.classList.add("open");
+      b.classList.add("active");
+    });
+  });
+  note.textContent = "klik file untuk lihat isi (menampilkan versi terakhir di filter saat ini).";
+}
+
+function snapDiff() {
+  const pre = document.getElementById("snapPre");
+  const per = document.getElementById("snapPeriodSel").value;
+  const open = snapRows().filter(function(s){ return s.boundary==="open" && (!per || String(s.period_no)===per); });
+  const close = snapRows().filter(function(s){ return s.boundary==="close" && (!per || String(s.period_no)===per); });
+  if (!open.length || !close.length) { pre.textContent = "Butuh snapshot open & close untuk periode ini."; pre.classList.add("open"); return; }
+  const ov = open[0].version, cv = close[0].version;
+  const byName = function(rows, v){ const m={}; rows.forEach(function(s){ if(s.version===v) m[s.env_name]=s.content; }); return m; };
+  const o = byName(open, ov), c = byName(close, cv);
+  let out = "";
+  Object.keys(o).concat(Object.keys(c)).sort().forEach(function(name){
+    if (!(name in o)) { out += "\n[" + name + "] hanya di CLOSE (ditambahkan)\n"; return; }
+    if (!(name in c)) { out += "\n[" + name + "] hanya di OPEN (dihapus)\n"; return; }
+    if (o[name] === c[name]) return;
+    out += "\n── " + name + " (BERUBAH) ──\n";
+    const al = o[name].split("\n"), bl = c[name].split("\n");
+    const n = Math.max(al.length, bl.length);
+    for (let i=0;i<n;i++){
+      const a = i<al.length ? al[i] : "", b = i<bl.length ? bl[i] : "";
+      if (a !== b) out += "- " + a + "\n+ " + b + "\n";
+    }
+  });
+  pre.textContent = out || "open v" + ov + " dan close v" + cv + " IDENTIK.";
+  pre.classList.add("open");
+}
+
+async function renderPeriodPnl() {
+  try {
+    const d = await fetchJson("/api/periods");
+    const list = d.periods || [];
+    const acct = state.account || (list.length ? list[0].account : "");
+    const my = list.filter(function(p){ return p.account === acct; });
+    const body = document.getElementById("pnlBody");
+    if (!my.length) {
+      body.innerHTML = '<tr><td colspan="9" class="blocks-empty">Belum ada periode.</td></tr>';
+      document.getElementById("pnlNote").textContent = "";
+      return;
+    }
+    body.innerHTML = my.map(function(p){
+      const net = p.net != null ? p.net : 0;
+      const netCls = net > 0 ? "pos" : (net < 0 ? "neg" : "");
+      const netPct = p.net_pct != null ? (p.net_pct > 0 ? "+" : "") + p.net_pct.toFixed(2) + "%" : "—";
+      const eq = p.end_equity != null ? "$" + p.end_equity.toFixed(2) : "—";
+      const days = p.days != null ? p.days + "d" : "—";
+      const succ = p.success_pct != null ? p.success_pct.toFixed(0) + "%" : "—";
+      const dates = (p.start_date || "?") + " → " + (p.end_date || "sekarang");
+      return '<tr>'
+        + '<td>Periode ' + p.period_no + '</td>'
+        + '<td>' + p.status + '</td>'
+        + '<td>' + dates + '</td>'
+        + '<td class="r">' + p.bought + '</td>'
+        + '<td class="r">' + p.sold + '</td>'
+        + '<td class="r">' + days + '</td>'
+        + '<td class="r">' + succ + '</td>'
+        + '<td class="r">' + eq + '</td>'
+        + '<td class="r ' + netCls + '">' + (net>0?"+":"") + net.toFixed(2) + '</td>'
+        + '<td class="r ' + netCls + '">' + netPct + '</td>'
+        + '</tr>';
+    }).join("");
+    const cap = my[0].start_equity_eff != null ? "$" + Number(my[0].start_equity_eff).toFixed(2) : "?";
+    document.getElementById("pnlNote").textContent =
+      "Net P/L = equity akhir − extra_capital − start_equity (" + cap + ") — definitif, termasuk biaya/dust. Merah = rugi.";
+  } catch (e) { console.error("pnl", e); }
+}
+
+document.getElementById("pnlToggle").addEventListener("click", function() {
+  const col = document.getElementById("pnlCollapse");
+  const open = this.classList.toggle("open");
+  this.setAttribute("aria-expanded", open ? "true" : "false");
+  col.classList.toggle("open", open);
+  if (open) renderPeriodPnl().catch(function(e){ console.error("pnl", e); });
+});
+
+document.getElementById("snapToggle").addEventListener("click", function() {
+  const col = document.getElementById("snapCollapse");
+  const open = this.classList.toggle("open");
+  this.setAttribute("aria-expanded", open ? "true" : "false");
+  col.classList.toggle("open", open);
+  if (open && !snapData.length) renderSnapshots().catch(function(e){ console.error("snap", e); });
+});
+document.getElementById("snapBoundarySeg").addEventListener("click", function(e) {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#snapBoundarySeg button").forEach(function(x){ x.classList.remove("active"); });
+  b.classList.add("active");
+  snapBoundary = b.dataset.b;
+  drawSnap();
+});
+document.getElementById("snapPeriodSel").addEventListener("change", function(){ drawSnap(); });
+document.getElementById("snapDiffBtn").addEventListener("click", function(){ snapDiff(); });
+
+function renderSoldRow(blk) {
+  const pnlCls = blk.pnl_usdc >= 0 ? "pos" : "neg";  return '<tr>'
+    + '<td>' + blk.id + '</td>'
+    + '<td><span class="badge badge-mode">' + (blk.sold_reason_label || blk.sold_reason || '?') + '</span></td>'
+    + '<td class="r">' + fmtPrice(blk.entry_price) + '</td>'
+    + '<td class="r">' + fmtPrice(blk.sold_price) + '</td>'
+    + '<td class="r ' + pnlCls + '">' + fmtSigned(blk.pnl_usdc, 4) + '</td>'
+    + '<td class="r">' + (blk.age_days != null ? fmtAge(blk.age_days) : '—') + '</td>'
+    + '<td title="' + fmtTimeLabel(blk.sold_time) + '">' + fmtTimeAgo(blk.sold_time) + '</td>'
+  + '</tr>';
+}
+
+document.getElementById("blocksToggle").addEventListener("click", function() {
+  const btn = this;
+  const col = document.getElementById("blocksCollapse");
+  blocksOpen = !blocksOpen;
+  btn.classList.toggle("open", blocksOpen);
+  btn.setAttribute("aria-expanded", blocksOpen ? "true" : "false");
+  col.classList.toggle("open", blocksOpen);
+  if (blocksOpen) {
+    if (!blocksData) {
+      fetchBlocks().catch(function(e){ console.error("blocks", e); });
+    } else {
+      renderBlocks();
+    }
+  }
+});
+
+document.getElementById("blocksFilterSeg").addEventListener("click", function(e) {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#blocksFilterSeg button").forEach(function(x) { x.classList.remove("active"); });
+  b.classList.add("active");
+  blocksFilter = b.dataset.filter;
+  if (blocksData) renderBlocks();
+});
+
+document.getElementById("rangeSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#rangeSeg button").forEach(x => x.classList.remove("active"));
+  b.classList.add("active");
+  state.range = b.dataset.range;
+  render().catch(err => console.error(err));
+  updateForceSell().catch(err => console.error("forceSell", err));
+  if (profitOpen) { fetchProfit(state.range).catch(function(e){ console.error("profit", e); }); }
+});
+document.getElementById("coinSel").addEventListener("change", e => {
+  state.coin = e.target.value;
+  // The [equity]/[usdt] overlay sub-tab only applies to the Total Equity
+  // view (cash_usdt is account-wide). Hide it for per-coin selections.
+  const oc = document.getElementById("overlayControls");
+  if (oc) oc.style.display = (state.coin === "total") ? "" : "none";
+  render().catch(err => console.error(err));
+});
+document.getElementById("overlaySeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#overlaySeg button").forEach(x => x.classList.remove("active"));
+  b.classList.add("active");
+  state.overlay = b.dataset.overlay;
+  const bc = document.getElementById("buyCoinControls");
+  if (bc) bc.style.display = (state.overlay === "usdc") ? "" : "none";
+  render().catch(err => console.error(err));
+});
+document.getElementById("buyCoinSel").addEventListener("change", e => {
+  state.buyCoin = e.target.value;
+  render().catch(err => console.error(err));
+});
+document.getElementById("periodSel").addEventListener("change", e => {
+  state.period = e.target.value;
+  fetchBlocks().catch(err => console.error("blocks", err));
+});
+
+(async function init() {
+  await resolveAccount();
+  await loadCoins();
+  await loadBuyCoins();
+  await fetchStats();
+  await render();
+  await updateForceSell();
+  await renderPeriods();
+  await renderSnapshots();
+  await renderPeriodPnl();
+  // Auto-expand the Periode P&L card so per-period profit/loss is visible
+  // without clicking (closed accounts especially).
+  try {
+    const pnlBtn = document.getElementById("pnlToggle");
+    pnlBtn.classList.add("open");
+    pnlBtn.setAttribute("aria-expanded", "true");
+    document.getElementById("pnlCollapse").classList.add("open");
+  } catch (e) { console.warn("pnl autopen", e); }
+  if (SNAP) {
+    legendEl.textContent += "  ·  📸 snapshot " + (SNAP.generated_at || "");
+  } else {
+    setInterval(fetchStats, 60000);
+  }
+})().catch(err => { legendEl.textContent = "Error: " + err; console.error(err); });
+</script>
+</body>
+</html>
