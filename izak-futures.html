@@ -144,13 +144,19 @@ function render(f){
   foot.appendChild(tr);
 }
 function setStatus(on, txt){ $("dot").className="dot "+(on?"on":"off"); $("statusText").textContent=txt; }
+let lastWsErr="";
 function connect(){
   setStatus(false,"connecting…");
-  const ws = new WebSocket(WS_URL);
-  ws.onopen = ()=>{ setStatus(true,"live"); };
+  let ws;
+  try { ws = new WebSocket(WS_URL); } catch(e){ setStatus(false,"ws init error: "+e.message); return; }
+  ws.onopen = ()=>{ lastWsErr=""; setStatus(true,"live"); };
   ws.onmessage = e=>{ try{ render(JSON.parse(e.data)); }catch(err){ console.warn("frame", err); } };
-  ws.onclose = ()=>{ setStatus(false,"reconnecting…"); setTimeout(connect, 2000); };
-  ws.onerror = ()=>{ try{ws.close();}catch(_){} };
+  ws.onerror = (e)=>{ try{ lastWsErr = (e && e.message) || "network error"; }catch(_){ lastWsErr="ws error"; } };
+  ws.onclose = (ev)=>{
+    const code = (ev && ev.code!=null)? " · code "+ev.code : "";
+    setStatus(false,"reconnecting… "+lastWsErr+code);
+    setTimeout(connect, 2000);
+  };
 }
 $("title").textContent = ACCOUNT + " · Realtime";
 $("sub").textContent = "LIVE Binance USDT-M · ws " + WS_URL.replace(/^wss?:\/\//,"") + " · ";
