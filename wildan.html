@@ -35,6 +35,11 @@
   .stat-label { color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
   .stat-big { font-size:1.5rem; font-weight:700; }
   .stat-sub { color:var(--muted); font-size:0.8rem; margin-top:4px; }
+  .spotlive-wrap { border:1px solid #2b4a66; border-radius:12px; padding:14px 16px 10px; margin-bottom:18px; background:linear-gradient(180deg,#16233a,#101a2b); }
+  .spotlive-head { display:flex; align-items:center; gap:10px; color:#38bdf8; font-size:0.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:12px; }
+  .spotlive-head:after { content:""; flex:1; height:1px; background:#2b4a66; }
+  .spotlive-wrap .stats-row { margin-bottom:0; }
+  .spotlive-wrap .profit-card { margin-top:12px; }
   .profit-card { padding:0; overflow:hidden; margin-top:16px; }
   .profit-toggle { width:100%; background:transparent; border:0; color:var(--txt); padding:15px 20px; cursor:pointer; font-size:1rem; font-weight:600; display:flex; justify-content:space-between; align-items:center; font-family:inherit; }
   .profit-toggle:hover { background:#243349; }
@@ -94,6 +99,46 @@
   <h1 id="titleEl">Ambarawa Capital Dashboard</h1>
   <div class="sub" id="subtext">Account equity per hour (USDT)</div>
   <div class="sub" id="periodBanner" style="display:none; color:var(--warn); font-weight:600;"></div>
+
+  <div class="spotlive-wrap" id="spotLiveWrap">
+    <div class="spotlive-head">Spot — live <span id="spotLiveBadge" style="font-weight:600;text-transform:none;letter-spacing:0;"></span></div>
+    <div class="stats-row stats-row-3" id="spotLiveRow">
+      <div class="stat-card">
+        <div class="stat-label">Equity</div>
+        <div class="stat-big flat" id="spotEqVal">—</div>
+        <div class="stat-sub" id="spotEqSub">cash + coin values · live</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Cash (USDT)</div>
+        <div class="stat-big flat" id="spotCashVal">—</div>
+        <div class="stat-sub" id="spotCashSub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Today P&amp;L</div>
+        <div class="stat-big flat" id="spotTodayVal">—</div>
+        <div class="stat-sub" id="spotTodaySub">—</div>
+      </div>
+    </div>
+    <div class="card profit-card">
+      <button class="profit-toggle" id="spotToggle" aria-expanded="true">
+        <span>🪙 Spot — Coins <span id="spotCount"></span></span>
+        <span class="chevron" id="spotChevron">▾</span>
+      </button>
+      <div class="blocks-collapse open" id="spotCollapse">
+        <div class="profit-scroll">
+          <table class="profit-table" id="spotTable">
+            <thead><tr>
+              <th>Coin</th><th class="r">Balance</th><th class="r">Qty active</th>
+              <th class="r">Avg entry</th><th class="r">Mark</th>
+              <th class="r">Value (USDT)</th><th class="r">Unrealized vs entry</th>
+            </tr></thead>
+            <tbody id="spotRows"></tbody>
+            <tfoot id="spotFoot"></tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="controls">
     <div class="seg" id="rangeSeg">
@@ -317,7 +362,7 @@
   </div>
 </div>
 
-<script>window.__SNAPSHOT__ = {"accounts": ["wildan"], "account": "wildan", "exchanges": {"azel": "Binance", "bima": "Binance", "imelda": "Binance", "izak": "Binance", "vennia": "Binance", "wildan": "Binance"}, "per_account": {"wildan": {"coins": [], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "d3": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "monthly": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "ytd": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time_gross": {"pct": 0.0, "usd": 0.0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": null, "ts": null, "age_days": null, "lookback_days": 30, "period_no": null}, "usdt_total": {"value": null, "ts": null, "total_capital": 0.0}, "total_usage": {"value": null, "ts": null}, "total_capital_card": {"value": 0.0}, "extra_capital_card": {"value": 0.0}, "block_size_card": {"value": 0.0}, "funding_card": {"value": null, "ts": null}, "max_drawdown": {"pct": null, "peak": null, "trough": null, "peak_ts": null, "trough_ts": null, "period_no": null}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}}, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "month": {"range": "month", "label": "This Month", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "all": {"range": "all", "label": "All Time", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}}, "blocks": {"bots": [], "totals": {"bot_count": 0, "active_blocks": 0, "active_spent": 0, "active_value": 0, "unrealized_total": 0, "realized_total": 0, "expired_days_threshold": 0}}, "periods": []}}, "generated_at": "2026-09-09 07:20 WIB"};</script>
+<script>window.__SNAPSHOT__ = {"accounts": ["wildan"], "account": "wildan", "exchanges": {"azel": "Binance", "bima": "Binance", "imelda": "Binance", "izak": "Binance", "vennia": "Binance", "wildan": "Binance"}, "per_account": {"wildan": {"coins": ["BNB", "ETH", "USDT"], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "d3": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "monthly": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "ytd": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time_gross": {"pct": 0.0, "usd": 0.0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": null, "ts": null, "age_days": null, "lookback_days": 30, "period_no": null}, "usdt_total": {"value": null, "ts": null, "total_capital": 0.0}, "total_usage": {"value": null, "ts": null}, "total_capital_card": {"value": 0.0}, "extra_capital_card": {"value": 0.0}, "block_size_card": {"value": 0.0}, "funding_card": {"value": null, "ts": null}, "max_drawdown": {"pct": null, "peak": null, "trough": null, "peak_ts": null, "trough_ts": null, "period_no": null}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}, "BNB": {"today": {"coin": "BNB", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "BNB", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "BNB", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "BNB", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "BNB", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}, "ETH": {"today": {"coin": "ETH", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "ETH", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "ETH", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "ETH", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "ETH", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}, "USDT": {"today": {"coin": "USDT", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "USDT", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "USDT", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "USDT", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "USDT", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}}, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "month": {"range": "month", "label": "This Month", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "all": {"range": "all", "label": "All Time", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}}, "blocks": {"bots": [], "totals": {"bot_count": 0, "active_blocks": 0, "active_spent": 0, "active_value": 0, "unrealized_total": 0, "realized_total": 0, "expired_days_threshold": 0}}, "periods": []}}, "generated_at": "2026-09-09 07:40 WIB"};</script>
 <script>
 let chart = null;
 let chart2 = null;
@@ -1491,12 +1536,111 @@ document.getElementById("periodSel").addEventListener("change", e => {
   fetchBlocks().catch(err => console.error("blocks", err));
 });
 
+let _spotWs = null;
+function rtMoney(v) { if (v == null || isNaN(v)) return "—"; return "$" + Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function rtQty(v) { if (v == null) return "—"; return Number(v).toLocaleString(undefined,{maximumFractionDigits:4,minimumFractionDigits:0}); }
+function rtEsc(s) { return String(s).replace(/[&<>"']/g, function(m){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]; }); }
+function spotBadge(state, txt) {
+  const b = document.getElementById("spotLiveBadge");
+  if (!b) return;
+  b.textContent = txt;
+  b.style.color = state === "live" ? "#16a34a" : (state === "off" ? "#94a3b8" : "#f59e0b");
+}
+function renderSpotData(f) {
+  const has = f && typeof f.equity === "number";
+  const setBig = function(id, val, signedMode) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!has) { el.textContent = "—"; el.className = "stat-big flat"; return; }
+    if (signedMode) { el.textContent = fmtUsd(val); el.className = "stat-big " + (val>0?"up":(val<0?"down":"flat")); }
+    else { el.textContent = rtMoney(val); el.className = "stat-big " + (val<0?"down":"flat"); }
+  };
+  setBig("spotEqVal", has ? f.equity : null, false);
+  setBig("spotCashVal", has ? f.cash : null, false);
+  const td = has ? f.today : null;
+  const tv = document.getElementById("spotTodayVal");
+  if (td && td.pct != null && !isNaN(td.pct)) {
+    tv.textContent = fmtPct(td.pct);
+    tv.className = "stat-big " + (td.pct>0?"up":(td.pct<0?"down":"flat"));
+    const ts = document.getElementById("spotTodaySub");
+    if (ts) ts.textContent = fmtUsd(td.usd) + " · dari " + rtMoney(td.from);
+  } else if (tv) { tv.textContent = "—"; tv.className = "stat-big flat";
+    const ts = document.getElementById("spotTodaySub"); if (ts) ts.textContent = "—"; }
+  const subC = document.getElementById("spotCashSub");
+  if (subC) subC.textContent = has ? "stablecoin free · live" : "—";
+
+  document.getElementById("spotCount").textContent = has ? "(" + f.coins.length + ")" : "";
+  const body = document.getElementById("spotRows");
+  const foot = document.getElementById("spotFoot");
+  if (!body || !foot) return;
+  body.innerHTML = ""; foot.innerHTML = "";
+  const coins = has ? (f.coins || []) : [];
+  if (!coins.length) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td"); td.colSpan = 7; td.className = "td-mute";
+    td.textContent = has ? "Tidak ada coin tersimpan." : "Menunggu data live…";
+    tr.appendChild(td); body.appendChild(tr);
+  } else {
+    coins.forEach(function (c) {
+      const tr = document.createElement("tr");
+      const unreal = c.unrealized;
+      const unrealStr = (unreal == null) ? '<td class="r td-mute">—</td>'
+        : '<td class="r ' + clsSign(unreal) + '">' + fmtSigned(unreal, 2) + "</td>";
+      tr.innerHTML =
+        "<td>" + rtEsc(String(c.coin)) + "</td>" +
+        '<td class="r">' + rtQty(c.balance) + "</td>" +
+        '<td class="r">' + (c.qty_active > 0 ? rtQty(c.qty_active) : "—") + "</td>" +
+        '<td class="r">' + (c.avg_entry ? fmtPrice(c.avg_entry) : "—") + "</td>" +
+        '<td class="r">' + (c.mark ? fmtPrice(c.mark) : "—") + "</td>" +
+        '<td class="r">' + rtMoney(c.value) + "</td>" + unrealStr;
+      body.appendChild(tr);
+    });
+    const tValue = coins.reduce((s,c)=>s+(c.value||0),0);
+    const tUnr = coins.reduce((s,c)=>s+(c.unrealized||0),0);
+    const tr = document.createElement("tr");
+    tr.innerHTML = "<td>TOTAL</td><td class='r'></td><td class='r'></td><td class='r'></td><td class='r'></td>"
+      + '<td class="r">' + rtMoney(tValue) + "</td>"
+      + '<td class="r ' + (tUnr>0?"pos":(tUnr<0?"neg":"td-mute")) + '">' + (tUnr? fmtSigned(tUnr,2):"—") + "</td>";
+    foot.appendChild(tr);
+  }
+}
+function renderSpotLive() {
+  const wrap = document.getElementById("spotLiveWrap");
+  if (!wrap) return;
+  const acct = SNAP ? (SNAP.account || ((SNAP.accounts || [])[0])) : "";
+  if (!acct) { spotBadge("off", "no account"); return; }
+  if (_spotWs) { try { _spotWs.close(); } catch (_) {} _spotWs = null; }
+  let base = new URLSearchParams(location.search).get("ws") || "wss://ws.kebonjeruk.xyz";
+  base += (base.indexOf("?") >= 0 ? "&" : "?") + "market=spot&account=" + encodeURIComponent(acct);
+  let ws;
+  try { ws = new WebSocket(base); } catch (e) { return; }
+  _spotWs = ws;
+  ws.onopen = function () { spotBadge("live", "● LIVE"); };
+  ws.onmessage = function (ev) { try { renderSpotData(JSON.parse(ev.data)); } catch (e) { console.warn("spot ws frame", e); } };
+  ws.onclose = function () { spotBadge("off", "· snapshot/offline — reconnect…"); _spotWs = null; setTimeout(renderSpotLive, 4000); };
+  ws.onerror = function () { try { ws.close(); } catch (_) {} };
+}
+(function () {
+  const btn = document.getElementById("spotToggle");
+  const col = document.getElementById("spotCollapse");
+  if (btn && col) {
+    btn.addEventListener("click", function () {
+      const open = btn.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      col.classList.toggle("open", open);
+      const ch = document.getElementById("spotChevron");
+      if (ch) ch.textContent = open ? "▾" : "▸";
+    });
+  }
+})();
+
 (async function init() {
   await resolveAccount();
   await loadCoins();
   await loadBuyCoins();
-  await fetchStats();
-  await render();
+   await fetchStats();
+   renderSpotLive();
+   await render();
   await updateForceSell();
   await renderPeriods();
   await renderSnapshots();
