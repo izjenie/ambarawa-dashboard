@@ -43,7 +43,7 @@
 <body>
 <div class="wrap">
   <h1 id="title">izak-futures · Realtime</h1>
-  <div class="sub" id="sub">LIVE dari Binance USDT-M (websocket relay) · <span class="status" id="status"><span class="dot" id="dot"></span><span id="statusText">connecting…</span></span></div>
+  <div class="sub" id="sub">LIVE Binance USDT-M · <span id="wsInfo"></span> · <span class="status" id="status"><span class="dot" id="dot"></span><span id="statusText">connecting…</span></span></div>
 
   <div class="section">
     <div class="sec-title">Futures</div>
@@ -159,7 +159,8 @@ function connect(){
   };
 }
 $("title").textContent = ACCOUNT + " · Realtime";
-$("sub").textContent = "LIVE Binance USDT-M · ws " + WS_URL.replace(/^wss?:\/\//,"") + " · ";
+const wsInfo = $("wsInfo");
+if (wsInfo) wsInfo.textContent = WS_URL.replace(/^wss?:\/\//,"");
 connect();
 </script>
 </body>
