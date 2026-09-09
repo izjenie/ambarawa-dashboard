@@ -77,9 +77,9 @@
 
 <script>
 const ACCOUNT = new URLSearchParams(location.search).get("account") || "izak-futures";
-// Endpoint relay: named Cloudflare tunnel ke relay lokal. Override via ?ws=wss://…
+// Endpoint relay: Cloudflare named tunnel ke relay lokal. Override via ?ws=wss://…
 const WS_URL = new URLSearchParams(location.search).get("ws")
-  || "wss://ws.ambarawa.kebonjeruk.xyz";
+  || "wss://ws.kebonjeruk.xyz";
 
 const $ = id => document.getElementById(id);
 const money = v => "$" + Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
