@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="300">
+<title>Ambarawa Summary</title>
+<style>
+  :root { --up:#16a34a; --down:#dc2626; --flat:#6b7280; --warn:#f59e0b;
+           --bg:#0f172a; --card:#1e293b; --txt:#e2e8f0; --muted:#94a3b8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt);
+          font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  .wrap { max-width:860px; margin:0 auto; padding:28px 20px 48px; }
+  h1 { font-size:1.35rem; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:0.82rem; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid #334155; border-radius:12px;
+           padding:6px 0; overflow:hidden; }
+  table { width:100%; border-collapse:collapse; font-size:0.9rem; }
+  thead th { text-align:left; color:var(--muted); font-weight:600;
+              padding:12px 16px; border-bottom:1px solid #334155; font-size:0.78rem;
+              text-transform:uppercase; letter-spacing:0.03em; }
+  thead th.r, td.r { text-align:right; font-variant-numeric:tabular-nums; }
+  tbody td { padding:11px 16px; border-bottom:1px solid #263449; }
+  tbody tr:last-child td { border-bottom:0; }
+  tbody tr:hover { background:#243349; }
+  tr.dim { color:var(--muted); }
+  td.acct { font-weight:600; }
+  td.en { color:var(--muted); font-size:0.82rem; }
+  td.en.false { color:var(--warn); }
+  td.fut { color:#93c5fd; }
+  tfoot td { padding:13px 16px; border-top:2px solid #334155; font-weight:700;
+              background:#172033; }
+  tfoot td.r { text-align:right; font-variant-numeric:tabular-nums; }
+  .empty { text-align:center; color:var(--muted); padding:24px; }
+  .note { color:var(--muted); font-size:0.75rem; margin-top:14px; line-height:1.6; }
+  .note code { color:#cbd5e1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💰 Ambarawa Funding Summary</h1>
+  <div class="sub">Spot accounts · generated 2026-09-26 09:50 UTC · auto-refresh 5 min</div>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Account</th><th>Enable</th>
+          <th class="r">USDT</th><th class="r">USDC</th>
+          <th class="r">FDUSD</th><th class="r">USDT (F)</th>
+        </tr>
+      </thead>
+      <tbody>
+<tr class=""><td class="acct">izak</td><td class="en true">true</td><td class="r">949.99</td><td class="r">48.37</td><td class="r">4.17</td><td class="r fut">79.85</td></tr>
+<tr class=" dim"><td class="acct">azel</td><td class="en false">false</td><td class="r">91.03</td><td class="r">0.00</td><td class="r">10.81</td><td class="r fut">150.67</td></tr>
+<tr class=""><td class="acct">vennia</td><td class="en true">true</td><td class="r">38.25</td><td class="r">10.25</td><td class="r">0.00</td><td class="r fut">n/a</td></tr>
+<tr class=""><td class="acct">imelda</td><td class="en true">true</td><td class="r">629.96</td><td class="r">26.66</td><td class="r">0.00</td><td class="r fut">0.00</td></tr>
+<tr class=""><td class="acct">bima</td><td class="en true">true</td><td class="r">40.94</td><td class="r">37.39</td><td class="r">0.00</td><td class="r fut">50.00</td></tr>
+<tr class=""><td class="acct">wildan</td><td class="en true">true</td><td class="r">0.00</td><td class="r">15.75</td><td class="r">0.00</td><td class="r fut">0.00</td></tr>
+<tr class=""><td class="acct">kresna</td><td class="en true">true</td><td class="r">8.89</td><td class="r">38.17</td><td class="r">0.00</td><td class="r fut">n/a</td></tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>TOTAL</td><td></td>
+          <td class="r">1,759.07</td>
+          <td class="r">176.60</td>
+          <td class="r">14.98</td>
+          <td class="r">280.52*</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="note">
+    <b>USDT / USDC / FDUSD</b> = funding wallet. <b>USDT (F)</b> = USDT-M futures
+    wallet <code>availableBalance</code>. Funding wallet is per Binance account, so
+    accounts sharing one Binance account (e.g. <code>izak</code> +
+    <code>izak-futures</code>) show identical funding; futures profit is parked as
+    FDUSD, spot profit as USDC. <b>n/a</b> = API key can't read that wallet;
+    <b>TOTAL*</b> excludes n/a rows. Testnet accounts skipped.
+  </div>
+</div>
+</body>
+</html>
