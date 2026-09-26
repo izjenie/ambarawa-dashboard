@@ -11,25 +11,28 @@
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--txt);
           font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
-  .wrap { max-width:860px; margin:0 auto; padding:28px 20px 48px; }
+  .wrap { max-width:960px; margin:0 auto; padding:28px 20px 48px; }
   h1 { font-size:1.35rem; margin:0 0 4px; }
   .sub { color:var(--muted); font-size:0.82rem; margin-bottom:18px; }
   .card { background:var(--card); border:1px solid #334155; border-radius:12px;
            padding:6px 0; overflow:hidden; }
   table { width:100%; border-collapse:collapse; font-size:0.9rem; }
-  thead th { text-align:left; color:var(--muted); font-weight:600;
-              padding:12px 16px; border-bottom:1px solid #334155; font-size:0.78rem;
-              text-transform:uppercase; letter-spacing:0.03em; }
+  thead th { color:var(--muted); font-weight:600; padding:10px 14px;
+              border-bottom:1px solid #334155; font-size:0.78rem;
+              text-transform:uppercase; letter-spacing:0.03em; text-align:left;
+              vertical-align:middle; }
+  thead th.grp { text-align:center; font-size:0.82rem; color:var(--txt);
+                  border-left:1px solid #334155; border-bottom:1px solid #334155; }
   thead th.r, td.r { text-align:right; font-variant-numeric:tabular-nums; }
-  tbody td { padding:11px 16px; border-bottom:1px solid #263449; }
+  thead th.fut, td.fut { color:#93c5fd; }
+  thead th.fund, td.fund { color:#fcd34d; }
+  th.gsep, td.gsep { border-left:1px solid #263449; }
+  tbody td { padding:11px 14px; border-bottom:1px solid #263449; }
   tbody tr:last-child td { border-bottom:0; }
   tbody tr:hover { background:#243349; }
   tr.dim { color:var(--muted); }
   td.acct { font-weight:600; }
-  td.en { color:var(--muted); font-size:0.82rem; }
-  td.en.false { color:var(--warn); }
-  td.fut { color:#93c5fd; }
-  tfoot td { padding:13px 16px; border-top:2px solid #334155; font-weight:700;
+  tfoot td { padding:13px 14px; border-top:2px solid #334155; font-weight:700;
               background:#172033; }
   tfoot td.r { text-align:right; font-variant-numeric:tabular-nums; }
   .empty { text-align:center; color:var(--muted); padding:24px; }
@@ -39,43 +42,48 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>💰 Ambarawa Funding Summary</h1>
-  <div class="sub">Spot accounts · generated 2026-09-26 10:10 UTC · auto-refresh 5 min</div>
+  <h1>💰 Ambarawa Summary</h1>
+  <div class="sub">Spot accounts · generated 2026-09-26 10:17 UTC · auto-refresh 5 min</div>
   <div class="card">
     <table>
       <thead>
         <tr>
-          <th>Account</th><th>Enable</th>
-          <th class="r">USDT</th><th class="r">USDC</th>
-          <th class="r">FDUSD</th><th class="r">USDT (F)</th>
+          <th rowspan="2">Account</th>
+          <th colspan="2" class="grp">Spot</th>
+          <th colspan="2" class="grp">Future</th>
+          <th colspan="3" class="grp">Funding</th>
+        </tr>
+        <tr>
+          <th class="r gsep">USDT</th><th class="r">Others</th>
+          <th class="r fut gsep">USDT</th><th class="r fut">Others</th>
+          <th class="r fund gsep">USDT</th><th class="r fund">USDC</th><th class="r fund">FDUSD</th>
         </tr>
       </thead>
       <tbody>
-<tr class=""><td class="acct">izak</td><td class="en true">true</td><td class="r">949.99</td><td class="r">48.37</td><td class="r">4.17</td><td class="r fut">80.45</td></tr>
-<tr class=" dim"><td class="acct">azel</td><td class="en false">false</td><td class="r">91.03</td><td class="r">0.00</td><td class="r">10.81</td><td class="r fut">152.74</td></tr>
-<tr class=""><td class="acct">vennia</td><td class="en true">true</td><td class="r">38.25</td><td class="r">10.25</td><td class="r">0.00</td><td class="r fut">n/a</td></tr>
-<tr class=""><td class="acct">imelda</td><td class="en true">true</td><td class="r">629.96</td><td class="r">26.66</td><td class="r">0.00</td><td class="r fut">0.00</td></tr>
-<tr class=""><td class="acct">bima</td><td class="en true">true</td><td class="r">40.94</td><td class="r">37.39</td><td class="r">0.00</td><td class="r fut">50.00</td></tr>
-<tr class=""><td class="acct">wildan</td><td class="en true">true</td><td class="r">0.00</td><td class="r">15.75</td><td class="r">0.00</td><td class="r fut">0.00</td></tr>
-<tr class=""><td class="acct">kresna</td><td class="en true">true</td><td class="r">8.89</td><td class="r">38.17</td><td class="r">0.00</td><td class="r fut">n/a</td></tr>
+<tr class=""><td class="acct">izak</td><td class="r gsep">925.43</td><td class="r">82.76</td><td class="r fut gsep">80.65</td><td class="r fut">0.00</td><td class="r fund gsep">949.99</td><td class="r fund">48.37</td><td class="r fund">4.17</td></tr>
+<tr class=" dim"><td class="acct">azel</td><td class="r gsep">200.00</td><td class="r">0.00</td><td class="r fut gsep">153.82</td><td class="r fut">0.00</td><td class="r fund gsep">91.03</td><td class="r fund">0.00</td><td class="r fund">10.81</td></tr>
+<tr class=""><td class="acct">vennia</td><td class="r gsep">141.08</td><td class="r">57.03</td><td class="r fut gsep">n/a</td><td class="r fut">n/a</td><td class="r fund gsep">38.25</td><td class="r fund">10.25</td><td class="r fund">0.00</td></tr>
+<tr class=""><td class="acct">imelda</td><td class="r gsep">763.35</td><td class="r">245.43</td><td class="r fut gsep">0.00</td><td class="r fut">0.00</td><td class="r fund gsep">629.96</td><td class="r fund">26.66</td><td class="r fund">0.00</td></tr>
+<tr class=""><td class="acct">bima</td><td class="r gsep">351.51</td><td class="r">153.22</td><td class="r fut gsep">50.00</td><td class="r fut">0.00</td><td class="r fund gsep">40.94</td><td class="r fund">37.39</td><td class="r fund">0.00</td></tr>
+<tr class=""><td class="acct">wildan</td><td class="r gsep">81.56</td><td class="r">18.69</td><td class="r fut gsep">0.00</td><td class="r fut">0.00</td><td class="r fund gsep">0.00</td><td class="r fund">15.75</td><td class="r fund">0.00</td></tr>
+<tr class=""><td class="acct">kresna</td><td class="r gsep">825.13</td><td class="r">181.01</td><td class="r fut gsep">n/a</td><td class="r fut">n/a</td><td class="r fund gsep">8.89</td><td class="r fund">38.17</td><td class="r fund">0.00</td></tr>
       </tbody>
       <tfoot>
         <tr>
-          <td>TOTAL</td><td></td>
-          <td class="r">1,759.07</td>
-          <td class="r">176.60</td>
-          <td class="r">14.98</td>
-          <td class="r">283.19*</td>
+          <td>TOTAL</td>
+<td class="r gsep">3,288.05</td><td class="r">738.15</td><td class="r fut gsep">284.47*</td><td class="r fut">0.00*</td><td class="r fund gsep">1,759.07</td><td class="r fund">176.60</td><td class="r fund">14.98</td>
         </tr>
       </tfoot>
     </table>
   </div>
   <div class="note">
-    <b>USDT / USDC / FDUSD</b> = funding wallet. <b>USDT (F)</b> = USDT-M futures
-    wallet <code>availableBalance</code>. Funding wallet is per Binance account, so
-    accounts sharing one Binance account (e.g. <code>izak</code> +
-    <code>izak-futures</code>) show identical funding; futures profit is parked as
-    FDUSD, spot profit as USDC. <b>n/a</b> = API key can't read that wallet;
+    <b>Spot</b> = spot wallet (USDT free + Others). <b>Future</b> = USDT-M futures
+    wallet (USDT <code>availableBalance</code> + Others). <b>Funding</b> = funding
+    wallet USDT / USDC / FDUSD. <b>Others</b> = total value in USDT of all
+    non-stable coins in that wallet (stablecoins excluded; coins with no USDT pair
+    skipped). Funding wallet is per Binance account, so accounts sharing one
+    Binance account (e.g. <code>izak</code> + <code>izak-futures</code>) show
+    identical funding. <b>n/a</b> = API key can't read that wallet;
     <b>TOTAL*</b> excludes n/a rows. Testnet accounts skipped.
   </div>
 </div>
