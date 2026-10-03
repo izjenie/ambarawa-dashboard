@@ -37,16 +37,11 @@
   .stat-big { font-size:1.5rem; font-weight:700; }
   .stat-sub { color:var(--muted); font-size:0.8rem; margin-top:4px; }
   .stat-sub.warn { color:var(--warn); }
-  .futures-wrap { border:1px solid #2b4a66; border-radius:12px; padding:14px 16px 10px; margin-bottom:18px; background:linear-gradient(180deg,#16233a,#101a2b); }
-  .futures-head { display:flex; align-items:center; gap:10px; color:#38bdf8; font-size:0.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:12px; }
-  .futures-head:after { content:""; flex:1; height:1px; background:#2b4a66; }
-  .futures-wrap .stats-row { margin-bottom:0; }
-  .futures-wrap .profit-card { margin-top:12px; }
-  .lev-card { margin-top:16px; }
-  .lev-grid { display:flex; flex-wrap:wrap; gap:8px 18px; }
-  .lev-item { font-size:0.95rem; }
-  .lev-sym { color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.04em; margin-right:6px; }
-  .lev-val { font-weight:700; color:#f59e0b; }
+  .spotlive-wrap { border:1px solid #2b4a66; border-radius:12px; padding:14px 16px 10px; margin-bottom:18px; background:linear-gradient(180deg,#16233a,#101a2b); }
+  .spotlive-head { display:flex; align-items:center; gap:10px; color:#38bdf8; font-size:0.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:12px; }
+  .spotlive-head:after { content:""; flex:1; height:1px; background:#2b4a66; }
+  .spotlive-wrap .stats-row { margin-bottom:0; }
+  .spotlive-wrap .profit-card { margin-top:12px; }
   .profit-card { padding:0; overflow:hidden; margin-top:16px; }
   .profit-toggle { width:100%; background:transparent; border:0; color:var(--txt); padding:15px 20px; cursor:pointer; font-size:1rem; font-weight:600; display:flex; justify-content:space-between; align-items:center; font-family:inherit; }
   .profit-toggle:hover { background:#243349; }
@@ -110,63 +105,47 @@
   <div class="sub" id="subtext">Account equity per hour (USDT)</div>
   <div class="sub" id="periodBanner" style="display:none; color:var(--warn); font-weight:600;"></div>
 
-  <div class="futures-wrap" id="futuresWrap">
-    <div class="futures-head">Futures <span id="futLiveBadge" style="font-weight:600;text-transform:none;letter-spacing:0;"></span></div>
-    <div class="stats-row stats-row-4" id="futuresRow">
-      <div class="stat-card">
-        <div class="stat-label">Wallet balance</div>
-        <div class="stat-big flat" id="futWalletVal">—</div>
-        <div class="stat-sub" id="futWalletSub">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Unrealized PnL</div>
-        <div class="stat-big flat" id="futUpnlVal">—</div>
-        <div class="stat-sub" id="futUpnlSub">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Margin balance</div>
-        <div class="stat-big flat" id="futMarginVal">—</div>
-        <div class="stat-sub" id="futMarginSub">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Available balance</div>
-        <div class="stat-big flat" id="futAvailVal">—</div>
-        <div class="stat-sub" id="futAvailSub">—</div>
-      </div>
-    </div>
-    <div class="stats-row stats-row-2" id="futuresRow2">
+  <div class="spotlive-wrap" id="spotLiveWrap">
+    <div class="spotlive-head">Spot — live <span id="spotLiveBadge" style="font-weight:600;text-transform:none;letter-spacing:0;"></span></div>
+    <div class="stats-row stats-row-4" id="spotLiveRow">
       <div class="stat-card">
         <div class="stat-label">Equity</div>
-        <div class="stat-big flat" id="futEqVal">—</div>
-        <div class="stat-sub" id="futEqSub">wallet + uPnL</div>
+        <div class="stat-big flat" id="spotEqVal">—</div>
+        <div class="stat-sub" id="spotEqSub">cash + coin values · live</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Cash (USDT)</div>
+        <div class="stat-big flat" id="spotCashVal">—</div>
+        <div class="stat-sub" id="spotCashSub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Unrealized P&amp;L</div>
+        <div class="stat-big flat" id="spotUpnlVal">—</div>
+        <div class="stat-sub" id="spotUpnlSub">qty active vs avg entry · live</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Today P&amp;L</div>
-        <div class="stat-big flat" id="futTodayVal">—</div>
-        <div class="stat-sub" id="futTodaySub">—</div>
+        <div class="stat-big flat" id="spotTodayVal">—</div>
+        <div class="stat-sub" id="spotTodaySub">—</div>
       </div>
     </div>
     <div class="card profit-card">
-      <button class="profit-toggle" id="futuresToggle" aria-expanded="false">
-        <span>🪙 Futures — Coins <span id="futuresCount"></span></span>
-        <span class="chevron" id="futuresChevron">▸</span>
+      <button class="profit-toggle" id="spotToggle" aria-expanded="true">
+        <span>🪙 Spot — Coins <span id="spotCount"></span></span>
+        <span class="chevron" id="spotChevron">▾</span>
       </button>
-      <div class="blocks-collapse" id="futuresCollapse">
+      <div class="blocks-collapse open" id="spotCollapse">
         <div class="profit-scroll">
-          <table class="profit-table" id="futuresTable">
-            <thead>
-              <tr>
-                <th>Coin</th><th class="r">Qty</th><th class="r">Entry</th>
-                <th class="r">Mark</th><th class="r">Size (USDT)</th><th class="r">Lev</th>
-                <th class="r">Margin</th><th class="r">ROE%</th><th class="r">M.ratio%</th>
-                <th class="r">uPnL (USDT)</th><th class="r">Realized today</th>
-              </tr>
-            </thead>
-            <tbody id="futuresBody"></tbody>
-            <tfoot id="futuresFoot"></tfoot>
+          <table class="profit-table" id="spotTable">
+            <thead><tr>
+              <th>Coin</th><th class="r">Balance</th><th class="r">Qty active</th>
+              <th class="r">Avg entry</th><th class="r">Mark</th>
+              <th class="r">Value (USDT)</th><th class="r">Unrealized vs entry</th>
+            </tr></thead>
+            <tbody id="spotRows"></tbody>
+            <tfoot id="spotFoot"></tfoot>
           </table>
         </div>
-        <div class="profit-note" id="futuresNote"></div>
       </div>
     </div>
   </div>
@@ -187,7 +166,6 @@
       <button data-overlay="equity" class="active">equity</button>
       <button data-overlay="usdt">usdt</button>
       <button data-overlay="wc">usage</button>
-      <button data-overlay="dd">dd</button>
       <button data-overlay="usdc">usdc</button>
     </div>
   </div>
@@ -196,19 +174,19 @@
     <select id="buyCoinSel"><option value="BTC">BTC</option></select>
   </div>
 
-  <div class="stats-row stats-row-4" id="statsRow">
+  <div class="stats-row stats-row-5" id="statsRow">
     <div class="stat-card">
       <div class="stat-label">Today</div>
       <div class="stat-big flat" id="todayPct">—</div>
       <div class="stat-sub" id="todaySub">—</div>
       <div class="stat-sub warn" id="todayEc" style="display:none">—</div>
     </div>
-    <div class="stat-card" style="display:none">
+    <div class="stat-card">
       <div class="stat-label">3 Days</div>
       <div class="stat-big flat" id="d3Pct">—</div>
       <div class="stat-sub" id="d3Sub">—</div>
     </div>
-    <div class="stat-card" style="display:none">
+    <div class="stat-card">
       <div class="stat-label">MTD</div>
       <div class="stat-big flat" id="monthPct">—</div>
       <div class="stat-sub" id="monthSub">—</div>
@@ -219,14 +197,9 @@
       <div class="stat-sub" id="ytdSub">—</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">All-Time (margin)</div>
+      <div class="stat-label">All-Time (with fee)</div>
       <div class="stat-big flat" id="allPct">—</div>
       <div class="stat-sub" id="allSub">—</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">All time (equity)</div>
-      <div class="stat-big flat" id="allEqPct">—</div>
-      <div class="stat-sub" id="allEqSub">—</div>
     </div>
   </div>
   <div class="stats-row stats-row-5">
@@ -243,7 +216,7 @@
       <div class="stat-sub warn" id="athEc" style="display:none">—</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Total usage (margin)</div>
+      <div class="stat-label">Total usage</div>
       <div class="stat-big warn" id="usageVal">—</div>
       <div class="stat-sub" id="usageSub">—</div>
     </div>
@@ -275,7 +248,7 @@
       <div class="stat-sub" id="extraSub">—</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">💰 Funding FDUSD</div>
+      <div class="stat-label">💰 Funding USD1</div>
       <div class="stat-big up" id="fundVal">—</div>
       <div class="stat-sub" id="fundSub">—</div>
     </div>
@@ -292,11 +265,6 @@
       <div class="stat-sub" id="maxddSub">—</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label" id="maxddCashLabel">📉 Max Drawdown (Cash)</div>
-      <div class="stat-big down" id="maxddCashVal">—</div>
-      <div class="stat-sub" id="maxddCashSub">cash = available margin (modal terkunci, bukan rugi)</div>
-    </div>
-    <div class="stat-card">
       <div class="stat-label">🏁 First Buy Balance</div>
       <div class="stat-big flat" id="fbbVal">—</div>
       <div class="stat-sub" id="fbbSub">—</div>
@@ -306,11 +274,6 @@
       <div class="stat-big flat" id="perVal">—</div>
       <div class="stat-sub" id="perSub">—</div>
     </div>
-  </div>
-
-  <div class="card lev-card">
-    <div class="headline"><span class="big" id="levTitle">⚙️ Leverage per coin</span></div>
-    <div class="lev-grid" id="levRows">Loading…</div>
   </div>
 
   <div class="card">
@@ -445,7 +408,7 @@
   </div>
 </div>
 
-<script>window.__SNAPSHOT__ = {"accounts": ["bima-futures"], "account": "bima-futures", "exchanges": {"azel-futures": "Binance", "bima-futures": "Binance", "dian-futures": "Binance", "imelda-futures": "Binance", "izak-futures": "Binance", "ops-futures": "Binance", "susi-futures": "Binance", "tommy-futures": "Binance", "vennia-futures": "Binance", "wasil-futures": "Binance", "wildan-futures": "Binance"}, "per_account": {"bima-futures": {"coins": ["USDT"], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": 50.0, "to": 50.0, "ec": 0.0}, "d3": {"pct": 0.0, "usd": 0.0, "from": null, "to": 50.0}, "monthly": {"pct": 0.0, "usd": 0.0, "from": null, "to": 50.0}, "ytd": {"pct": 0.0, "usd": 0.0, "from": 50.0, "to": 50.0}, "all_time": {"pct": 0.0, "usd": 0.0, "from": 50.0, "to": 50.0}, "all_time_equity": {"pct": 0.0, "usd": 0.0, "from": 50.0, "to": 50.0}, "all_time_gross": {"pct": 0.0, "usd": 0.0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": 50.0, "raw_value": 50.0, "ec": 0.0, "ts": "2026-09-12T22:00:00+00:00", "age_days": 20.3334, "lookback_days": 30, "period_no": 1}, "usdt_total": {"value": 50.0, "ts": "2026-09-12T22:00:00+00:00", "total_capital": 50.0}, "total_usage": {"value": 0.0, "ts": "2026-09-12T22:00:00+00:00"}, "total_capital_card": {"value": 50.0}, "extra_capital_card": {"value": 0.0}, "block_size_card": {"value": 5.0}, "funding_card": {"value": 0.0, "ts": "2026-10-03T06:02:48.320060+00:00"}, "max_drawdown": {"pct": 0.0, "peak": 50.0, "trough": 50.0, "peak_ts": "2026-09-12T02:00:00+00:00", "trough_ts": "2026-09-12T02:00:00+00:00", "period_no": 1}, "max_drawdown_cash": {"pct": 0.0, "peak": 50.0, "trough": 50.0, "peak_ts": "2026-09-12T02:00:00+00:00", "trough_ts": "2026-09-12T02:00:00+00:00", "period_no": 1}, "first_buy_balance": {"value": null, "ts": null}, "leverage_per_coin": [{"bot": "bima-futures-aaveusdt", "symbol": "AAVEUSDT", "leverage": 5.0}, {"bot": "bima-futures-adausdt", "symbol": "ADAUSDT", "leverage": 5.0}, {"bot": "bima-futures-avaxusdt", "symbol": "AVAXUSDT", "leverage": 5.0}, {"bot": "bima-futures-wldusdt", "symbol": "WLDUSDT", "leverage": 5.0}, {"bot": "bima-futures-xrpusdt", "symbol": "XRPUSDT", "leverage": 5.0}, {"bot": "bima-futures-zecusdt", "symbol": "ZECUSDT", "leverage": 5.0}]}, "equity": 50.0, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [{"bot_name": "bima-futures-aaveusdt", "base_asset": "AAVE", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-adausdt", "base_asset": "ADA", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-avaxusdt", "base_asset": "AVAX", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-wldusdt", "base_asset": "WLD", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-zecusdt", "base_asset": "ZEC", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 5}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [{"bot_name": "bima-futures-aaveusdt", "base_asset": "AAVE", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-adausdt", "base_asset": "ADA", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-avaxusdt", "base_asset": "AVAX", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-wldusdt", "base_asset": "WLD", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-zecusdt", "base_asset": "ZEC", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 5}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [{"bot_name": "bima-futures-aaveusdt", "base_asset": "AAVE", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-adausdt", "base_asset": "ADA", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-avaxusdt", "base_asset": "AVAX", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-wldusdt", "base_asset": "WLD", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-zecusdt", "base_asset": "ZEC", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 5}}, "month": {"range": "month", "label": "This Month", "rankings": [{"bot_name": "bima-futures-aaveusdt", "base_asset": "AAVE", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-adausdt", "base_asset": "ADA", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-avaxusdt", "base_asset": "AVAX", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-wldusdt", "base_asset": "WLD", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-zecusdt", "base_asset": "ZEC", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 5}}, "all": {"range": "all", "label": "All Time", "rankings": [{"bot_name": "bima-futures-aaveusdt", "base_asset": "AAVE", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-adausdt", "base_asset": "ADA", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-avaxusdt", "base_asset": "AVAX", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-wldusdt", "base_asset": "WLD", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}, {"bot_name": "bima-futures-zecusdt", "base_asset": "ZEC", "realized": 0.0, "unrealized": 0.0, "total": 0.0, "pnl_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "sold_count": 0, "active_count": 0, "total_capital": 50.0}], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 5}}}, "blocks": {"bots": [{"bot_name": "bima-futures-aaveusdt", "base_asset": "AAVE", "symbol": "AAVEUSDT", "current_price": null, "start_price": 127.70631900000001, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 50.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}, {"bot_name": "bima-futures-adausdt", "base_asset": "ADA", "symbol": "ADAUSDT", "current_price": null, "start_price": 0.2074, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 50.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}, {"bot_name": "bima-futures-avaxusdt", "base_asset": "AVAX", "symbol": "AVAXUSDT", "current_price": null, "start_price": 7.454, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 50.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}, {"bot_name": "bima-futures-wldusdt", "base_asset": "WLD", "symbol": "WLDUSDT", "current_price": null, "start_price": 0.408242, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 50.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}, {"bot_name": "bima-futures-zecusdt", "base_asset": "ZEC", "symbol": "ZECUSDT", "current_price": null, "start_price": 1152.8544000000002, "is_idle": true, "active_count": 0, "sold_count": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 0, "total_capital": 50.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": []}], "totals": {"bot_count": 5, "active_blocks": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_total": 0, "expired_days_threshold": 7}}, "periods": [{"account": "bima-futures", "period_no": 1, "start_date": "2026-09-12", "end_date": null, "status": "open", "start_equity": 50.0, "start_equity_eff": 50.0, "closed_equity": null, "realized_pnl": null, "extra_returned": null, "profit_returned": null, "bought": 0, "sold": 0, "days": 21, "success_pct": null, "period_realized": 0.0, "unrealized": 0.0, "end_equity": 50.0, "extra_used": 0.0, "net": 0.0, "net_pct": 0.0, "max_dd_pct": 0.0}], "recent_sells": {"rows": [], "totals": {"count": 0, "wins": 0, "losses": 0, "win_rate": null, "total_pnl": 0}}, "futures": {"source": "rest", "ts": "2026-10-03T06:01:29.039543+00:00", "wallet": 50.0, "unrealized": 0.0, "margin": 50.0, "available": 50.0, "coins": []}}}, "generated_at": "2026-10-03 13:00 WIB"};</script>
+<script>window.__SNAPSHOT__ = {"accounts": ["batara"], "account": "batara", "exchanges": {"azel": "Binance", "bagus": "Binance", "batara": "Binance", "bima": "Binance", "dian": "Binance", "imelda": "Binance", "izak": "Binance", "kresna": "Binance", "tommy": "Binance", "vennia": "Binance", "wildan": "Binance"}, "per_account": {"batara": {"coins": ["USDT"], "buy_coins": [], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "d3": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "monthly": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "ytd": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time_gross": {"pct": 0.0, "usd": 0.0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": null, "raw_value": null, "ec": 0.0, "ts": null, "age_days": null, "lookback_days": 30, "period_no": null}, "usdt_total": {"value": null, "ts": null, "total_capital": 0.0}, "total_usage": {"value": null, "ts": null}, "total_capital_card": {"value": 0.0}, "extra_capital_card": {"value": 0.0}, "block_size_card": {"value": 0.0}, "funding_card": {"value": null, "ts": null}, "max_drawdown": {"pct": null, "peak": null, "trough": null, "peak_ts": null, "trough_ts": null, "period_no": null}, "first_buy_balance": {"value": null, "ts": null}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}, "USDT": {"today": {"coin": "USDT", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "USDT", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "USDT", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "USDT", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "USDT", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}}, "buys": {}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "month": {"range": "month", "label": "This Month", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "all": {"range": "all", "label": "All Time", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}}, "blocks": {"bots": [], "totals": {"bot_count": 0, "active_blocks": 0, "active_spent": 0, "active_value": 0, "unrealized_total": 0, "realized_total": 0, "expired_days_threshold": 0}}, "periods": [], "recent_sells": {"rows": [], "totals": {"count": 0, "wins": 0, "losses": 0, "win_rate": null, "total_pnl": 0}}}}, "generated_at": "2026-10-03 13:00 WIB"};</script>
 <script>
 let chart = null;
 let chart2 = null;
@@ -611,7 +574,7 @@ function setProfitCard(prefix, data) {
 function applyLiveToWindowCards(deltaUsd, deltaPct) {
   const snap = window.__statsSnap;
   if (!snap) return;
-  const map = { d3: "d3", month: "monthly", ytd: "ytd", all: "all_time", allEq: "all_time_equity" };
+  const map = { d3: "d3", month: "monthly", ytd: "ytd", all: "all_time" };
   Object.keys(map).forEach(function (prefix) {
     const c = snap[map[prefix]];
     if (!c || c.from == null || c.to == null) return;
@@ -650,7 +613,6 @@ async function fetchStats() {
     setProfitCard("month", d.monthly);
     setProfitCard("ytd", d.ytd);
     setProfitCard("all", d.all_time);
-    setProfitCard("allEq", d.all_time_equity);
     // All-Time card: the big % is equity-based (net, with fee). Annotate the
     // sub with the gross blocks-based % (without fee) for comparison.
     const ag = d.all_time_gross || {pct: 0, usd: 0};
@@ -702,38 +664,30 @@ async function fetchStats() {
       }
     }
 
-    // Max Drawdown cards — largest peak-to-trough decline (%) of the account's
-    // current open period over the best-resolution capital series. Card 1 =
-    // EQUITY (real P&L drawdown). Card 2 = AVAILABLE CASH (cash dips when
-    // margin is locked into positions — informational, NOT a loss).
+    // Max Drawdown card — largest peak-to-trough equity decline (%) of the
+    // account's current open period (raw capital_hourly series).
     const mdd = d.max_drawdown || {};
-    const mddCash = d.max_drawdown_cash || {};
-    function renderMdd(prefix, label, md, isCash) {
-      const lbl = document.getElementById(prefix + "Label");
-      const val = document.getElementById(prefix + "Val");
-      const sub = document.getElementById(prefix + "Sub");
-      const cashNote = "cash = available margin (modal terkunci, bukan rugi)";
-      if (lbl) {
-        lbl.textContent = label + (md.period_no != null ? " (Periode " + md.period_no + ")" : "");
-      }
-      if (!val) { return; }
-      if (md.pct == null) {
-        val.textContent = "—";
-        val.className = "stat-big down";
-        sub.textContent = isCash ? cashNote : "no data";
-      } else if (md.pct === 0) {
-        val.textContent = "0.00%";
-        val.className = "stat-big flat";
-        sub.textContent = isCash ? cashNote : "belum ada drawdown";
-      } else {
-        val.textContent = "-" + md.pct.toFixed(2) + "%";
-        val.className = "stat-big down";
-        sub.textContent = "peak " + fmtUsd(md.peak) + " → " + fmtUsd(md.trough)
-          + " · " + fmtTimeLabel(md.trough_ts);
-      }
+    const maxddLabel = document.getElementById("maxddLabel");
+    const maxddVal = document.getElementById("maxddVal");
+    const maxddSub = document.getElementById("maxddSub");
+    if (maxddLabel) {
+      maxddLabel.textContent = "📉 Max Drawdown"
+        + (mdd.period_no != null ? " (Periode " + mdd.period_no + ")" : "");
     }
-    renderMdd("maxdd", "📉 Max Drawdown (Equity)", mdd, false);
-    renderMdd("maxddCash", "📉 Max Drawdown (Cash)", mddCash, true);
+    if (mdd.pct == null) {
+      maxddVal.textContent = "—";
+      maxddVal.className = "stat-big down";
+      maxddSub.textContent = "no data";
+    } else if (mdd.pct === 0) {
+      maxddVal.textContent = "0.00%";
+      maxddVal.className = "stat-big flat";
+      maxddSub.textContent = "belum ada drawdown";
+    } else {
+      maxddVal.textContent = "-" + mdd.pct.toFixed(2) + "%";
+      maxddVal.className = "stat-big down";
+      maxddSub.textContent = "peak " + fmtUsd(mdd.peak) + " → " + fmtUsd(mdd.trough)
+        + " · " + fmtTimeLabel(mdd.trough_ts);
+    }
 
     // First Buy Balance card — account equity recorded by the dispatcher when
     // the account went from fully flat to its first buy of a new cycle.
@@ -803,7 +757,7 @@ async function fetchStats() {
       extraVal.className = "stat-big flat";
       extraSub.textContent = "0 / not set";
     }
-    // Funding FDUSD card (live funding-wallet balance, read at generation).
+    // Funding USD1 card (live funding-wallet balance, read at generation).
     const fc = d.funding_card || {value: null, ts: null};
     const fundVal = document.getElementById("fundVal");
     const fundSub = document.getElementById("fundSub");
@@ -819,7 +773,7 @@ async function fetchStats() {
       fundVal.className = "stat-big up";
       fundSub.textContent = "funding wallet unavailable";
     }
-    // Funding FDUSD as a percentage of total_capital (accounts.yaml).
+    // Funding USD1 as a percentage of total_capital (accounts.yaml).
     if (fc.value != null && tc.value > 0) {
       const pct = (fc.value / tc.value) * 100;
       fundPctVal.textContent = pct.toFixed(2) + "%";
@@ -830,8 +784,8 @@ async function fetchStats() {
       fundPctVal.className = "stat-big up";
       fundPctSub.textContent = "needs funding + total capital";
     }
-    // Expose funding value + its % (same as the Funding FDUSD card) for the
-    // "Realized profit Periode N (funding FDUSD)" sub-row in the Periode P&L list.
+    // Expose funding value + its % (same as the Funding USD1 card) for the
+    // "Realized profit Periode N (funding USD1)" sub-row in the Periode P&L list.
     window.__fundingValue = fc.value;
     window.__fundingPct = (fc.value != null && tc.value > 0) ? (fc.value / tc.value * 100) : null;
 
@@ -844,253 +798,13 @@ async function fetchStats() {
       usageSub.textContent = "no data";
     } else {
       usageVal.textContent = fmtUsd(usage.value);
-      usageVal.className = "stat-big warn";   // equity − available cash (margin) → yellow
-      usageSub.textContent = "posisi/margin terpakai · hourly snapshot · " + fmtTimeLabel(usage.ts);
-    }
-
-    // Leverage per coin (futures engine): each bot's FUTURES_LEVERAGE.
-    const levEl = document.getElementById("levRows");
-    if (levEl) {
-      const lev = d.leverage_per_coin || [];
-      const levTitle = document.getElementById("levTitle");
-      if (levTitle) {
-        levTitle.textContent = "⚙️ Leverage per coin (" + lev.length + ")";
-      }
-      if (!lev.length) {
-        levEl.textContent = "no futures bots";
-      } else {
-        levEl.textContent = "";
-        lev.forEach(function (r) {
-          const span = document.createElement("span");
-          span.className = "lev-item";
-          span.innerHTML = '<span class="lev-sym"></span><span class="lev-val"></span>';
-          span.childNodes[0].textContent = r.symbol;
-          span.childNodes[1].textContent = (Number(r.leverage) % 1 === 0
-            ? Number(r.leverage) : Number(r.leverage).toFixed(2)) + "x";
-          levEl.appendChild(span);
-        });
-      }
+      usageVal.className = "stat-big warn";   // equity − USDT → yellow
+      usageSub.textContent = "hourly snapshot · " + fmtTimeLabel(usage.ts);
     }
   } catch (e) { console.warn("stats", e); }
 }
 
-function fmtQty(v) {
-  if (v == null) return "—";
-  return Number(v).toLocaleString(undefined, {maximumFractionDigits:4, minimumFractionDigits:0});
-}
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, function (m) {
-    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m];
-  });
-}
-function fmtMoney(v) {
-  if (v == null) return "—";
-  return "$" + Number(v).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-}
-function setFutBig(id, val, isSigned) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (val == null || isNaN(val)) {
-    el.textContent = "—";
-    el.className = "stat-big flat";
-    return;
-  }
-  if (isSigned) {
-    el.textContent = fmtUsd(val);
-    el.className = "stat-big " + (val > 0 ? "up" : (val < 0 ? "down" : "flat"));
-  } else {
-    el.textContent = fmtMoney(val);
-    el.className = "stat-big " + (val < 0 ? "down" : "flat");
-  }
-}
-// "Futures" group: wallet / unrealized / margin / available / equity /
-// today P&L + the open LONG coin table. Falls back to the dispatcher's
-// snapshot payload (perSnap().futures) and goes LIVE over WebSocket
-// (wss://ws.kebonjeruk.xyz) when connected.
-let _futWs = null;
-function setFutBadge(state, txt) {
-  const b = document.getElementById("futLiveBadge");
-  if (!b) return;
-  b.textContent = txt;
-  if (state === "live") b.style.color = "#16a34a";
-  else if (state === "snap") b.style.color = "#f59e0b";
-  else b.style.color = "#94a3b8";
-}
-function renderFuturesData(live, mode, subText) {
-  const has = !!live;
-  const sub = subText || "—";
-  const setSub = function (id, t) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = t;
-  };
-  setSub("futWalletSub", sub); setSub("futUpnlSub", sub);
-  setSub("futMarginSub", sub); setSub("futAvailSub", sub);
-  setSub("futEqSub", has ? "wallet + uPnL · " + sub : "wallet + uPnL");
-  setFutBig("futWalletVal", has ? live.wallet : null, false);
-  setFutBig("futUpnlVal", has ? live.unrealized : null, true);
-  setFutBig("futMarginVal", has ? live.margin : null, false);
-  setFutBig("futAvailVal", has ? live.available : null, false);
-  setFutBig("futEqVal", has ? (live.equity != null ? live.equity : live.margin) : null, false);
-  const td = has ? live.today : null;
-  const ec = window.__todayEc || 0;
-  // Guard: a funded account should never report equity <= 0 — that signals a
-  // relay read failure (stale/rotated API key → -2015 → empty balances). Skip
-  // the live overwrite in that case so the baked snapshot cards (Today + window
-  // cards) are not wiped into ~-100% / -99.98%.
-  const eqNow = has ? (live.equity != null ? live.equity : live.margin) : null;
-  const eqOk = has && typeof eqNow === "number" && eqNow > 0;
-  // Today live: prefer the relay's own today; if the relay has no baseline
-  // (today=null) fall back to the stats baseline + live equity so the card
-  // still moves. Either way = raw value adjusted by extra_capital.
-  let tdy = null;
-  if (eqOk && td && td.pct != null && !isNaN(td.pct)) {
-    const usdAdj = td.usd - ec;
-    tdy = { usd: usdAdj, pct: (td.from > 0 ? usdAdj / td.from * 100 : td.pct), from: td.from };
-  } else if (eqOk) {
-    const st = window.__statsSnap && window.__statsSnap.today;
-    if (st && st.from > 0) {
-      const usdAdj = (eqNow - st.from) - ec;
-      tdy = { usd: usdAdj, pct: usdAdj / st.from * 100, from: st.from };
-    }
-  }
-  if (tdy) {
-    setFutBig("futTodayVal", tdy.pct, false);
-    const tv = document.getElementById("futTodayVal");
-    if (tv) {
-      tv.textContent = fmtPct(tdy.pct);
-      tv.className = "stat-big " + (tdy.pct > 0 ? "up" : (tdy.pct < 0 ? "down" : "flat"));
-    }
-    const ts = document.getElementById("futTodaySub");
-    if (ts) ts.textContent = fmtUsd(tdy.usd) + " · dari " + fmtMoney(tdy.from);
-    // Keep the "Today" profit card identical to the LIVE Today P&L card.
-    setProfitCard("today", { pct: tdy.pct, usd: tdy.usd, from: tdy.from, to: live.equity, ec: ec });
-    // Move the window cards (3 Days / MTD / YTD / All-Time) in realtime too:
-    // snapshot value − today at snapshot + live today.
-    const snapToday = window.__statsSnap && window.__statsSnap.today;
-    if (snapToday && snapToday.from != null && snapToday.to != null) {
-      applyLiveToWindowCards(tdy.usd - snapToday.usd, tdy.pct - snapToday.pct);
-    }
-  } else {
-    const tv = document.getElementById("futTodayVal");
-    if (tv) { tv.textContent = "—"; tv.className = "stat-big flat"; }
-    const ts = document.getElementById("futTodaySub");
-    if (ts) ts.textContent = "—";
-  }
-  document.getElementById("futuresCount").textContent = has ? "(" + (live.coins || []).length + ")" : "";
-
-  const body = document.getElementById("futuresBody");
-  const foot = document.getElementById("futuresFoot");
-  const note = document.getElementById("futuresNote");
-  if (!body || !foot || !note) return;
-  body.innerHTML = "";
-  foot.innerHTML = "";
-  note.textContent = mode === "snap" ? "Data snapshot tiap 10 menit (fallback saat WS offline)." : "";
-
-  const coins = (live && live.coins) ? live.coins : [];
-  if (!has || coins.length === 0) {
-    const tr = document.createElement("tr");
-    const td = document.createElement("td");
-    td.colSpan = 11;
-    td.className = "td-mute";
-    td.textContent = has ? "Tidak ada posisi LONG terbuka." : "Tidak ada data.";
-    tr.appendChild(td);
-    body.appendChild(tr);
-  } else {
-    coins.forEach(function (c) {
-      const tr = document.createElement("tr");
-      const upnlCls = c.upnl > 0 ? "pos" : (c.upnl < 0 ? "neg" : "");
-      const roiCls = c.roi > 0 ? "pos" : (c.roi < 0 ? "neg" : "");
-      const realCls = (c.realized == null) ? "td-mute"
-        : (c.realized > 0 ? "pos" : (c.realized < 0 ? "neg" : ""));
-      tr.innerHTML =
-        "<td>" + escapeHtml(String(c.coin)) + "</td>" +
-        '<td class="r">' + fmtQty(c.qty) + "</td>" +
-        '<td class="r">' + fmtPrice(c.entry) + "</td>" +
-        '<td class="r">' + fmtPrice(c.mark) + "</td>" +
-        '<td class="r">' + fmtMoney(c.size) + "</td>" +
-        '<td class="r">' + (c.lev ? (Math.round(c.lev * 10) / 10) + "x" : "—") + "</td>" +
-        '<td class="r">' + fmtMoney(c.margin) + "</td>" +
-        '<td class="r ' + roiCls + '">' + fmtPctSigned(c.roi) + "</td>" +
-        '<td class="r td-mute">' + fmtPctSigned(c.mratio) + "</td>" +
-        '<td class="r ' + upnlCls + '">' + fmtSigned(c.upnl, 2) + "</td>" +
-        '<td class="r ' + realCls + '">' + (c.realized == null ? "—" : fmtSigned(c.realized, 2)) + "</td>";
-      body.appendChild(tr);
-    });
-    const tSize = coins.reduce((s, c) => s + (c.size || 0), 0);
-    const tMargin = coins.reduce((s, c) => s + (c.margin || 0), 0);
-    const tUpnl = coins.reduce((s, c) => s + (c.upnl || 0), 0);
-    const tReal = coins.reduce((s, c) => s + (c.realized || 0), 0);
-    const tRoe = tMargin > 0 ? (tUpnl / tMargin) * 100 : 0;
-    const tr = document.createElement("tr");
-    tr.innerHTML =
-      "<td>TOTAL</td><td class='r'></td><td class='r'></td><td class='r'></td>" +
-      '<td class="r">' + fmtMoney(tSize) + "</td><td class='r'></td>" +
-      '<td class="r">' + fmtMoney(tMargin) + "</td>" +
-      '<td class="r ' + (tRoe > 0 ? "pos" : (tRoe < 0 ? "neg" : "")) + '">' + fmtPctSigned(tRoe) + "</td>" +
-      '<td class="r"></td>' +
-      '<td class="r ' + (tUpnl > 0 ? "pos" : (tUpnl < 0 ? "neg" : "")) + '">' + fmtSigned(tUpnl, 2) + "</td>" +
-      '<td class="r ' + (tReal > 0 ? "pos" : (tReal < 0 ? "neg" : "")) + '">' + fmtSigned(tReal, 2) + "</td>";
-    foot.appendChild(tr);
-  }
-
-  const btn = document.getElementById("futuresToggle");
-  const col = document.getElementById("futuresCollapse");
-  const openIt = has && coins.length > 0;
-  if (btn && col) {
-    if (openIt) {
-      btn.classList.add("open");
-      btn.setAttribute("aria-expanded", "true");
-      col.classList.add("open");
-      const chev = document.getElementById("futuresChevron");
-      if (chev) chev.textContent = "▾";
-    } else {
-      btn.classList.remove("open");
-      btn.setAttribute("aria-expanded", "false");
-      col.classList.remove("open");
-      const chev = document.getElementById("futuresChevron");
-      if (chev) chev.textContent = "▸";
-    }
-  }
-}
-function renderFutures() {
-  // Snapshot fallback first (renders instantly even before WS connects).
-  const snap = perSnap().futures || null;
-  if (snap) {
-    renderFuturesData(snap, "snap",
-      (snap.source === "live" ? "WS live · " : "snapshot · ") + fmtTimeLabel(snap.ts || ""));
-    setFutBadge("snap", "· snapshot");
-  } else {
-    renderFuturesData(null, "snap", "—");
-    setFutBadge("off", "· no data");
-  }
-  startFuturesWs();
-}
-function startFuturesWs() {
-  if (_futWs) { try { _futWs.close(); } catch (_) {} _futWs = null; }
-  const acct = SNAP ? (SNAP.account || ((SNAP.accounts || [])[0])) : "";
-  if (!acct) { setFutBadge("off", "· no account"); return; }
-  let url = new URLSearchParams(location.search).get("ws") || "wss://ws.kebonjeruk.xyz/ws";
-  url += (url.indexOf("?") >= 0 ? "&" : "?") + "market=futures&account=" + encodeURIComponent(acct);
-  let ws;
-  try { ws = new WebSocket(url); } catch (e) { return; }
-  _futWs = ws;
-  ws.onopen = function () { setFutBadge("live", "● LIVE"); };
-  ws.onmessage = function (ev) {
-    try {
-      const f = JSON.parse(ev.data);
-      renderFuturesData(f, "live", "LIVE · " + fmtTimeLabel(f.ts || ""));
-    } catch (e) { console.warn("futures ws frame", e); }
-  };
-  ws.onclose = function () {
-    setFutBadge("snap", "· snapshot (offline)");
-    _futWs = null;
-    setTimeout(startFuturesWs, 4000);
-  };
-  ws.onerror = function () { try { ws.close(); } catch (_) {} };
-}
-
-
-
+// Total force-sell (fund_sell) P&L over the selected range, shown red on the
 // Force Sell card. Updates when the range selector changes.
 async function updateForceSell() {
   const el = document.getElementById("fsVal");
@@ -1115,8 +829,8 @@ async function updateForceSell() {
 // Buy-history chart (usdc tab): per-coin buy price ladder with markers colored
 // by the block's final outcome. X = entry time, Y = entry price. Green =
 // profitable, red = force sell (fund_sell), blue = active, gray = other loss.
-const BUY_STATUS_COLOR = { active: "#f59e0b", profit: "#16a34a", force_sell: "#dc2626", loss: "#94a3b8" };
-const BUY_STATUS_LABEL = { active: "ACTIVE", profit: "PROFIT", force_sell: "FORCE SELL", loss: "LOSS" };
+const BUY_STATUS_COLOR = { active: "#f59e0b", profit: "#16a34a", force_sell: "#dc2626", loss: "#94a3b8", combined: "#64748b" };
+const BUY_STATUS_LABEL = { active: "ACTIVE", profit: "PROFIT", force_sell: "FORCE SELL", loss: "LOSS", combined: "COMBINED" };
 
 async function renderBuys() {
   const d = await fetchJson("/api/buys?coin=" + encodeURIComponent(state.buyCoin) + "&range=" + state.range);
@@ -1332,123 +1046,13 @@ function renderWcSplit(d) {
     }
   });
   chart = mkChart("chart", "USDT", d.points.map(p => (p.usdt || 0)), "#16a34a");
-  // Total usage (futures) = equity − AVAILABLE cash (margin locked). Falls back
-  // to the old equity−USDT only when cash is unavailable on a point.
-  chart2 = mkChart("chart2", "Total usage",
-    d.points.map(p => ((p.value != null ? p.value : 0) - (p.cash != null ? p.cash : (p.usdt || 0)))),
-    "#f59e0b");
-}
-
-// Drawdown tab — peak-in-range drawdown of the best-resolution (5m/hourly)
-// equity (red) overlaid with CASH drawdown (yellow), drawn below 0.
-function renderDrawdown(d) {
-  const series = (d.dd_points && d.dd_points.length) ? d.dd_points : d.points;
-  const cashSeries = (d.dd_cash_points && d.dd_cash_points.length) ? d.dd_cash_points : null;
-  const b2 = document.getElementById("chartbox2");
-  if (b2) b2.style.display = "none";
-  if (!series.length) {
-    subEl.textContent = "no data yet";
-    return;
-  }
-  const labels = series.map(p => p.label);
-  function ddSeries(src) {
-    let peak = null;
-    const data = src.map(p => {
-      const v = p.value;
-      if (v == null) { return null; }
-      if (peak == null || v > peak) { peak = v; }
-      const dd = (peak > 0) ? (peak - v) / peak * 100 : 0;
-      return -dd;
-    });
-    return data;
-  }
-  function maxDd(src) {
-    let peak = null;
-    let m = 0;
-    src.forEach(p => {
-      const v = p.value;
-      if (v == null) { return; }
-      if (peak == null || v > peak) { peak = v; }
-      const dd = (peak > 0) ? (peak - v) / peak * 100 : 0;
-      if (dd > m) { m = dd; }
-    });
-    return m;
-  }
-  const eqData = ddSeries(series);
-  const cashData = cashSeries ? ddSeries(cashSeries) : null;
-  const eqMax = maxDd(series);
-  const cashMax = cashSeries ? maxDd(cashSeries) : 0;
-  const pts = series.filter(p => p.value != null).length;
-  const rangeLbl = RANGE_SUB[d.range] || d.range;
-  const head = "-" + eqMax.toFixed(2) + "%";
-  pctEl.textContent = head;
-  pctEl.className = "big down";
-  usdEl.textContent = cashSeries ? ("cash -" + cashMax.toFixed(2) + "%") : "";
-  cntEl.textContent = pts + " pts (5m/hourly) · " + rangeLbl;
-  subEl.textContent = "dd equity (merah) · dd cash (kuning) · " + rangeLbl;
-  legendEl.textContent = "Max dd: equity -" + eqMax.toFixed(2) + "%"
-    + (cashSeries ? " · cash -" + cashMax.toFixed(2) + "%" : "") + " (peak reset di awal range)";
-  const ctx = document.getElementById("chart").getContext("2d");
-  const datasets = [{
-    label: "Equity dd %",
-    data: eqData,
-    borderColor: "#dc2626",
-    backgroundColor: "rgba(220,38,38,0.20)",
-    fill: true,
-    tension: 0.25,
-    pointRadius: 1,
-    pointHoverRadius: 4,
-    borderWidth: 2,
-    spanGaps: true
-  }];
-  if (cashSeries) {
-    datasets.push({
-      label: "Cash dd %",
-      data: cashData,
-      borderColor: "#f59e0b",
-      backgroundColor: "rgba(245,158,11,0.10)",
-      fill: false,
-      tension: 0.25,
-      pointRadius: 0,
-      pointHoverRadius: 3,
-      borderWidth: 2,
-      borderDash: [6, 4],
-      spanGaps: true
-    });
-  }
-  chart = new Chart(ctx, {
-    type: "line",
-    data: { labels: labels, datasets: datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: "index", intersect: false },
-      plugins: {
-        legend: { display: true, labels: { color: "#94a3b8", boxWidth: 12, font: { size: 12 } } },
-        tooltip: {
-          callbacks: {
-            label: function(ctx) {
-              const v = ctx.parsed.y;
-              return (ctx.dataset.label || "") + ": " + ((v == null || isNaN(v)) ? "—" : v.toFixed(2) + " %");
-            }
-          }
-        }
-      },
-      scales: {
-        x: { ticks: { maxTicksLimit: 10, color: "#94a3b8" }, grid: { color: "#1e293b" } },
-        y: { ticks: { color: "#94a3b8", callback: v => v.toFixed(0) + "%" }, grid: { color: "#334155" } }
-      }
-    }
-  });
+  chart2 = mkChart("chart2", "Total usage", d.points.map(p => ((p.value != null ? p.value : 0) - (p.usdt || 0))), "#f59e0b");
 }
 
 async function render() {
   resetCharts();
   if (state.overlay === "usdc") { return renderBuys(); }
   const d = await fetchJson("/api/equity?range=" + state.range + "&coin=" + encodeURIComponent(state.coin));
-  if (state.overlay === "dd") {
-    return renderDrawdown(d);
-  }
   // Total usage tab = two separate charts (USDT top, usage bottom) on Total.
   const split = state.overlay === "wc" && d.coin === "total";
   deltas = d.points.map(p => p.delta_pct);
@@ -1624,16 +1228,6 @@ function renderProfit(d) {
     + "</tr>";
   note.textContent = "Realized = sold blocks in period · Unrealized valued at latest hourly snapshot price (up to 1h stale) · Ranked by realized";
 }
-
-document.getElementById("futuresToggle").addEventListener("click", function() {
-  const btn = this;
-  const col = document.getElementById("futuresCollapse");
-  const open = btn.classList.toggle("open");
-  btn.setAttribute("aria-expanded", open ? "true" : "false");
-  col.classList.toggle("open", open);
-  const chev = document.getElementById("futuresChevron");
-  if (chev) chev.textContent = open ? "▾" : "▸";
-});
 
 document.getElementById("profitToggle").addEventListener("click", function() {
   const btn = this;
@@ -1972,13 +1566,13 @@ async function renderPeriodPnl() {
         + '<td class="r ' + netCls + '">' + netPct + '</td>'
         + '<td class="r ' + (dd != null && dd > 0 ? "neg" : "") + '" title="Max drawdown equity periode (snapshot per jam)">' + ddTxt + '</td>'
         + '</tr>';
-      // Running period only: indented line with the funding-wallet FDUSD (the
+      // Running period only: indented line with the funding-wallet USD1 (the
       // realized profit parked in funding) + its % of total capital. Always
       // shown for the open period (even when the live funding read is
       // unavailable) so it is never silently hidden.
       if (p.status === "open") {
         row += '<tr class="pnl-sub">'
-          + '<td colspan="8" class="pnl-sub-label">↳ Realized profit Periode ' + p.period_no + ' (funding FDUSD)</td>'
+          + '<td colspan="8" class="pnl-sub-label">↳ Realized profit Periode ' + p.period_no + ' (funding USD1)</td>'
           + '<td class="r up">' + (fv != null ? fmtUsd(fv) : "—") + '</td>'
           + '<td class="r up">' + (fp != null ? fp.toFixed(2) + "%" : "—") + '</td>'
           + '<td></td>'
@@ -1987,7 +1581,7 @@ async function renderPeriodPnl() {
       return row;
     }).join("");
     // Footer: sum Net P/L across every period of the selected account, plus the
-    // running period's realized profit parked in funding FDUSD (when open). The
+    // running period's realized profit parked in funding USD1 (when open). The
     // TOTAL % is intentionally left blank. Red = loss, green = profit.
     let tNet = 0, hasNet = false, hasOpen = false;
     my.forEach(function(p){
@@ -1995,7 +1589,7 @@ async function renderPeriodPnl() {
       if (p.status === "open") { hasOpen = true; }
     });
     // TOTAL Net P/L also includes the running period's realized profit parked in
-    // funding FDUSD (window.__fundingValue). The TOTAL % is intentionally blank.
+    // funding USD1 (window.__fundingValue). The TOTAL % is intentionally blank.
     const tNetAdj = (hasOpen && fv != null) ? tNet + fv : tNet;
     const tCls = tNetAdj > 0 ? "pos" : (tNetAdj < 0 ? "neg" : "");
     const tNetTxt = hasNet ? (tNetAdj > 0 ? "+" : "") + tNetAdj.toFixed(2) : "—";
@@ -2008,7 +1602,7 @@ async function renderPeriodPnl() {
       + '</tr>';
     const cap = my[0].start_equity_eff != null ? "$" + Number(my[0].start_equity_eff).toFixed(2) : "?";
     document.getElementById("pnlNote").textContent =
-      "Net P/L (periode tutup) = profit yang diparkir ke funding (FDUSD/USDC); periode rugi = equity akhir − start_equity. Net P/L (periode berjalan) = equity live − extra_capital − start_equity (" + cap + "). Merah = rugi. Max DD = penurunan equity terbesar dari puncak (snapshot per jam, tanpa koreksi injeksi).";
+      "Net P/L (periode tutup) = profit yang diparkir ke funding (USD1/USDC); periode rugi = equity akhir − start_equity. Net P/L (periode berjalan) = equity live − extra_capital − start_equity (" + cap + "). Merah = rugi. Max DD = penurunan equity terbesar dari puncak (snapshot per jam, tanpa koreksi injeksi).";
   } catch (e) { console.error("pnl", e); }
 }
 
@@ -2098,9 +1692,9 @@ function renderRecent() {
         + '<td class="r">' + fmtPrice(r.entry_price) + '</td>'
         + '<td class="r">' + fmtPrice(r.sold_price) + '</td>'
         + '<td class="r">' + fmtPrice(r.mark_price) + '</td>'
-        + '<td class="r">' + fmtQty(r.qty) + '</td>'
-        + '<td class="r">' + fmtMoney(r.cost) + '</td>'
-        + '<td class="r">' + (r.proceeds != null ? fmtMoney(r.proceeds) : '—') + '</td>'
+        + '<td class="r">' + rtQty(r.qty) + '</td>'
+        + '<td class="r">' + rtMoney(r.cost) + '</td>'
+        + '<td class="r">' + (r.proceeds != null ? rtMoney(r.proceeds) : '—') + '</td>'
         + '<td class="r ' + pnlCls + '">' + fmtSigned(r.realized_pnl, 4) + '</td>'
         + '<td class="r ' + pnlCls + '">' + pctTxt + '</td>'
         + '<td><span class="badge badge-mode">' + (r.sold_reason_label || r.sold_reason || '?') + '</span></td>'
@@ -2165,13 +1759,145 @@ document.getElementById("periodSel").addEventListener("change", e => {
   fetchBlocks().catch(err => console.error("blocks", err));
 });
 
+let _spotWs = null;
+function rtMoney(v) { if (v == null || isNaN(v)) return "—"; return "$" + Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function rtQty(v) { if (v == null) return "—"; return Number(v).toLocaleString(undefined,{maximumFractionDigits:4,minimumFractionDigits:0}); }
+function rtEsc(s) { return String(s).replace(/[&<>"']/g, function(m){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]; }); }
+function spotBadge(state, txt) {
+  const b = document.getElementById("spotLiveBadge");
+  if (!b) return;
+  b.textContent = txt;
+  b.style.color = state === "live" ? "#16a34a" : (state === "off" ? "#94a3b8" : "#f59e0b");
+}
+function renderSpotData(f) {
+  const has = f && typeof f.equity === "number";
+  const setBig = function(id, val, signedMode) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!has) { el.textContent = "—"; el.className = "stat-big flat"; return; }
+    if (signedMode) { el.textContent = fmtUsd(val); el.className = "stat-big " + (val>0?"up":(val<0?"down":"flat")); }
+    else { el.textContent = rtMoney(val); el.className = "stat-big " + (val<0?"down":"flat"); }
+  };
+  setBig("spotEqVal", has ? f.equity : null, false);
+  setBig("spotCashVal", has ? f.cash : null, false);
+  // Unrealized PnL = sum of each coin's unrealized (qty_active vs avg entry).
+  const unr = has ? (f.coins || []).reduce(function(s,c){ return s + (c.unrealized || 0); }, 0) : null;
+  setBig("spotUpnlVal", unr, true);
+  const usub = document.getElementById("spotUpnlSub");
+  if (usub) usub.textContent = has ? "qty active vs avg entry · live" : "—";
+
+  const td = has ? f.today : null;
+  const tv = document.getElementById("spotTodayVal");
+  const ec = window.__todayEc || 0;
+  // Guard: a funded account should never report equity <= 0 — that signals a
+  // relay read failure (stale/rotated API key → -2015 → empty balances). Skip
+  // the live overwrite in that case so the baked snapshot cards (Today + window
+  // cards) are not wiped into ~-100% / -99.98%.
+  const eqOk = has && f.equity > 0;
+  // Today live: prefer the relay's own today; if the relay has no baseline
+  // (today=null) fall back to the stats baseline + live equity so the card
+  // still moves. Either way = raw value adjusted by extra_capital.
+  let tdy = null;
+  if (eqOk && td && td.pct != null && !isNaN(td.pct)) {
+    const usdAdj = td.usd - ec;
+    tdy = { usd: usdAdj, pct: (td.from > 0 ? usdAdj / td.from * 100 : td.pct), from: td.from };
+  } else if (eqOk) {
+    const st = window.__statsSnap && window.__statsSnap.today;
+    if (st && st.from > 0) {
+      const usdAdj = (f.equity - st.from) - ec;
+      tdy = { usd: usdAdj, pct: usdAdj / st.from * 100, from: st.from };
+    }
+  }
+  if (tdy) {
+    tv.textContent = fmtPct(tdy.pct);
+    tv.className = "stat-big " + (tdy.pct>0?"up":(tdy.pct<0?"down":"flat"));
+    const ts = document.getElementById("spotTodaySub");
+    if (ts) ts.textContent = fmtUsd(tdy.usd) + " · dari " + rtMoney(tdy.from);
+    // Keep the "Today" profit card identical to the LIVE Today P&L card.
+    setProfitCard("today", { pct: tdy.pct, usd: tdy.usd, from: tdy.from, to: f.equity, ec: ec });
+    // Move the window cards (3 Days / MTD / YTD / All-Time) in realtime too:
+    // snapshot value − today at snapshot + live today.
+    const snapToday = window.__statsSnap && window.__statsSnap.today;
+    if (snapToday && snapToday.from != null && snapToday.to != null) {
+      applyLiveToWindowCards(tdy.usd - snapToday.usd, tdy.pct - snapToday.pct);
+    }
+  } else if (tv) { tv.textContent = "—"; tv.className = "stat-big flat";
+    const ts = document.getElementById("spotTodaySub"); if (ts) ts.textContent = "—"; }
+  const subC = document.getElementById("spotCashSub");
+  if (subC) subC.textContent = has ? "stablecoin free · live" : "—";
+
+  document.getElementById("spotCount").textContent = has ? "(" + f.coins.length + ")" : "";
+  const body = document.getElementById("spotRows");
+  const foot = document.getElementById("spotFoot");
+  if (!body || !foot) return;
+  body.innerHTML = ""; foot.innerHTML = "";
+  const coins = has ? (f.coins || []) : [];
+  if (!coins.length) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td"); td.colSpan = 7; td.className = "td-mute";
+    td.textContent = has ? "Tidak ada coin tersimpan." : "Menunggu data live…";
+    tr.appendChild(td); body.appendChild(tr);
+  } else {
+    coins.forEach(function (c) {
+      const tr = document.createElement("tr");
+      const unreal = c.unrealized;
+      const unrealStr = (unreal == null) ? '<td class="r td-mute">—</td>'
+        : '<td class="r ' + clsSign(unreal) + '">' + fmtSigned(unreal, 2) + "</td>";
+      tr.innerHTML =
+        "<td>" + rtEsc(String(c.coin)) + "</td>" +
+        '<td class="r">' + rtQty(c.balance) + "</td>" +
+        '<td class="r">' + (c.qty_active > 0 ? rtQty(c.qty_active) : "—") + "</td>" +
+        '<td class="r">' + (c.avg_entry ? fmtPrice(c.avg_entry) : "—") + "</td>" +
+        '<td class="r">' + (c.mark ? fmtPrice(c.mark) : "—") + "</td>" +
+        '<td class="r">' + rtMoney(c.value) + "</td>" + unrealStr;
+      body.appendChild(tr);
+    });
+    const tValue = coins.reduce((s,c)=>s+(c.value||0),0);
+    const tUnr = coins.reduce((s,c)=>s+(c.unrealized||0),0);
+    const tr = document.createElement("tr");
+    tr.innerHTML = "<td>TOTAL</td><td class='r'></td><td class='r'></td><td class='r'></td><td class='r'></td>"
+      + '<td class="r">' + rtMoney(tValue) + "</td>"
+      + '<td class="r ' + (tUnr>0?"pos":(tUnr<0?"neg":"td-mute")) + '">' + (tUnr? fmtSigned(tUnr,2):"—") + "</td>";
+    foot.appendChild(tr);
+  }
+}
+function renderSpotLive() {
+  const wrap = document.getElementById("spotLiveWrap");
+  if (!wrap) return;
+  const acct = SNAP ? (SNAP.account || ((SNAP.accounts || [])[0])) : "";
+  if (!acct) { spotBadge("off", "no account"); return; }
+  if (_spotWs) { try { _spotWs.close(); } catch (_) {} _spotWs = null; }
+  let base = new URLSearchParams(location.search).get("ws") || "wss://ws.kebonjeruk.xyz/ws";
+  base += (base.indexOf("?") >= 0 ? "&" : "?") + "market=spot&account=" + encodeURIComponent(acct);
+  let ws;
+  try { ws = new WebSocket(base); } catch (e) { return; }
+  _spotWs = ws;
+  ws.onopen = function () { spotBadge("live", "● LIVE"); };
+  ws.onmessage = function (ev) { try { renderSpotData(JSON.parse(ev.data)); } catch (e) { console.warn("spot ws frame", e); } };
+  ws.onclose = function () { spotBadge("off", "· snapshot/offline — reconnect…"); _spotWs = null; setTimeout(renderSpotLive, 4000); };
+  ws.onerror = function () { try { ws.close(); } catch (_) {} };
+}
+(function () {
+  const btn = document.getElementById("spotToggle");
+  const col = document.getElementById("spotCollapse");
+  if (btn && col) {
+    btn.addEventListener("click", function () {
+      const open = btn.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      col.classList.toggle("open", open);
+      const ch = document.getElementById("spotChevron");
+      if (ch) ch.textContent = open ? "▾" : "▸";
+    });
+  }
+})();
+
 (async function init() {
   await resolveAccount();
   await loadCoins();
   await loadBuyCoins();
-  await fetchStats();
-  renderFutures();
-  await render();
+   await fetchStats();
+   renderSpotLive();
+   await render();
   await updateForceSell();
   await renderPeriods();
   await renderSnapshots();
