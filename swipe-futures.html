@@ -10,7 +10,7 @@
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--txt);
           font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
-  .wrap { max-width:1280px; margin:0 auto; padding:28px 20px 48px; }
+  .wrap { max-width:1400px; margin:0 auto; padding:28px 20px 48px; }
   h1 { font-size:1.35rem; margin:0 0 4px; }
   .sub { color:var(--muted); font-size:0.82rem; margin-bottom:18px; }
   .card { background:var(--card); border:1px solid #334155; border-radius:12px;
@@ -21,7 +21,6 @@
               border-bottom:1px solid #334155; font-size:0.72rem;
               text-transform:uppercase; letter-spacing:0.03em; text-align:right; }
   thead th:first-child { text-align:left; }
-  thead th.c, thead th.r { text-align:right; }
   tbody td { padding:10px 12px; border-bottom:1px solid #263449; }
   tbody tr:last-child td { border-bottom:0; }
   tbody tr:hover { background:#243349; }
@@ -29,78 +28,50 @@
   td.acct { font-weight:600; text-align:left; }
   td.r { text-align:right; font-variant-numeric:tabular-nums; }
   td.c { text-align:center; }
-  td.up, td .up { color:var(--up); }
-  td.down { color:var(--down); }
-  td.warn { color:var(--warn); }
-  td.flat { color:var(--flat); }
-  td.empty { text-align:center; color:var(--muted); padding:24px; }
-  .note { color:var(--muted); font-size:0.75rem; margin-top:14px; line-height:1.7; }
-  .note code { color:#cbd5e1; }
-  .legend span { display:inline-block; margin-right:14px; }
-  .legend b.up { color:var(--up); }
-  .legend b.down { color:var(--down); }
-  .legend b.warn { color:var(--warn); }
-  .legend b.flat { color:var(--flat); }
+  .up { color:var(--up); } .down { color:var(--down); }
+  .flat { color:var(--flat); } .warn { color:var(--warn); font-weight:600; }
+  .note { color:var(--muted); font-size:0.78rem; margin-top:14px; line-height:1.6; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>🔥 Ambarawa Swipe — FUTURES</h1>
-  <div class="sub">15 akun · generated 2026-10-18 02:28 UTC · snapshot statis (jalankan ulang skrip untuk refresh)</div>
+  <h1>Ambarawa Swipe — FUTURES</h1>
+  <div class="sub">Generated 2026-10-18 06:12:16 UTC · 15 account(s) · refresh every 10 min</div>
   <div class="card">
     <table>
       <thead>
         <tr>
-          <th>Account</th>
-          <th class="c">en</th>
-          <th class="r">equity</th>
-          <th class="r">total</th>
-          <th class="r">ec</th>
-          <th class="r">ALLTIME%</th>
-          <th class="r">today%</th>
-          <th class="r">fbb</th>
-          <th class="r">unreal$</th>
-          <th class="r">unreal%</th>
-          <th class="c">gate</th>
-          <th class="r">swAT%</th>
-          <th class="r">sw%</th>
-          <th class="c">fire?</th>
-          <th class="c">phase</th>
+          <th>account</th><th class="c">en</th><th class="r">equity</th>
+          <th class="r">total</th><th class="r">ec</th><th class="r">ALLTIME%</th>
+          <th class="r">today%</th><th class="r">fbb</th><th class="r">unreal$</th>
+          <th class="r">unreal%</th><th class="c">gate</th><th class="r">swAT%</th>
+          <th class="r">sw%</th><th class="c">fire?</th><th class="c">phase</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td class="acct">susi-futures</td><td class="c">Y</td><td class="r">207.57</td><td class="r">207.57</td><td class="r">0.00</td><td class="r up">+0.00</td><td class="r">+1.30</td><td class="r">203.05</td><td class="r">+0.00</td><td class="r">+0.00</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">done:1</td></tr>
-        <tr><td class="acct">christine-futures</td><td class="c">Y</td><td class="r">158.85</td><td class="r">158.85</td><td class="r">0.00</td><td class="r down">-0.00</td><td class="r">+0.59</td><td class="r">156.09</td><td class="r">+0.00</td><td class="r">+0.00</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">done:1</td></tr>
-        <tr><td class="acct">edward-futures</td><td class="c">Y</td><td class="r">107.39</td><td class="r">107.39</td><td class="r">0.00</td><td class="r down">-0.00</td><td class="r">+0.42</td><td class="r">106.08</td><td class="r">+0.00</td><td class="r">+0.00</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">done:1</td></tr>
-        <tr><td class="acct">setiaji-futures</td><td class="c">Y</td><td class="r">93.00</td><td class="r">95.88</td><td class="r">0.00</td><td class="r down">-3.01</td><td class="r">+4.59</td><td class="r">96.07</td><td class="r">-6.22</td><td class="r">-6.47</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle:2</td></tr>
-        <tr><td class="acct">izak-futures</td><td class="c">Y</td><td class="r">104.40</td><td class="r">109.77</td><td class="r">0.00</td><td class="r down">-4.89</td><td class="r">+4.12</td><td class="r">109.09</td><td class="r">-6.09</td><td class="r">-5.55</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle:1</td></tr>
-        <tr><td class="acct">imelda-futures</td><td class="c">Y</td><td class="r">106.10</td><td class="r">113.31</td><td class="r">0.00</td><td class="r down">-6.37</td><td class="r">+4.40</td><td class="r">113.29</td><td class="r">-8.45</td><td class="r">-7.46</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle:1</td></tr>
-        <tr><td class="acct">tommy-futures</td><td class="c">Y</td><td class="r">102.52</td><td class="r">112.05</td><td class="r">0.00</td><td class="r down">-8.51</td><td class="r">+5.84</td><td class="r">112.01</td><td class="r">-11.69</td><td class="r">-10.43</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle:1</td></tr>
-        <tr><td class="acct">alvina-futures</td><td class="c">Y</td><td class="r">136.07</td><td class="r">151.42</td><td class="r">0.00</td><td class="r down">-10.14</td><td class="r">+3.17</td><td class="r">151.33</td><td class="r">-24.62</td><td class="r">-16.26</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">-</td></tr>
-        <tr><td class="acct">bima-futures</td><td class="c">Y</td><td class="r">124.11</td><td class="r">140.00</td><td class="r">0.00</td><td class="r down">-11.35</td><td class="r">+2.66</td><td class="r">139.92</td><td class="r">-15.90</td><td class="r">-11.36</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">-</td></tr>
-        <tr><td class="acct">wasil-futures</td><td class="c">Y</td><td class="r">98.11</td><td class="r">110.82</td><td class="r">0.00</td><td class="r down">-11.47</td><td class="r">+8.05</td><td class="r">110.40</td><td class="r">-15.29</td><td class="r">-13.80</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle:1</td></tr>
-        <tr><td class="acct">azel-futures</td><td class="c">Y</td><td class="r">167.10</td><td class="r">201.95</td><td class="r">0.00</td><td class="r down">-17.26</td><td class="r">+7.18</td><td class="r">200.62</td><td class="r">-35.95</td><td class="r">-17.80</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">-</td></tr>
-        <tr><td class="acct">wildan-futures</td><td class="c">Y</td><td class="r">95.42</td><td class="r">115.37</td><td class="r">0.00</td><td class="r down">-17.29</td><td class="r">+9.18</td><td class="r">114.61</td><td class="r">-22.05</td><td class="r">-19.11</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle:2</td></tr>
-        <tr><td class="acct">ops-futures</td><td class="c">Y</td><td class="r">166.27</td><td class="r">203.13</td><td class="r">0.00</td><td class="r down">-18.15</td><td class="r">+11.66</td><td class="r">199.90</td><td class="r">-37.62</td><td class="r">-18.52</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">-</td></tr>
-        <tr><td class="acct">dian-futures</td><td class="c">Y</td><td class="r">116.22</td><td class="r">152.43</td><td class="r">0.00</td><td class="r down">-23.75</td><td class="r">+10.68</td><td class="r">152.64</td><td class="r">-38.21</td><td class="r">-25.03</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">-</td></tr>
-        <tr><td class="acct">vennia-futures</td><td class="c">Y</td><td class="r">86.72</td><td class="r">115.12</td><td class="r">0.00</td><td class="r down">-24.67</td><td class="r">+10.62</td><td class="r">111.44</td><td class="r">-32.20</td><td class="r">-27.97</td><td class="c down">BLOCK</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle:1</td></tr>
+        <tr><td class="acct">alvina-futures</td><td class="c">Y</td><td class="r">132.55</td><td class="r">151.42</td><td class="r">0.00</td><td class="r down">-12.46</td><td class="r down">-1.13</td><td class="r">151.33</td><td class="r down">-28.14</td><td class="r down">-18.59</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">-</td></tr>
+        <tr><td class="acct">azel-futures</td><td class="c">Y</td><td class="r">161.48</td><td class="r">201.95</td><td class="r">0.00</td><td class="r down">-20.04</td><td class="r up">+2.15</td><td class="r">200.62</td><td class="r down">-41.57</td><td class="r down">-20.72</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">-</td></tr>
+        <tr><td class="acct">bima-futures</td><td class="c">Y</td><td class="r">122.32</td><td class="r">140.00</td><td class="r">0.00</td><td class="r down">-12.63</td><td class="r up">+0.89</td><td class="r">139.92</td><td class="r down">-17.69</td><td class="r down">-12.64</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">-</td></tr>
+        <tr><td class="acct">christine-futures</td><td class="c">Y</td><td class="r">158.85</td><td class="r">158.85</td><td class="r">0.00</td><td class="r down">-0.00</td><td class="r up">+0.59</td><td class="r">156.09</td><td class="r flat">0.00</td><td class="r flat">+0.00</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle</td></tr>
+        <tr><td class="acct">dian-futures</td><td class="c">Y</td><td class="r">111.73</td><td class="r">152.43</td><td class="r">0.00</td><td class="r down">-26.70</td><td class="r up">+5.12</td><td class="r">152.64</td><td class="r down">-42.70</td><td class="r down">-27.97</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c warn">YES</td><td class="c">-</td></tr>
+        <tr><td class="acct">edward-futures</td><td class="c">Y</td><td class="r">107.53</td><td class="r">107.39</td><td class="r">0.00</td><td class="r up">+0.13</td><td class="r up">+0.56</td><td class="r">107.38</td><td class="r up">0.18</td><td class="r up">+0.16</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle</td></tr>
+        <tr><td class="acct">imelda-futures</td><td class="c">Y</td><td class="r">104.10</td><td class="r">113.31</td><td class="r">0.00</td><td class="r down">-8.13</td><td class="r up">+1.66</td><td class="r">113.29</td><td class="r down">-10.45</td><td class="r down">-9.22</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle</td></tr>
+        <tr><td class="acct">izak-futures</td><td class="c">Y</td><td class="r">102.98</td><td class="r">109.77</td><td class="r">0.00</td><td class="r down">-6.19</td><td class="r up">+2.39</td><td class="r">109.09</td><td class="r down">-7.51</td><td class="r down">-6.89</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle</td></tr>
+        <tr><td class="acct">ops-futures</td><td class="c">Y</td><td class="r">159.88</td><td class="r">203.13</td><td class="r">0.00</td><td class="r down">-21.29</td><td class="r up">+6.00</td><td class="r">199.90</td><td class="r down">-44.01</td><td class="r down">-22.02</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c warn">YES</td><td class="c">-</td></tr>
+        <tr><td class="acct">setiaji-futures</td><td class="c">Y</td><td class="r">98.14</td><td class="r">98.14</td><td class="r">0.00</td><td class="r down">-0.00</td><td class="r up">+8.42</td><td class="r">96.07</td><td class="r flat">0.00</td><td class="r flat">+0.00</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c warn">YES</td><td class="c">idle</td></tr>
+        <tr><td class="acct">susi-futures</td><td class="c">Y</td><td class="r">207.57</td><td class="r">207.57</td><td class="r">0.00</td><td class="r up">+0.00</td><td class="r up">+1.30</td><td class="r">203.05</td><td class="r flat">0.00</td><td class="r flat">+0.00</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c flat">-</td><td class="c">idle</td></tr>
+        <tr><td class="acct">tommy-futures</td><td class="c">Y</td><td class="r">102.17</td><td class="r">112.05</td><td class="r">0.00</td><td class="r down">-8.82</td><td class="r up">+4.82</td><td class="r">112.01</td><td class="r down">-13.02</td><td class="r down">-11.62</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c warn">YES</td><td class="c">idle</td></tr>
+        <tr><td class="acct">vennia-futures</td><td class="c">Y</td><td class="r">83.30</td><td class="r">115.12</td><td class="r">0.00</td><td class="r down">-27.64</td><td class="r up">+5.07</td><td class="r">111.44</td><td class="r down">-35.62</td><td class="r down">-31.96</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c warn">YES</td><td class="c">idle</td></tr>
+        <tr><td class="acct">wasil-futures</td><td class="c">Y</td><td class="r">95.48</td><td class="r">110.82</td><td class="r">0.00</td><td class="r down">-13.84</td><td class="r up">+4.53</td><td class="r">110.40</td><td class="r down">-17.92</td><td class="r down">-16.23</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c warn">YES</td><td class="c">idle</td></tr>
+        <tr><td class="acct">wildan-futures</td><td class="c">Y</td><td class="r">91.75</td><td class="r">115.37</td><td class="r">0.00</td><td class="r down">-20.48</td><td class="r up">+4.42</td><td class="r">114.61</td><td class="r down">-25.72</td><td class="r down">-22.45</td><td class="c up">ok</td><td class="r">+2.00</td><td class="r">+3.00</td><td class="c warn">YES</td><td class="c">idle</td></tr>
       </tbody>
     </table>
   </div>
   <div class="note">
-    <div class="legend">
-      <span><b class="up">green</b> ALLTIME% ≥ 0 / gate ok</span>
-      <span><b class="down">red</b> ALLTIME% &lt; 0 / gate BLOCK / ~sw</span>
-      <span><b class="warn">yellow</b> fire? YES</span>
-      <span><b class="flat">grey</b> none</span>
-    </div>
-    <b>ALLTIME%</b> = (equity − <code>extra_capital</code> − <code>total_capital</code>) / <code>total_capital</code> × 100.
-    <b>ec</b> = <code>extra_capital</code> (injeksi). <b>fbb</b> = <code>first_buy_balance</code>.
-    <b>unreal$</b> = mark-to-market P&amp;L posisi aktif (futures = <code>futures_live</code> WS cache; spot = harga snapshot <code>capital_asset_hourly</code> per jam).
-    <b>gate</b> = <code>equity_own &gt; max(fbb, total)</code> — <code>BLOCK</code> berarti akun masih di bawah modal → swipe tidak bisa fire.
-    <b>fire?</b> = <code>YES</code> bila ALLTIME% ≥ swAT% dan gate <code>ok</code>; <code>~sw</code> bila threshold lolos tapi gate blok.
-    <b>swAT%</b> = <code>swipe_on_profit_alltime_pct</code>, <b>sw%</b> = <code>swipe_on_profit_pct</code> (jalur today).
-    <b>phase</b> = marker <code>swipe_on_profit</code> (phase:count). Read-only — tidak pernah menulis DB / order / transfer.
+    <b>ec</b> = extra_capital dari DB (bukan yaml). <b>ALLTIME%</b> =
+    (equity − ec − total) / total. <b>gate</b> = <code>_extra_capital_suspect</code>
+    (BLOCKED = yaml/DB extra_capital tidak cocok dengan injeksi live → swipe ditahan).
+    <b>fire?</b> = YES bila ambang today/all-time terlampaui DAN gate tidak menahan.
   </div>
 </div>
 </body>
