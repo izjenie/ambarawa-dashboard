@@ -31,38 +31,52 @@
   .up { color:var(--up); } .down { color:var(--down); }
   .flat { color:var(--flat); } .warn { color:var(--warn); font-weight:600; }
   .note { color:var(--muted); font-size:0.78rem; margin-top:14px; line-height:1.6; }
+  thead th[data-sort] { cursor:pointer; user-select:none; }
+  thead th[data-sort]:hover { color:var(--txt); }
+  thead th.sort-active { color:#7dd3fc; }
+  thead th .sort-ind { opacity:0.35; font-size:0.65rem; margin-left:3px; }
+  thead th.sort-active .sort-ind { opacity:1; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Ambarawa Swipe — SPOT</h1>
-  <div class="sub">Generated 2026-10-18 08:31:56 UTC · 13 account(s) · refresh every 10 min</div>
+  <div class="sub">Generated 2026-10-18 15:40:00 WIB (2026-10-18 08:40:00 UTC) · 13 account(s) · refresh every 10 min</div>
   <div class="card">
     <table>
       <thead>
         <tr>
-          <th>account</th><th class="c">en</th><th class="r">equity</th>
-          <th class="r">total</th><th class="r">ec</th><th class="r">own</th>
-          <th class="r">basis</th><th class="r">ALLTIME%</th>
-          <th class="r">today%</th><th class="r">fbb</th><th class="r">unreal$</th>
-          <th class="r">unreal%</th><th class="c">gate</th><th class="r">swAT%</th>
-          <th class="r">sw%</th><th class="c">fire?</th><th class="c">phase</th>
+          <th data-sort="account">account</th><th class="c">en</th>
+          <th class="r" data-sort="equity">equity</th>
+          <th class="r" data-sort="total">total</th><th class="r" data-sort="ec">ec</th>
+          <th class="r" data-sort="own">own</th>
+          <th class="r" data-sort="basis">basis</th>
+          <th class="r sort-active" data-sort="alltime">ALLTIME%</th>
+          <th class="r" data-sort="today">today%</th>
+          <th class="r" data-sort="fbb">fbb</th>
+          <th class="r" data-sort="unreal">unreal$</th>
+          <th class="r" data-sort="unreal-pct">unreal%</th>
+          <th class="c">gate</th>
+          <th class="r" data-sort="swat">swAT%</th>
+          <th class="r" data-sort="sw">sw%</th>
+          <th class="c" data-sort="fire">fire?</th>
+          <th class="c">phase</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td class="acct">alvina</td><td class="c">Y</td><td class="r">759.75</td><td class="r">790.00</td><td class="r">0.00</td><td class="r">759.75</td><td class="r">790.00</td><td class="r down">-3.83</td><td class="r down">-0.06</td><td class="r">766.63</td><td class="r down">-13.30</td><td class="r down">-1.74</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
-        <tr><td class="acct">azel</td><td class="c">Y</td><td class="r">1,762.19</td><td class="r">2,000.00</td><td class="r">0.00</td><td class="r">1,762.19</td><td class="r">2,000.00</td><td class="r down">-11.89</td><td class="r down">-0.14</td><td class="r">1,833.59</td><td class="r down">-271.43</td><td class="r down">-14.80</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
-        <tr><td class="acct">bagus</td><td class="c">Y</td><td class="r">5,135.09</td><td class="r">5,500.00</td><td class="r">0.00</td><td class="r">5,135.09</td><td class="r">5,500.00</td><td class="r down">-6.63</td><td class="r up">+0.64</td><td class="r">5,160.29</td><td class="r down">-417.65</td><td class="r down">-8.09</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
-        <tr><td class="acct">batara</td><td class="c">Y</td><td class="r">4,648.92</td><td class="r">5,149.00</td><td class="r">0.00</td><td class="r">4,648.92</td><td class="r">5,149.00</td><td class="r down">-9.71</td><td class="r up">+0.66</td><td class="r">4,706.23</td><td class="r down">-502.25</td><td class="r down">-10.67</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
-        <tr><td class="acct">bima</td><td class="c">Y</td><td class="r">480.28</td><td class="r">500.00</td><td class="r">0.00</td><td class="r">480.28</td><td class="r">500.00</td><td class="r down">-3.94</td><td class="r down">-0.15</td><td class="r">491.14</td><td class="r down">-19.31</td><td class="r down">-3.93</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
-        <tr><td class="acct">christine</td><td class="c">Y</td><td class="r">1,890.59</td><td class="r">2,000.00</td><td class="r">0.00</td><td class="r">1,890.59</td><td class="r">2,000.00</td><td class="r down">-5.47</td><td class="r up">+0.01</td><td class="r">1,916.44</td><td class="r down">-37.87</td><td class="r down">-1.98</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
-        <tr><td class="acct">dian</td><td class="c">Y</td><td class="r">1,265.50</td><td class="r">1,280.00</td><td class="r">0.00</td><td class="r">1,265.50</td><td class="r">1,280.00</td><td class="r down">-1.13</td><td class="r down">-0.01</td><td class="r">1,279.74</td><td class="r down">-24.39</td><td class="r down">-1.91</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
-        <tr><td class="acct">edward</td><td class="c">Y</td><td class="r">1,940.35</td><td class="r">2,122.00</td><td class="r">0.00</td><td class="r">1,940.35</td><td class="r">2,122.00</td><td class="r down">-8.56</td><td class="r up">+0.50</td><td class="r">1,956.21</td><td class="r down">-183.02</td><td class="r down">-9.36</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
-        <tr><td class="acct">imelda</td><td class="c">Y</td><td class="r">3,492.30</td><td class="r">3,000.00</td><td class="r">600.00</td><td class="r">2,892.30</td><td class="r">3,000.00</td><td class="r down">-3.59</td><td class="r up">+0.30</td><td class="r">2,949.21</td><td class="r down">-139.00</td><td class="r down">-4.71</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
-        <tr><td class="acct">izak</td><td class="c">Y</td><td class="r">3,467.32</td><td class="r">3,000.00</td><td class="r">600.00</td><td class="r">2,867.32</td><td class="r">3,000.00</td><td class="r down">-4.42</td><td class="r up">+0.38</td><td class="r">2,820.59</td><td class="r down">-146.34</td><td class="r down">-5.19</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
-        <tr><td class="acct">kresna</td><td class="c">Y</td><td class="r">993.35</td><td class="r">1,000.00</td><td class="r">0.00</td><td class="r">993.35</td><td class="r">1,000.90</td><td class="r down">-0.67</td><td class="r down">-0.16</td><td class="r">1,000.90</td><td class="r down">-15.55</td><td class="r down">-1.55</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
-        <tr><td class="acct">setiaji</td><td class="c">Y</td><td class="r">576.40</td><td class="r">500.00</td><td class="r">90.00</td><td class="r">486.40</td><td class="r">500.00</td><td class="r down">-2.72</td><td class="r down">-0.17</td><td class="r">489.46</td><td class="r down">-16.71</td><td class="r down">-3.41</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
-        <tr><td class="acct">tommy</td><td class="c">Y</td><td class="r">1,365.39</td><td class="r">1,500.00</td><td class="r">0.00</td><td class="r">1,365.39</td><td class="r">1,500.00</td><td class="r down">-8.97</td><td class="r up">+0.49</td><td class="r">1,387.16</td><td class="r down">-145.50</td><td class="r down">-10.49</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="kresna" data-s-equity="994.063748" data-s-total="1000.0" data-s-ec="0.0" data-s-own="994.063748" data-s-basis="1000.896" data-s-alltime="-0.5936251999999967" data-s-today="-0.08516439064446092" data-s-fbb="1000.896" data-s-unreal="-14.835489999999986" data-s-unreal-pct="-1.4822209300466769" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">kresna</td><td class="c">Y</td><td class="r">994.06</td><td class="r">1,000.00</td><td class="r">0.00</td><td class="r">994.06</td><td class="r">1,000.90</td><td class="r down">-0.59</td><td class="r down">-0.09</td><td class="r">1,000.90</td><td class="r down">-14.84</td><td class="r down">-1.48</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="dian" data-s-equity="1266.412133" data-s-total="1280.0" data-s-ec="0.0" data-s-own="1266.412133" data-s-basis="1280.0" data-s-alltime="-1.0615521093749969" data-s-today="0.0662187199683171" data-s-fbb="1279.7372" data-s-unreal="-23.474739999999958" data-s-unreal-pct="-1.8343406755699496" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">dian</td><td class="c">Y</td><td class="r">1,266.41</td><td class="r">1,280.00</td><td class="r">0.00</td><td class="r">1,266.41</td><td class="r">1,280.00</td><td class="r down">-1.06</td><td class="r up">+0.07</td><td class="r">1,279.74</td><td class="r down">-23.47</td><td class="r down">-1.83</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="setiaji" data-s-equity="576.837522" data-s-total="500.0" data-s-ec="90.0" data-s-own="486.83752200000004" data-s-basis="500.0" data-s-alltime="-2.6324955999999933" data-s-today="-0.09271535627407165" data-s-fbb="489.4597" data-s-unreal="-16.277690399999926" data-s-unreal-pct="-3.325644664923369" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">setiaji</td><td class="c">Y</td><td class="r">576.84</td><td class="r">500.00</td><td class="r">90.00</td><td class="r">486.84</td><td class="r">500.00</td><td class="r down">-2.63</td><td class="r down">-0.09</td><td class="r">489.46</td><td class="r down">-16.28</td><td class="r down">-3.33</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="imelda" data-s-equity="3494.649916" data-s-total="3000.0" data-s-ec="600.0" data-s-own="2894.649916" data-s-basis="3000.0" data-s-alltime="-3.511669466666672" data-s-today="0.36582441845014096" data-s-fbb="2949.2117" data-s-unreal="-136.65137000000001" data-s-unreal-pct="-4.633487992740569" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">imelda</td><td class="c">Y</td><td class="r">3,494.65</td><td class="r">3,000.00</td><td class="r">600.00</td><td class="r">2,894.65</td><td class="r">3,000.00</td><td class="r down">-3.51</td><td class="r up">+0.37</td><td class="r">2,949.21</td><td class="r down">-136.65</td><td class="r down">-4.63</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="alvina" data-s-equity="760.628076" data-s-total="790.0" data-s-ec="0.0" data-s-own="760.628076" data-s-basis="790.0" data-s-alltime="-3.717965063291144" data-s-today="0.054755278601188916" data-s-fbb="766.6254" data-s-unreal="-12.8043499999999" data-s-unreal-pct="-1.6702225102377117" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">alvina</td><td class="c">Y</td><td class="r">760.63</td><td class="r">790.00</td><td class="r">0.00</td><td class="r">760.63</td><td class="r">790.00</td><td class="r down">-3.72</td><td class="r up">+0.05</td><td class="r">766.63</td><td class="r down">-12.80</td><td class="r down">-1.67</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="bima" data-s-equity="480.548495" data-s-total="500.0" data-s-ec="0.0" data-s-own="480.548495" data-s-basis="500.0" data-s-alltime="-3.8903009999999996" data-s-today="-0.09682896799633325" data-s-fbb="491.1381" data-s-unreal="-19.041369999999972" data-s-unreal-pct="-3.876988977234707" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">bima</td><td class="c">Y</td><td class="r">480.55</td><td class="r">500.00</td><td class="r">0.00</td><td class="r">480.55</td><td class="r">500.00</td><td class="r down">-3.89</td><td class="r down">-0.10</td><td class="r">491.14</td><td class="r down">-19.04</td><td class="r down">-3.88</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="izak" data-s-equity="3469.964088" data-s-total="3000.0" data-s-ec="600.0" data-s-own="2869.964088" data-s-basis="3000.0" data-s-alltime="-4.334530399999994" data-s-today="0.4528098283684493" data-s-fbb="2820.5883" data-s-unreal="-143.69315700000027" data-s-unreal-pct="-5.094439234538421" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">izak</td><td class="c">Y</td><td class="r">3,469.96</td><td class="r">3,000.00</td><td class="r">600.00</td><td class="r">2,869.96</td><td class="r">3,000.00</td><td class="r down">-4.33</td><td class="r up">+0.45</td><td class="r">2,820.59</td><td class="r down">-143.69</td><td class="r down">-5.09</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="christine" data-s-equity="1892.015867" data-s-total="2000.0" data-s-ec="0.0" data-s-own="1892.015867" data-s-basis="2000.0" data-s-alltime="-5.399206649999996" data-s-today="0.08645015508665264" data-s-fbb="1916.4409" data-s-unreal="-36.442410000000145" data-s-unreal-pct="-1.9015671185059837" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">christine</td><td class="c">Y</td><td class="r">1,892.02</td><td class="r">2,000.00</td><td class="r">0.00</td><td class="r">1,892.02</td><td class="r">2,000.00</td><td class="r down">-5.40</td><td class="r up">+0.09</td><td class="r">1,916.44</td><td class="r down">-36.44</td><td class="r down">-1.90</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="bagus" data-s-equity="5134.984179" data-s-total="5500.0" data-s-ec="0.0" data-s-own="5134.984179" data-s-basis="5500.0" data-s-alltime="-6.63665129090909" data-s-today="0.633307181286731" data-s-fbb="5160.2854" data-s-unreal="-414.87602499999963" data-s-unreal-pct="-8.039788361318148" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">bagus</td><td class="c">Y</td><td class="r">5,134.98</td><td class="r">5,500.00</td><td class="r">0.00</td><td class="r">5,134.98</td><td class="r">5,500.00</td><td class="r down">-6.64</td><td class="r up">+0.63</td><td class="r">5,160.29</td><td class="r down">-414.88</td><td class="r down">-8.04</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="edward" data-s-equity="1942.014173" data-s-total="2122.0" data-s-ec="0.0" data-s-own="1942.014173" data-s-basis="2122.0" data-s-alltime="-8.481895711592834" data-s-today="0.5835949543439659" data-s-fbb="1956.211" data-s-unreal="-181.3512300000001" data-s-unreal-pct="-9.270535233673673" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">edward</td><td class="c">Y</td><td class="r">1,942.01</td><td class="r">2,122.00</td><td class="r">0.00</td><td class="r">1,942.01</td><td class="r">2,122.00</td><td class="r down">-8.48</td><td class="r up">+0.58</td><td class="r">1,956.21</td><td class="r down">-181.35</td><td class="r down">-9.27</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="tommy" data-s-equity="1366.446561" data-s-total="1500.0" data-s-ec="0.0" data-s-own="1366.446561" data-s-basis="1500.0" data-s-alltime="-8.903562600000003" data-s-today="0.5673507181926336" data-s-fbb="1387.1635" data-s-unreal="-144.44826999999995" data-s-unreal-pct="-10.413211564462296" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">tommy</td><td class="c">Y</td><td class="r">1,366.45</td><td class="r">1,500.00</td><td class="r">0.00</td><td class="r">1,366.45</td><td class="r">1,500.00</td><td class="r down">-8.90</td><td class="r up">+0.57</td><td class="r">1,387.16</td><td class="r down">-144.45</td><td class="r down">-10.41</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="batara" data-s-equity="4654.716502" data-s-total="5149.0" data-s-ec="0.0" data-s-own="4654.716502" data-s-basis="5149.0" data-s-alltime="-9.5996018255972" data-s-today="0.7859736278489009" data-s-fbb="4706.2288" data-s-unreal="-497.50199999999984" data-s-unreal-pct="-10.57113925272821" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">batara</td><td class="c">Y</td><td class="r">4,654.72</td><td class="r">5,149.00</td><td class="r">0.00</td><td class="r">4,654.72</td><td class="r">5,149.00</td><td class="r down">-9.60</td><td class="r up">+0.79</td><td class="r">4,706.23</td><td class="r down">-497.50</td><td class="r down">-10.57</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="azel" data-s-equity="1762.486091" data-s-total="2000.0" data-s-ec="0.0" data-s-own="1762.486091" data-s-basis="2000.0" data-s-alltime="-11.875695450000002" data-s-today="-0.1273621838321253" data-s-fbb="1833.5899" data-s-unreal="-271.0487200000001" data-s-unreal-pct="-14.782406905709946" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">azel</td><td class="c">Y</td><td class="r">1,762.49</td><td class="r">2,000.00</td><td class="r">0.00</td><td class="r">1,762.49</td><td class="r">2,000.00</td><td class="r down">-11.88</td><td class="r down">-0.13</td><td class="r">1,833.59</td><td class="r down">-271.05</td><td class="r down">-14.78</td><td class="c down">BLOCK</td><td class="r">+1.50</td><td class="r">+2.00</td><td class="c flat">~sw</td><td class="c">-</td></tr>
       </tbody>
     </table>
   </div>
@@ -80,5 +94,90 @@
     <span class="flat">-</span> = tidak ada ambang yang kena, atau akun masih rugi all-time.
   </div>
 </div>
+<script>
+(function () {
+  var table = document.querySelector('table');
+  if (!table) return;
+  var tbody = table.tBodies[0];
+  if (!tbody) return;
+  var ths = table.querySelectorAll('thead th');
+  // Default: ALLTIME% descending (most profitable on top), matching the
+  // server-side pre-sort so the first click on ALLTIME% reverses it.
+  var current = { col: 'alltime', dir: -1 };
+
+  // Sort on the RAW value carried by data-s-*, never the rendered text:
+  // "1,234.56" parses as 1, "-" as NaN. Empty means "no data" and always
+  // sinks to the bottom regardless of direction, so accounts without a
+  // sample never displace accounts that have one.
+  function raw(tr, col) {
+    var v = tr.getAttribute('data-s-' + col);
+    return v === null ? '' : v;
+  }
+
+  function cmp(a, b, col) {
+    var va = raw(a, col), vb = raw(b, col);
+    if (col === 'account') {
+      return String(va).localeCompare(String(vb), undefined, { sensitivity: 'base' });
+    }
+    var na = parseFloat(va), nb = parseFloat(vb);
+    if (isNaN(na) || isNaN(nb)) return va < vb ? -1 : (va > vb ? 1 : 0);
+    return na - nb;
+  }
+
+  function sortBy(col, dir) {
+    var rows = Array.prototype.slice.call(tbody.rows);
+    // The "no accounts" placeholder is not sortable data.
+    var placeholders = rows.filter(function (r) {
+      return !r.hasAttribute('data-s-account');
+    });
+    rows = rows.filter(function (r) { return r.hasAttribute('data-s-account'); });
+
+    rows.sort(function (a, b) {
+      var aEmpty = raw(a, col) === '', bEmpty = raw(b, col) === '';
+      // Empties sink to the bottom in BOTH directions, so an account with no
+      // sample never displaces one that has a value.
+      if (aEmpty !== bEmpty) return aEmpty ? 1 : -1;
+      if (aEmpty && bEmpty) return 0;
+      var c = cmp(a, b, col);
+      return dir > 0 ? c : -c;
+    });
+
+    if (placeholders.length) {
+      rows = rows.concat(placeholders);
+    }
+    rows.forEach(function (r) { tbody.appendChild(r); });
+
+    ths.forEach(function (th) {
+      var ind = th.querySelector('.sort-ind');
+      th.classList.remove('sort-active');
+      if (ind) ind.textContent = '▲▼';
+    });
+    var active = table.querySelector('thead th[data-sort="' + col + '"]');
+    if (active) {
+      active.classList.add('sort-active');
+      var i = active.querySelector('.sort-ind');
+      if (i) i.textContent = dir > 0 ? '▲' : '▼';
+    }
+  }
+
+  ths.forEach(function (th) {
+    var col = th.getAttribute('data-sort');
+    if (!col) return;
+    var ind = document.createElement('span');
+    ind.className = 'sort-ind';
+    ind.textContent = '▲▼';
+    th.appendChild(ind);
+    th.addEventListener('click', function () {
+      var dir = (current.col === col && current.dir > 0) ? -1 : 1;
+      current = { col: col, dir: dir };
+      sortBy(col, dir);
+    });
+  });
+
+  // Apply the default view on load so the active indicator and the order
+  // agree even if the server-side pre-sort is ever bypassed.
+  sortBy('alltime', -1);
+})();
+</script>
 </body>
 </html>
