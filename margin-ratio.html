@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Margin Ratio · Futures</title>
+<style>
+  :root{
+    --bg:#0b1220; --card:#111a2e; --line:#243349; --txt:#e2e8f0; --muted:#94a3b8;
+    --up:#16a34a; --down:#dc2626; --warn:#f59e0b; --acc:#38bdf8;
+    --low:#16a34a; --moderate:#eab308; --high:#f97316; --critical:#dc2626; --liq:#a21caf;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+       font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:1280px;margin:0 auto;padding:18px 16px 60px}
+  h1{font-size:1.25rem;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:0.85rem;margin:2px 0 14px;
+       display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .status{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:0.8rem;
+          border:1px solid var(--line);border-radius:999px;padding:3px 11px}
+  .dot{width:8px;height:8px;border-radius:50%;background:#64748b}
+  .dot.on{background:var(--up);box-shadow:0 0 6px var(--up)}
+  .dot.off{background:var(--down);box-shadow:0 0 6px var(--down)}
+  .chip{font-size:0.75rem;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--muted)}
+  .section{border:1px solid var(--line);border-radius:14px;padding:14px 16px 12px;margin-bottom:16px;
+           background:linear-gradient(180deg,#14233c,#101a2e)}
+  .sec-title{display:flex;align-items:center;gap:10px;color:var(--acc);font-weight:700;
+             text-transform:uppercase;font-size:0.78rem;letter-spacing:0.12em;margin-bottom:12px}
+  .sec-title:after{content:"";flex:1;height:1px;background:var(--line)}
+  .banner{display:none;border:1px solid #7c2d12;background:#2a1410;color:#fca5a5;
+          border-radius:10px;padding:9px 12px;font-size:0.8rem;margin-bottom:12px}
+  .banner code{color:#fde68a}
+  .tblwrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:0.84rem}
+  th,td{padding:8px 9px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em}
+  th.r,td.r{text-align:right}
+  tbody tr:hover{background:#16233d}
+  tfoot td{font-weight:700;border-top:2px solid #3b5a82;color:var(--muted);font-size:0.8rem}
+  .band{display:inline-flex;align-items:center;gap:6px;font-weight:700}
+  .b-low{color:var(--low)} .b-moderate{color:var(--moderate)} .b-high{color:var(--high)}
+  .b-critical{color:var(--critical)} .b-liquidation{color:var(--liq)}
+  .st{font-size:0.7rem;font-weight:700;letter-spacing:0.06em;border-radius:6px;padding:2px 7px}
+  .st-live{background:#052e16;color:#4ade80;border:1px solid #14532d}
+  .st-stale{background:#3b2a06;color:#fbbf24;border:1px solid #78350f}
+  .st-unverified{background:#1e293b;color:#94a3b8;border:1px solid #334155}
+  .mut{color:var(--muted)}
+  .pos{color:var(--up)} .neg{color:var(--down)}
+  .rowwarn{background:#1f1206}
+  @media(max-width:760px){.wrap{padding:12px 10px 40px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💹 Binance Futures — Cross Margin Ratio</h1>
+  <div class="sub">
+    <span>estimasi lokal · terbesar dulu</span>
+    <span class="chip" id="clock">—</span>
+    <span class="chip" id="mark">marks —</span>
+    <span class="chip" id="age">data —</span>
+    <span class="status" id="status"><span class="dot" id="dot"></span><span id="statusText">connecting…</span></span>
+    <span class="chip" id="wsInfo"></span>
+  </div>
+
+  <div class="banner" id="bracketBanner">
+    ⚠️ Bracket risk belum ada untuk: <code id="bracketList"></code> — jalankan
+    <code>./scripts/margin-ratio.sh --refresh-brackets</code>.
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Margin ratio per akun</div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr>
+          <th>Account</th><th class="r">Pos</th><th>Coins</th>
+          <th class="r">Wallet</th><th class="r">uPnL</th><th class="r">Margin Bal</th>
+          <th class="r">Maint MM</th><th class="r">Notional</th>
+          <th class="r">Margin Ratio</th><th>Risk</th><th>Status</th>
+        </tr></thead>
+        <tbody id="rows"><tr><td colspan="11" class="mut">menunggu data…</td></tr></tbody>
+        <tfoot id="foot"></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// Relay sama dengan halaman dashboard lain; override via ?ws=ws://127.0.0.1:8787/ws
+const QS = new URLSearchParams(location.search);
+const WS_URL = QS.get("ws") || "wss://ws.kebonjeruk.xyz/ws";
+const MARKET = "margin";
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const str = v => (v===null||v===undefined||Number.isNaN(v)) ? "—" : String(v);
+const compact = v => {                       // matches scripts/margin_ratio.py fmt_compact
+  if(v===null||v===undefined||Number.isNaN(v)) return "—";
+  const n = Number(v);
+  if(n===0) return "0";
+  const a = Math.abs(n);
+  if(a>=1e12) return (n/1e12).toFixed(2)+"T";
+  if(a>=1e9)  return (n/1e9).toFixed(2)+"B";
+  if(a>=1e6)  return (n/1e6).toFixed(2)+"M";
+  return n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+};
+const ratio = v => (v===null||v===undefined) ? "—"
+  : (v===Infinity || v==="Infinity" || v==="inf") ? "&gt;100%" : Number(v).toFixed(2)+"%";
+const cls = v => v>0 ? "pos" : (v<0 ? "neg" : "");
+const bandLabel = b => ({low:"low",moderate:"moderate",high:"high",
+  critical:"critical",liquidation:"liquidation",unknown:"unknown"}[b] || b || "unknown");
+
+function render(f){
+  const sum = f.summary || {};
+  const rows = f.rows || [];
+  $("clock").textContent = (f.ts ? new Date(f.ts).toLocaleString() : "—");
+
+  const mk = f.mark || {};
+  $("mark").textContent = "marks " + (mk.prices||0) + "/" + (mk.symbols||0)
+    + (mk.connected ? " 🟢" : " 🔴")
+    + (mk.age_ms!=null ? " · " + (mk.age_ms/1000).toFixed(1) + "s" : "");
+  $("age").textContent = f.data_age_s!=null ? "data " + f.data_age_s + "s" : "data —";
+
+  const missing = sum.missing_brackets || [];
+  $("bracketBanner").style.display = missing.length ? "block" : "none";
+  $("bracketList").textContent = missing.join(", ");
+
+  const body = $("rows");
+  body.innerHTML = "";
+  if(!rows.length){
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 11; td.className = "mut";
+    td.textContent = "(no futures accounts)";
+    tr.appendChild(td); body.appendChild(tr);
+  } else {
+    rows.forEach(r=>{
+      const tr = document.createElement("tr");
+      const hasRatio = r.margin_ratio !== null && r.margin_ratio !== undefined;
+      if(r.status === "live" && hasRatio && Number(r.margin_ratio) >= 80) tr.className = "rowwarn";
+      tr.innerHTML =
+        "<td>"+esc(r.account)+"</td>"
+        +"<td class='r'>"+str(r.n_positions)+"</td>"
+        +"<td>"+esc(r.coins||"-")+"</td>"
+        +"<td class='r'>"+compact(r.wallet)+"</td>"
+        +"<td class='r "+cls(r.unrealized)+"'>"+compact(r.unrealized)+"</td>"
+        +"<td class='r'>"+compact(r.margin_balance)+"</td>"
+        +"<td class='r'>"+compact(r.maint_margin)+"</td>"
+        +"<td class='r'>"+compact(r.notional)+"</td>"
+        +"<td class='r b-"+esc(r.band||"unknown")+"'>"+(hasRatio ? ratio(r.margin_ratio) : "—")+"</td>"
+        +"<td class='b-"+esc(r.band||"unknown")+"'><span class='band'>"
+          +(hasRatio ? esc(r.icon||"") + " " + esc(bandLabel(r.band)) : "<span class='mut'>·</span>")+"</span></td>"
+        +"<td><span class='st st-"+esc(r.status)+"'>"+esc(r.status_label||r.status)+"</span></td>";
+      body.appendChild(tr);
+    });
+  }
+
+  const foot = $("foot");
+  foot.innerHTML = "";
+  const tr = document.createElement("tr");
+  let txt = (sum.accounts||0) + " akun futures · live " + (sum.live||0)
+          + " · stale " + (sum.stale||0) + " · unverified " + (sum.unverified||0);
+  if(sum.worst) txt += " · tertinggi " + sum.worst.account + " "
+    + ratio(sum.worst.margin_ratio) + " " + (sum.worst.icon||"") + " " + bandLabel(sum.worst.band);
+  const td = document.createElement("td");
+  td.colSpan = 11; td.textContent = txt;
+  tr.appendChild(td); foot.appendChild(tr);
+}
+
+function setStatus(on, txt){ $("dot").className = "dot " + (on?"on":"off"); $("statusText").textContent = txt; }
+let lastWsErr = "";
+function connect(){
+  setStatus(false, "connecting…");
+  let ws;
+  const url = new URL(WS_URL);
+  url.searchParams.set("market", MARKET);
+  try { ws = new WebSocket(url.toString()); }
+  catch(e){ setStatus(false, "ws init error: " + e.message); return; }
+  ws.onopen = ()=>{ lastWsErr = ""; setStatus(true, "live"); };
+  ws.onmessage = e=>{
+    try {
+      const f = JSON.parse(e.data);
+      if(f && f.market === "margin") render(f);
+    } catch(err){ console.warn("frame", err); }
+  };
+  ws.onerror = ()=>{ lastWsErr = "network error"; };
+  ws.onclose = ev=>{
+    const code = (ev && ev.code!=null) ? " · code "+ev.code : "";
+    setStatus(false, "reconnecting… " + lastWsErr + code);
+    setTimeout(connect, 2000);
+  };
+}
+
+$("wsInfo").textContent = WS_URL.replace(/^wss?:\/\//, "") + "?market=" + MARKET;
+connect();
+</script>
+</body>
+</html>
