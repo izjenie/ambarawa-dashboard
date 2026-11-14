@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ambarawa Swipe — SPOT</title>
+<style>
+  :root { --up:#16a34a; --down:#dc2626; --flat:#6b7280; --warn:#f59e0b;
+           --bg:#0f172a; --card:#1e293b; --txt:#e2e8f0; --muted:#94a3b8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt);
+          font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  .wrap { max-width:1400px; margin:0 auto; padding:28px 20px 48px; }
+  h1 { font-size:1.35rem; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:0.82rem; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid #334155; border-radius:12px;
+           padding:6px 0; overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:0.86rem;
+           white-space:nowrap; }
+  thead th { color:var(--muted); font-weight:600; padding:10px 12px;
+              border-bottom:1px solid #334155; font-size:0.72rem;
+              text-transform:uppercase; letter-spacing:0.03em; text-align:right; }
+  thead th:first-child { text-align:left; }
+  tbody td { padding:10px 12px; border-bottom:1px solid #263449; }
+  tbody tr:last-child td { border-bottom:0; }
+  tbody tr:hover { background:#243349; }
+  tr.dim { color:var(--muted); }
+  td.acct { font-weight:600; text-align:left; }
+  td.r { text-align:right; font-variant-numeric:tabular-nums; }
+  td.c { text-align:center; }
+  .up { color:var(--up); } .down { color:var(--down); }
+  .flat { color:var(--flat); } .warn { color:var(--warn); font-weight:600; }
+  .note { color:var(--muted); font-size:0.78rem; margin-top:14px; line-height:1.6; }
+  thead th[data-sort] { cursor:pointer; user-select:none; }
+  thead th[data-sort]:hover { color:var(--txt); }
+  thead th.sort-active { color:#7dd3fc; }
+  thead th .sort-ind { opacity:0.35; font-size:0.65rem; margin-left:3px; }
+  thead th.sort-active .sort-ind { opacity:1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ambarawa Swipe — SPOT</h1>
+  <div class="sub">Generated 2026-11-15 01:00:00 WIB (2026-11-14 18:00:00 UTC) · 12 account(s) · refresh every 10 min</div>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="account">account</th><th class="c">en</th>
+          <th class="r" data-sort="days">days</th>
+          <th class="r" data-sort="start-eq">start_eq</th>
+          <th class="r" data-sort="equity">equity</th>
+          <th class="r" data-sort="total">total</th>
+          <th class="r" data-sort="pnl">pnl</th>
+          <th class="r" data-sort="ec">ec</th>
+          <th class="r" data-sort="own">own</th>
+          <th class="r" data-sort="basis">basis</th>
+          <th class="r" data-sort="alltime-usd">ALLTIME$</th>
+          <th class="r sort-active" data-sort="alltime">ALLTIME%</th>
+          <th class="r" data-sort="today">today%</th>
+          <th class="r" data-sort="fbb">fbb</th>
+          <th class="r" data-sort="unreal">unreal$</th>
+          <th class="r" data-sort="unreal-pct">unreal%</th>
+          <th class="c">gate</th>
+          <th class="r" data-sort="swat">swAT%</th>
+          <th class="r" data-sort="sw">sw%</th>
+          <th class="c" data-sort="fire">fire?</th>
+          <th class="c">phase</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-s-account="bima" data-s-days="45" data-s-start-eq="500.0" data-s-equity="358.049718" data-s-total="500.0" data-s-pnl="0.0" data-s-ec="0.0" data-s-own="358.049718" data-s-basis="500.0" data-s-alltime-usd="-141.95028200000002" data-s-alltime="-28.390056400000002" data-s-today="-7.347122460976633" data-s-fbb="394.155" data-s-unreal="-148.85225" data-s-unreal-pct="-37.76490213240984" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">bima</td><td class="c">Y</td><td class="r">45d</td><td class="r">500.00</td><td class="r">358.05</td><td class="r">500.00</td><td class="r flat">+0.00%</td><td class="r">0.00</td><td class="r">358.05</td><td class="r">500.00</td><td class="r down">-141.95</td><td class="r down">-28.39%</td><td class="r down">-7.35%</td><td class="r">394.15</td><td class="r down">-148.85</td><td class="r down">-37.76%</td><td class="c down" title="own 358.05 ≤ basis 500.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="setiaji" data-s-days="40" data-s-start-eq="500.0" data-s-equity="395.875032" data-s-total="500.0" data-s-pnl="0.0" data-s-ec="45.0" data-s-own="350.875032" data-s-basis="500.0" data-s-alltime-usd="-149.12496800000002" data-s-alltime="-29.824993600000006" data-s-today="-8.30208446579623" data-s-fbb="393.4009" data-s-unreal="-165.63384" data-s-unreal-pct="-42.103065854704454" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">setiaji</td><td class="c">Y</td><td class="r">40d</td><td class="r">500.00</td><td class="r">395.88</td><td class="r">500.00</td><td class="r flat">+0.00%</td><td class="r">45.00</td><td class="r">350.88</td><td class="r">500.00</td><td class="r down">-149.12</td><td class="r down">-29.82%</td><td class="r down">-8.30%</td><td class="r">393.40</td><td class="r down">-165.63</td><td class="r down">-42.10%</td><td class="c down" title="own 350.88 ≤ basis 500.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="dian" data-s-days="36" data-s-start-eq="1280.0" data-s-equity="886.844726" data-s-total="1280.0" data-s-pnl="0.0" data-s-ec="0.0" data-s-own="886.844726" data-s-basis="1280.0" data-s-alltime-usd="-393.15527399999996" data-s-alltime="-30.715255781249994" data-s-today="-9.538192528513276" data-s-fbb="985.9451" data-s-unreal="-440.0523999999999" data-s-unreal-pct="-44.63254597035879" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">dian</td><td class="c">Y</td><td class="r">36d</td><td class="r">1,280.00</td><td class="r">886.84</td><td class="r">1,280.00</td><td class="r flat">+0.00%</td><td class="r">0.00</td><td class="r">886.84</td><td class="r">1,280.00</td><td class="r down">-393.16</td><td class="r down">-30.72%</td><td class="r down">-9.54%</td><td class="r">985.95</td><td class="r down">-440.05</td><td class="r down">-44.63%</td><td class="c down" title="own 886.84 ≤ basis 1280.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="azel" data-s-days="44" data-s-start-eq="2000.0" data-s-equity="1345.650701" data-s-total="2000.0" data-s-pnl="0.0" data-s-ec="0.0" data-s-own="1345.650701" data-s-basis="2000.0" data-s-alltime-usd="-654.349299" data-s-alltime="-32.71746495" data-s-today="-6.8541048193715595" data-s-fbb="1478.6266" data-s-unreal="-691.85337" data-s-unreal-pct="-46.79026942975326" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">azel</td><td class="c">Y</td><td class="r">44d</td><td class="r">2,000.00</td><td class="r">1,345.65</td><td class="r">2,000.00</td><td class="r flat">+0.00%</td><td class="r">0.00</td><td class="r">1,345.65</td><td class="r">2,000.00</td><td class="r down">-654.35</td><td class="r down">-32.72%</td><td class="r down">-6.85%</td><td class="r">1,478.63</td><td class="r down">-691.85</td><td class="r down">-46.79%</td><td class="c down" title="own 1345.65 ≤ basis 2000.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="alvina" data-s-days="43" data-s-start-eq="790.0" data-s-equity="512.955007" data-s-total="790.0" data-s-pnl="0.0" data-s-ec="0.0" data-s-own="512.955007" data-s-basis="790.0" data-s-alltime-usd="-277.044993" data-s-alltime="-35.0689864556962" data-s-today="-9.458349895406744" data-s-fbb="568.1583" data-s-unreal="-298.30351" data-s-unreal-pct="-52.5035909886382" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">alvina</td><td class="c">Y</td><td class="r">43d</td><td class="r">790.00</td><td class="r">512.96</td><td class="r">790.00</td><td class="r flat">+0.00%</td><td class="r">0.00</td><td class="r">512.96</td><td class="r">790.00</td><td class="r down">-277.04</td><td class="r down">-35.07%</td><td class="r down">-9.46%</td><td class="r">568.16</td><td class="r down">-298.30</td><td class="r down">-52.50%</td><td class="c down" title="own 512.96 ≤ basis 790.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="imelda" data-s-days="48" data-s-start-eq="3000.0" data-s-equity="2546.883086" data-s-total="3000.0" data-s-pnl="0.0" data-s-ec="600.0" data-s-own="1946.8830859999998" data-s-basis="3000.0" data-s-alltime-usd="-1053.1169140000002" data-s-alltime="-35.10389713333334" data-s-today="-8.034910245982726" data-s-fbb="2210.4988" data-s-unreal="-1062.0321699999997" data-s-unreal-pct="-48.044910497123986" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">imelda</td><td class="c">Y</td><td class="r">48d</td><td class="r">3,000.00</td><td class="r">2,546.88</td><td class="r">3,000.00</td><td class="r flat">+0.00%</td><td class="r">600.00</td><td class="r">1,946.88</td><td class="r">3,000.00</td><td class="r down">-1,053.12</td><td class="r down">-35.10%</td><td class="r down">-8.03%</td><td class="r">2,210.50</td><td class="r down">-1,062.03</td><td class="r down">-48.04%</td><td class="c down" title="own 1946.88 ≤ basis 3000.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="tommy" data-s-days="43" data-s-start-eq="1500.0" data-s-equity="1079.616875" data-s-total="1500.0" data-s-pnl="0.0" data-s-ec="140.0" data-s-own="939.6168749999999" data-s-basis="1500.0" data-s-alltime-usd="-560.3831250000001" data-s-alltime="-37.358875000000005" data-s-today="-8.474498895180439" data-s-fbb="1049.6646" data-s-unreal="-566.1048499999998" data-s-unreal-pct="-53.93197503278664" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">tommy</td><td class="c">Y</td><td class="r">43d</td><td class="r">1,500.00</td><td class="r">1,079.62</td><td class="r">1,500.00</td><td class="r flat">+0.00%</td><td class="r">140.00</td><td class="r">939.62</td><td class="r">1,500.00</td><td class="r down">-560.38</td><td class="r down">-37.36%</td><td class="r down">-8.47%</td><td class="r">1,049.66</td><td class="r down">-566.10</td><td class="r down">-53.93%</td><td class="c down" title="own 939.62 ≤ basis 1500.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="izak" data-s-days="48" data-s-start-eq="3000.0" data-s-equity="2464.822311" data-s-total="3000.0" data-s-pnl="0.0" data-s-ec="600.0" data-s-own="1864.822311" data-s-basis="3000.0" data-s-alltime-usd="-1135.177689" data-s-alltime="-37.8392563" data-s-today="-7.147679873665655" data-s-fbb="2119.4181" data-s-unreal="-1148.8416995999996" data-s-unreal-pct="-54.20552460130447" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">izak</td><td class="c">Y</td><td class="r">48d</td><td class="r">3,000.00</td><td class="r">2,464.82</td><td class="r">3,000.00</td><td class="r flat">+0.00%</td><td class="r">600.00</td><td class="r">1,864.82</td><td class="r">3,000.00</td><td class="r down">-1,135.18</td><td class="r down">-37.84%</td><td class="r down">-7.15%</td><td class="r">2,119.42</td><td class="r down">-1,148.84</td><td class="r down">-54.21%</td><td class="c down" title="own 1864.82 ≤ basis 3000.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="batara" data-s-days="35" data-s-start-eq="5149.0" data-s-equity="3170.023924" data-s-total="5149.0" data-s-pnl="0.0" data-s-ec="0.0" data-s-own="3170.023924" data-s-basis="5149.0" data-s-alltime-usd="-1978.976076" data-s-alltime="-38.43418287046028" data-s-today="-9.532358514753254" data-s-fbb="3508.4171" data-s-unreal="-2031.44008" data-s-unreal-pct="-57.90189769625738" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">batara</td><td class="c">Y</td><td class="r">35d</td><td class="r">5,149.00</td><td class="r">3,170.02</td><td class="r">5,149.00</td><td class="r flat">+0.00%</td><td class="r">0.00</td><td class="r">3,170.02</td><td class="r">5,149.00</td><td class="r down">-1,978.98</td><td class="r down">-38.43%</td><td class="r down">-9.53%</td><td class="r">3,508.42</td><td class="r down">-2,031.44</td><td class="r down">-57.90%</td><td class="c down" title="own 3170.02 ≤ basis 5149.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="edward" data-s-days="34" data-s-start-eq="2122.0" data-s-equity="1498.225156" data-s-total="2122.0" data-s-pnl="0.0" data-s-ec="200.0" data-s-own="1298.225156" data-s-basis="2122.0" data-s-alltime-usd="-823.774844" data-s-alltime="-38.82068067860509" data-s-today="-8.516745318565798" data-s-fbb="1453.0305" data-s-unreal="-841.7349899999999" data-s-unreal-pct="-57.92961606793525" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">edward</td><td class="c">Y</td><td class="r">34d</td><td class="r">2,122.00</td><td class="r">1,498.23</td><td class="r">2,122.00</td><td class="r flat">+0.00%</td><td class="r">200.00</td><td class="r">1,298.23</td><td class="r">2,122.00</td><td class="r down">-823.77</td><td class="r down">-38.82%</td><td class="r down">-8.52%</td><td class="r">1,453.03</td><td class="r down">-841.73</td><td class="r down">-57.93%</td><td class="c down" title="own 1298.23 ≤ basis 2122.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="bagus" data-s-days="45" data-s-start-eq="5500.0" data-s-equity="3350.512239" data-s-total="5500.0" data-s-pnl="0.0" data-s-ec="0.0" data-s-own="3350.512239" data-s-basis="5500.0" data-s-alltime-usd="-2149.487761" data-s-alltime="-39.08159565454545" data-s-today="-8.701406453045534" data-s-fbb="3716.0878" data-s-unreal="-2249.6168479999997" data-s-unreal-pct="-60.537236176174304" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">bagus</td><td class="c">Y</td><td class="r">45d</td><td class="r">5,500.00</td><td class="r">3,350.51</td><td class="r">5,500.00</td><td class="r flat">+0.00%</td><td class="r">0.00</td><td class="r">3,350.51</td><td class="r">5,500.00</td><td class="r down">-2,149.49</td><td class="r down">-39.08%</td><td class="r down">-8.70%</td><td class="r">3,716.09</td><td class="r down">-2,249.62</td><td class="r down">-60.54%</td><td class="c down" title="own 3350.51 ≤ basis 5500.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+        <tr data-s-account="christine" data-s-days="36" data-s-start-eq="2000.0" data-s-equity="1204.632458" data-s-total="2000.0" data-s-pnl="0.0" data-s-ec="0.0" data-s-own="1204.632458" data-s-basis="2000.0" data-s-alltime-usd="-795.367542" data-s-alltime="-39.768377099999995" data-s-today="-9.965314892037997" data-s-fbb="1339.805" data-s-unreal="-816.6628799999997" data-s-unreal-pct="-60.95386119621883" data-s-swat="1.5" data-s-sw="2.0" data-s-fire="1"><td class="acct">christine</td><td class="c">Y</td><td class="r">36d</td><td class="r">2,000.00</td><td class="r">1,204.63</td><td class="r">2,000.00</td><td class="r flat">+0.00%</td><td class="r">0.00</td><td class="r">1,204.63</td><td class="r">2,000.00</td><td class="r down">-795.37</td><td class="r down">-39.77%</td><td class="r down">-9.97%</td><td class="r">1,339.81</td><td class="r down">-816.66</td><td class="r down">-60.95%</td><td class="c down" title="own 1204.63 ≤ basis 2000.00">BLOCK</td><td class="r">+1.50%</td><td class="r">+2.00%</td><td class="c flat">~sw</td><td class="c">-</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>ec</b> = extra_capital dari DB (bukan yaml). <b>days</b> = umur periode open
+    (hari kalender, inklusif). <b>start_eq</b> = start equity periode yang sedang
+    open (<span class="flat">-</span> bila tidak ada periode open).
+    <b>pnl</b> = (total − start_eq) / start_eq × 100 (tanpa ec).
+    <b>ALLTIME$</b> = equity − ec − total. <b>ALLTIME%</b> =
+    (equity − ec − total) / total. <b>own</b> = equity − ec (own capital).
+    <b>basis</b> = max(fbb, total).<br>
+    <b>gate</b>: <span class="warn">BLOCKED</span> = extra_capital suspect
+    (DB/yaml tidak cocok dengan injeksi live) · <span class="down">BLOCK</span> =
+    own ≤ basis — gate own-capital dispatcher, berlaku untuk SEMUA jalur
+    (today/all-time/first-buy/unrealized) dan TIDAK tergantung phase ·
+    <span class="up">ok</span> = own &gt; basis (lolos).<br>
+    <b>fire?</b> = <span class="warn">YES</span> hanya bila ambang
+    ALLTIME%/today% terlampaui <b>DAN</b> gate lolos <b>DAN</b> tidak sedang rugi
+    all-time (ALLTIME% ≥ 0). <b>~sw</b> = gate menahan walau ambang kena
+    (lihat kolom gate untuk sebabnya).
+    <span class="flat">-</span> = tidak ada ambang yang kena, atau akun masih rugi all-time.
+  </div>
+</div>
+<script>
+(function () {
+  var table = document.querySelector('table');
+  if (!table) return;
+  var tbody = table.tBodies[0];
+  if (!tbody) return;
+  var ths = table.querySelectorAll('thead th');
+  // Default: ALLTIME% descending (most profitable on top), matching the
+  // server-side pre-sort so the first click on ALLTIME% reverses it.
+  var current = { col: 'alltime', dir: -1 };
+
+  // Sort on the RAW value carried by data-s-*, never the rendered text:
+  // "1,234.56" parses as 1, "-" as NaN. Empty means "no data" and always
+  // sinks to the bottom regardless of direction, so accounts without a
+  // sample never displace accounts that have one.
+  function raw(tr, col) {
+    var v = tr.getAttribute('data-s-' + col);
+    return v === null ? '' : v;
+  }
+
+  function cmp(a, b, col) {
+    var va = raw(a, col), vb = raw(b, col);
+    if (col === 'account') {
+      return String(va).localeCompare(String(vb), undefined, { sensitivity: 'base' });
+    }
+    var na = parseFloat(va), nb = parseFloat(vb);
+    if (isNaN(na) || isNaN(nb)) return va < vb ? -1 : (va > vb ? 1 : 0);
+    return na - nb;
+  }
+
+  function sortBy(col, dir) {
+    var rows = Array.prototype.slice.call(tbody.rows);
+    // The "no accounts" placeholder is not sortable data.
+    var placeholders = rows.filter(function (r) {
+      return !r.hasAttribute('data-s-account');
+    });
+    rows = rows.filter(function (r) { return r.hasAttribute('data-s-account'); });
+
+    rows.sort(function (a, b) {
+      var aEmpty = raw(a, col) === '', bEmpty = raw(b, col) === '';
+      // Empties sink to the bottom in BOTH directions, so an account with no
+      // sample never displaces one that has a value.
+      if (aEmpty !== bEmpty) return aEmpty ? 1 : -1;
+      if (aEmpty && bEmpty) return 0;
+      var c = cmp(a, b, col);
+      return dir > 0 ? c : -c;
+    });
+
+    if (placeholders.length) {
+      rows = rows.concat(placeholders);
+    }
+    rows.forEach(function (r) { tbody.appendChild(r); });
+
+    ths.forEach(function (th) {
+      var ind = th.querySelector('.sort-ind');
+      th.classList.remove('sort-active');
+      if (ind) ind.textContent = '▲▼';
+    });
+    var active = table.querySelector('thead th[data-sort="' + col + '"]');
+    if (active) {
+      active.classList.add('sort-active');
+      var i = active.querySelector('.sort-ind');
+      if (i) i.textContent = dir > 0 ? '▲' : '▼';
+    }
+  }
+
+  ths.forEach(function (th) {
+    var col = th.getAttribute('data-sort');
+    if (!col) return;
+    var ind = document.createElement('span');
+    ind.className = 'sort-ind';
+    ind.textContent = '▲▼';
+    th.appendChild(ind);
+    th.addEventListener('click', function () {
+      var dir = (current.col === col && current.dir > 0) ? -1 : 1;
+      current = { col: col, dir: dir };
+      sortBy(col, dir);
+    });
+  });
+
+  // Apply the default view on load so the active indicator and the order
+  // agree even if the server-side pre-sort is ever bypassed.
+  sortBy('alltime', -1);
+})();
+</script>
+</body>
+</html>
