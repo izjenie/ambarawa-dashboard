@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ambarawa Swipe — FUTURES</title>
+<style>
+  :root { --up:#16a34a; --down:#dc2626; --flat:#6b7280; --warn:#f59e0b;
+           --bg:#0f172a; --card:#1e293b; --txt:#e2e8f0; --muted:#94a3b8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt);
+          font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  .wrap { max-width:1400px; margin:0 auto; padding:28px 20px 48px; }
+  h1 { font-size:1.35rem; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:0.82rem; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid #334155; border-radius:12px;
+           padding:6px 0; overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:0.86rem;
+           white-space:nowrap; }
+  thead th { color:var(--muted); font-weight:600; padding:10px 12px;
+              border-bottom:1px solid #334155; font-size:0.72rem;
+              text-transform:uppercase; letter-spacing:0.03em; text-align:right; }
+  thead th:first-child { text-align:left; }
+  tbody td { padding:10px 12px; border-bottom:1px solid #263449; }
+  tbody tr:last-child td { border-bottom:0; }
+  tbody tr:hover { background:#243349; }
+  tr.dim { color:var(--muted); }
+  td.acct { font-weight:600; text-align:left; }
+  td.r { text-align:right; font-variant-numeric:tabular-nums; }
+  td.c { text-align:center; }
+  .up { color:var(--up); } .down { color:var(--down); }
+  .flat { color:var(--flat); } .warn { color:var(--warn); font-weight:600; }
+  .note { color:var(--muted); font-size:0.78rem; margin-top:14px; line-height:1.6; }
+  thead th[data-sort] { cursor:pointer; user-select:none; }
+  thead th[data-sort]:hover { color:var(--txt); }
+  thead th.sort-active { color:#7dd3fc; }
+  thead th .sort-ind { opacity:0.35; font-size:0.65rem; margin-left:3px; }
+  thead th.sort-active .sort-ind { opacity:1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ambarawa Swipe — FUTURES</h1>
+  <div class="sub">Generated 2026-11-29 03:30:00 WIB (2026-11-28 20:30:00 UTC) · 10 account(s) · refresh every 10 min</div>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="account">account</th><th class="c">en</th>
+          <th class="r" data-sort="days">days</th>
+          <th class="r" data-sort="start-eq">start_eq</th>
+          <th class="r" data-sort="equity">equity</th>
+          <th class="r" data-sort="total">total</th>
+          <th class="r" data-sort="pnl">pnl</th>
+          <th class="r" data-sort="ec">ec</th>
+          <th class="r" data-sort="own">own</th>
+          <th class="r" data-sort="basis">basis</th>
+          <th class="r" data-sort="alltime-usd">ALLTIME$</th>
+          <th class="r sort-active" data-sort="alltime">ALLTIME%</th>
+          <th class="r" data-sort="today">today%</th>
+          <th class="r" data-sort="fbb">fbb</th>
+          <th class="r" data-sort="unreal">unreal$</th>
+          <th class="r" data-sort="unreal-pct">unreal%</th>
+          <th class="c">gate</th>
+          <th class="r" data-sort="swat">swAT%</th>
+          <th class="r" data-sort="sw">sw%</th>
+          <th class="c" data-sort="fire">fire?</th>
+          <th class="c">phase</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-s-account="alvina-futures" data-s-days="18" data-s-start-eq="100.0" data-s-equity="128.33652556400298" data-s-total="128.21" data-s-pnl="28.210000000000008" data-s-ec="0.0" data-s-own="128.33652556400298" data-s-basis="128.21" data-s-alltime-usd="0.126525564002975" data-s-alltime="0.09868618984710628" data-s-today="0.15663060924310426" data-s-fbb="128.0967" data-s-unreal="-1.1098768059970012" data-s-unreal-pct="-0.866436688842883" data-s-swat="2.0" data-s-sw="3.0" data-s-fire="0"><td class="acct">alvina-futures</td><td class="c">Y</td><td class="r">18d</td><td class="r">100.00</td><td class="r">128.34</td><td class="r">128.21</td><td class="r up">+28.21%</td><td class="r">0.00</td><td class="r">128.34</td><td class="r">128.21</td><td class="r up">0.13</td><td class="r up">+0.10%</td><td class="r up">+0.16%</td><td class="r">128.10</td><td class="r down">-1.11</td><td class="r down">-0.87%</td><td class="c up" title="">ok</td><td class="r">+2.00%</td><td class="r">+3.00%</td><td class="c flat">-</td><td class="c">holding</td></tr>
+        <tr data-s-account="dian-futures" data-s-days="18" data-s-start-eq="100.0" data-s-equity="122.494761192" data-s-total="122.98" data-s-pnl="22.980000000000004" data-s-ec="0.0" data-s-own="122.494761192" data-s-basis="122.98" data-s-alltime-usd="-0.4852388080000054" data-s-alltime="-0.3945672532119087" data-s-today="-0.10569355828821757" data-s-fbb="122.8335" data-s-unreal="-0.2636774680000016" data-s-unreal-pct="-0.21466250493554412" data-s-swat="2.0" data-s-sw="3.0" data-s-fire="1"><td class="acct">dian-futures</td><td class="c">Y</td><td class="r">18d</td><td class="r">100.00</td><td class="r">122.49</td><td class="r">122.98</td><td class="r up">+22.98%</td><td class="r">0.00</td><td class="r">122.49</td><td class="r">122.98</td><td class="r down">-0.49</td><td class="r down">-0.39%</td><td class="r down">-0.11%</td><td class="r">122.83</td><td class="r down">-0.26</td><td class="r down">-0.21%</td><td class="c down" title="own 122.49 ≤ basis 122.98">BLOCK</td><td class="r">+2.00%</td><td class="r">+3.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="tommy-futures" data-s-days="18" data-s-start-eq="100.0" data-s-equity="120.53166938999998" data-s-total="121.02" data-s-pnl="21.019999999999996" data-s-ec="0.0" data-s-own="120.53166938999998" data-s-basis="121.02" data-s-alltime-usd="-0.48833061000001976" data-s-alltime="-0.4035123202776564" data-s-today="-0.10738107935102682" data-s-fbb="121.0165" data-s-unreal="-0.26238437000001436" data-s-unreal-pct="-0.2168170208194869" data-s-swat="2.0" data-s-sw="3.0" data-s-fire="1"><td class="acct">tommy-futures</td><td class="c">Y</td><td class="r">18d</td><td class="r">100.00</td><td class="r">120.53</td><td class="r">121.02</td><td class="r up">+21.02%</td><td class="r">0.00</td><td class="r">120.53</td><td class="r">121.02</td><td class="r down">-0.49</td><td class="r down">-0.40%</td><td class="r down">-0.11%</td><td class="r">121.02</td><td class="r down">-0.26</td><td class="r down">-0.22%</td><td class="c down" title="own 120.53 ≤ basis 121.02">BLOCK</td><td class="r">+2.00%</td><td class="r">+3.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="setiaji-futures" data-s-days="18" data-s-start-eq="42.0" data-s-equity="53.081886350000005" data-s-total="53.31" data-s-pnl="26.928571428571434" data-s-ec="0.0" data-s-own="53.081886350000005" data-s-basis="53.31" data-s-alltime-usd="-0.2281136499999974" data-s-alltime="-0.42790030013130254" data-s-today="-0.1326664667962081" data-s-fbb="53.3079" data-s-unreal="-0.12867330999999724" data-s-unreal-pct="-0.2413775631754341" data-s-swat="2.0" data-s-sw="3.0" data-s-fire="1"><td class="acct">setiaji-futures</td><td class="c">Y</td><td class="r">18d</td><td class="r">42.00</td><td class="r">53.08</td><td class="r">53.31</td><td class="r up">+26.93%</td><td class="r">0.00</td><td class="r">53.08</td><td class="r">53.31</td><td class="r down">-0.23</td><td class="r down">-0.43%</td><td class="r down">-0.13%</td><td class="r">53.31</td><td class="r down">-0.13</td><td class="r down">-0.24%</td><td class="c down" title="own 53.08 ≤ basis 53.31">BLOCK</td><td class="r">+2.00%</td><td class="r">+3.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="imelda-futures" data-s-days="18" data-s-start-eq="100.0" data-s-equity="122.09140440200001" data-s-total="122.63" data-s-pnl="22.629999999999995" data-s-ec="0.0" data-s-own="122.09140440200001" data-s-basis="122.6553" data-s-alltime-usd="-0.5385955979999864" data-s-alltime="-0.4392037821087714" data-s-today="-0.15077080788154223" data-s-fbb="122.6553" data-s-unreal="-0.31832539799998266" data-s-unreal-pct="-0.25952844923943985" data-s-swat="2.0" data-s-sw="3.0" data-s-fire="1"><td class="acct">imelda-futures</td><td class="c">Y</td><td class="r">18d</td><td class="r">100.00</td><td class="r">122.09</td><td class="r">122.63</td><td class="r up">+22.63%</td><td class="r">0.00</td><td class="r">122.09</td><td class="r">122.66</td><td class="r down">-0.54</td><td class="r down">-0.44%</td><td class="r down">-0.15%</td><td class="r">122.66</td><td class="r down">-0.32</td><td class="r down">-0.26%</td><td class="c down" title="own 122.09 ≤ basis 122.66">BLOCK</td><td class="r">+2.00%</td><td class="r">+3.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="izak-futures" data-s-days="18" data-s-start-eq="100.0" data-s-equity="102.446822216" data-s-total="103.12" data-s-pnl="3.1200000000000045" data-s-ec="0.0" data-s-own="102.446822216" data-s-basis="103.12" data-s-alltime-usd="-0.6731777840000035" data-s-alltime="-0.6528101086113299" data-s-today="-0.36091248381589713" data-s-fbb="103.0204" data-s-unreal="-0.4836000640000067" data-s-unreal-pct="-0.4694216524105971" data-s-swat="2.0" data-s-sw="3.0" data-s-fire="0"><td class="acct">izak-futures</td><td class="c">Y</td><td class="r">18d</td><td class="r">100.00</td><td class="r">102.45</td><td class="r">103.12</td><td class="r up">+3.12%</td><td class="r">0.00</td><td class="r">102.45</td><td class="r">103.12</td><td class="r down">-0.67</td><td class="r down">-0.65%</td><td class="r down">-0.36%</td><td class="r">103.02</td><td class="r down">-0.48</td><td class="r down">-0.47%</td><td class="c up" title="gate OFF (own 102.45 ≤ basis 103.12)">ok</td><td class="r">+2.00%</td><td class="r">+3.00%</td><td class="c flat">-</td><td class="c">idle</td></tr>
+        <tr data-s-account="azel-futures" data-s-days="18" data-s-start-eq="100.0" data-s-equity="122.59490338999998" data-s-total="123.61" data-s-pnl="23.61" data-s-ec="0.0" data-s-own="122.59490338999998" data-s-basis="123.6103" data-s-alltime-usd="-1.0150966100000147" data-s-alltime="-0.8212091335652575" data-s-today="-0.5317772186603947" data-s-fbb="123.6103" data-s-unreal="-0.7911518000000061" data-s-unreal-pct="-0.6400371166480513" data-s-swat="2.0" data-s-sw="3.0" data-s-fire="1"><td class="acct">azel-futures</td><td class="c">Y</td><td class="r">18d</td><td class="r">100.00</td><td class="r">122.59</td><td class="r">123.61</td><td class="r up">+23.61%</td><td class="r">0.00</td><td class="r">122.59</td><td class="r">123.61</td><td class="r down">-1.02</td><td class="r down">-0.82%</td><td class="r down">-0.53%</td><td class="r">123.61</td><td class="r down">-0.79</td><td class="r down">-0.64%</td><td class="c down" title="own 122.59 ≤ basis 123.61">BLOCK</td><td class="r">+2.00%</td><td class="r">+3.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="susi-futures" data-s-days="18" data-s-start-eq="100.0" data-s-equity="19.627930063999997" data-s-total="26.22" data-s-pnl="-73.78" data-s-ec="0.0" data-s-own="19.627930063999997" data-s-basis="26.2804" data-s-alltime-usd="-6.5920699360000015" data-s-alltime="-25.141380381388263" data-s-today="-9.52126321124815" data-s-fbb="26.2804" data-s-unreal="-3.225548406000001" data-s-unreal-pct="-12.273589465913764" data-s-swat="2.0" data-s-sw="3.0" data-s-fire="1"><td class="acct">susi-futures</td><td class="c">Y</td><td class="r">18d</td><td class="r">100.00</td><td class="r">19.63</td><td class="r">26.22</td><td class="r down">-73.78%</td><td class="r">0.00</td><td class="r">19.63</td><td class="r">26.28</td><td class="r down">-6.59</td><td class="r down">-25.14%</td><td class="r down">-9.52%</td><td class="r">26.28</td><td class="r down">-3.23</td><td class="r down">-12.27%</td><td class="c down" title="own 19.63 ≤ basis 26.28">BLOCK</td><td class="r">+2.00%</td><td class="r">+3.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="edric-futures" data-s-days="29" data-s-start-eq="180.0" data-s-equity="2e-08" data-s-total="182.88" data-s-pnl="1.5999999999999976" data-s-ec="0.0" data-s-own="2e-08" data-s-basis="182.88" data-s-alltime-usd="-182.87999998" data-s-alltime="-99.99999998906387" data-s-today="0.0" data-s-fbb="182.7948" data-s-unreal="0.0" data-s-unreal-pct="0.0" data-s-swat="3.0" data-s-sw="5.0" data-s-fire="1"><td class="acct">edric-futures</td><td class="c">Y</td><td class="r">29d</td><td class="r">180.00</td><td class="r">0.00</td><td class="r">182.88</td><td class="r up">+1.60%</td><td class="r">0.00</td><td class="r">0.00</td><td class="r">182.88</td><td class="r down">-182.88</td><td class="r down">-100.00%</td><td class="r flat">+0.00%</td><td class="r">182.79</td><td class="r flat">0.00</td><td class="r flat">+0.00%</td><td class="c down" title="own 0.00 ≤ basis 182.88">BLOCK</td><td class="r">+3.00%</td><td class="r">+5.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+        <tr data-s-account="ops-futures" data-s-days="44" data-s-start-eq="200.0" data-s-equity="0.0" data-s-total="233.87" data-s-pnl="16.935000000000002" data-s-ec="484.18889993736957" data-s-own="-484.18889993736957" data-s-basis="233.87" data-s-alltime-usd="-718.0588999373696" data-s-alltime="-307.03335183536564" data-s-today="-96.26347526229358" data-s-fbb="8.1942" data-s-unreal="0.0" data-s-unreal-pct="0.0" data-s-swat="2.0" data-s-sw="3.0" data-s-fire="1"><td class="acct">ops-futures</td><td class="c">Y</td><td class="r">44d</td><td class="r">200.00</td><td class="r">0.00</td><td class="r">233.87</td><td class="r up">+16.94%</td><td class="r">484.19</td><td class="r">-484.19</td><td class="r">233.87</td><td class="r down">-718.06</td><td class="r down">-307.03%</td><td class="r down">-96.26%</td><td class="r">8.19</td><td class="r flat">0.00</td><td class="r flat">+0.00%</td><td class="c down" title="own -484.19 ≤ basis 233.87">BLOCK</td><td class="r">+2.00%</td><td class="r">+3.00%</td><td class="c flat">~sw</td><td class="c">idle</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <b>ec</b> = extra_capital dari DB (bukan yaml). <b>days</b> = umur periode open
+    (hari kalender, inklusif). <b>start_eq</b> = start equity periode yang sedang
+    open (<span class="flat">-</span> bila tidak ada periode open).
+    <b>pnl</b> = (total − start_eq) / start_eq × 100 (tanpa ec).
+    <b>ALLTIME$</b> = equity − ec − total. <b>ALLTIME%</b> =
+    (equity − ec − total) / total. <b>own</b> = equity − ec (own capital).
+    <b>basis</b> = max(fbb, total).<br>
+    <b>gate</b>: <span class="warn">BLOCKED</span> = extra_capital suspect
+    (DB/yaml tidak cocok dengan injeksi live) · <span class="down">BLOCK</span> =
+    own ≤ basis — gate own-capital dispatcher, berlaku untuk SEMUA jalur
+    (today/all-time/first-buy/unrealized) dan TIDAK tergantung phase ·
+    <span class="up">ok</span> = own &gt; basis (lolos).<br>
+    <b>fire?</b> = <span class="warn">YES</span> hanya bila ambang
+    ALLTIME%/today% terlampaui <b>DAN</b> gate lolos <b>DAN</b> tidak sedang rugi
+    all-time (ALLTIME% ≥ 0). <b>~sw</b> = gate menahan walau ambang kena
+    (lihat kolom gate untuk sebabnya).
+    <span class="flat">-</span> = tidak ada ambang yang kena, atau akun masih rugi all-time.
+  </div>
+</div>
+<script>
+(function () {
+  var table = document.querySelector('table');
+  if (!table) return;
+  var tbody = table.tBodies[0];
+  if (!tbody) return;
+  var ths = table.querySelectorAll('thead th');
+  // Default: ALLTIME% descending (most profitable on top), matching the
+  // server-side pre-sort so the first click on ALLTIME% reverses it.
+  var current = { col: 'alltime', dir: -1 };
+
+  // Sort on the RAW value carried by data-s-*, never the rendered text:
+  // "1,234.56" parses as 1, "-" as NaN. Empty means "no data" and always
+  // sinks to the bottom regardless of direction, so accounts without a
+  // sample never displace accounts that have one.
+  function raw(tr, col) {
+    var v = tr.getAttribute('data-s-' + col);
+    return v === null ? '' : v;
+  }
+
+  function cmp(a, b, col) {
+    var va = raw(a, col), vb = raw(b, col);
+    if (col === 'account') {
+      return String(va).localeCompare(String(vb), undefined, { sensitivity: 'base' });
+    }
+    var na = parseFloat(va), nb = parseFloat(vb);
+    if (isNaN(na) || isNaN(nb)) return va < vb ? -1 : (va > vb ? 1 : 0);
+    return na - nb;
+  }
+
+  function sortBy(col, dir) {
+    var rows = Array.prototype.slice.call(tbody.rows);
+    // The "no accounts" placeholder is not sortable data.
+    var placeholders = rows.filter(function (r) {
+      return !r.hasAttribute('data-s-account');
+    });
+    rows = rows.filter(function (r) { return r.hasAttribute('data-s-account'); });
+
+    rows.sort(function (a, b) {
+      var aEmpty = raw(a, col) === '', bEmpty = raw(b, col) === '';
+      // Empties sink to the bottom in BOTH directions, so an account with no
+      // sample never displaces one that has a value.
+      if (aEmpty !== bEmpty) return aEmpty ? 1 : -1;
+      if (aEmpty && bEmpty) return 0;
+      var c = cmp(a, b, col);
+      return dir > 0 ? c : -c;
+    });
+
+    if (placeholders.length) {
+      rows = rows.concat(placeholders);
+    }
+    rows.forEach(function (r) { tbody.appendChild(r); });
+
+    ths.forEach(function (th) {
+      var ind = th.querySelector('.sort-ind');
+      th.classList.remove('sort-active');
+      if (ind) ind.textContent = '▲▼';
+    });
+    var active = table.querySelector('thead th[data-sort="' + col + '"]');
+    if (active) {
+      active.classList.add('sort-active');
+      var i = active.querySelector('.sort-ind');
+      if (i) i.textContent = dir > 0 ? '▲' : '▼';
+    }
+  }
+
+  ths.forEach(function (th) {
+    var col = th.getAttribute('data-sort');
+    if (!col) return;
+    var ind = document.createElement('span');
+    ind.className = 'sort-ind';
+    ind.textContent = '▲▼';
+    th.appendChild(ind);
+    th.addEventListener('click', function () {
+      var dir = (current.col === col && current.dir > 0) ? -1 : 1;
+      current = { col: col, dir: dir };
+      sortBy(col, dir);
+    });
+  });
+
+  // Apply the default view on load so the active indicator and the order
+  // agree even if the server-side pre-sort is ever bypassed.
+  sortBy('alltime', -1);
+})();
+</script>
+</body>
+</html>

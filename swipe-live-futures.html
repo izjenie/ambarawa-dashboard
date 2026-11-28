@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swipe + Margin Ratio — FUTURES (live)</title>
+<style>
+  :root{
+    --bg:#0b1220; --card:#111a2e; --line:#243349; --txt:#e2e8f0; --muted:#94a3b8;
+    --up:#16a34a; --down:#dc2626; --warn:#f59e0b; --acc:#38bdf8;
+    --low:#16a34a; --moderate:#eab308; --high:#f97316; --critical:#dc2626; --liq:#a21caf;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+       font:13px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:none;margin:0 auto;padding:18px 16px 60px}
+  h1{font-size:1.2rem;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:0.82rem;margin:2px 0 12px;
+       display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .chip{font-size:0.74rem;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--muted)}
+  .status{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:0.78rem;
+          border:1px solid var(--line);border-radius:999px;padding:3px 11px}
+  .dot{width:8px;height:8px;border-radius:50%;background:#64748b}
+  .dot.on{background:var(--up);box-shadow:0 0 6px var(--up)}
+  .dot.off{background:var(--down);box-shadow:0 0 6px var(--down)}
+  .banner{display:none;border:1px solid #7c2d12;background:#2a1410;color:#fca5a5;
+          border-radius:10px;padding:9px 12px;font-size:0.78rem;margin-bottom:10px}
+  .banner code{color:#fde68a}
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+  table{border-collapse:collapse;font-size:0.8rem;white-space:nowrap;width:100%}
+  th,td{padding:7px 9px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.05em;
+     text-align:right;position:sticky;top:0;background:#16233d;z-index:2}
+  th.l,td.l{text-align:left}
+  th.c,td.c{text-align:center}
+  th.grp{border-left:2px solid #3b5a82}
+  td.grp{border-left:2px solid #263650}
+  tbody tr:hover{background:#16233d}
+  tbody tr.rowwarn{background:#1f1206}
+  tbody tr:last-child td{border-bottom:0}
+  tfoot td{font-weight:700;color:var(--muted);border-top:2px solid #3b5a82;font-size:0.76rem}
+  .mut{color:var(--muted)} .pos{color:var(--up)} .neg{color:var(--down)}
+  .up{color:var(--up)} .down{color:var(--down)} .flat{color:#cbd5e1}
+  .acct{font-weight:600}
+  td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+  .tag{font-size:0.68rem;font-weight:700;border-radius:6px;padding:2px 6px;letter-spacing:0.05em}
+  .t-ok{background:#052e16;color:#4ade80;border:1px solid #14532d}
+  .t-block{background:#450a0a;color:#fca5a5;border:1px solid #7f1d1d}
+  .t-yes{background:#052e16;color:#4ade80;border:1px solid #14532d}
+  .t-sw{background:#3b2a06;color:#fbbf24;border:1px solid #78350f}
+  .t-no{background:#1e293b;color:#94a3b8;border:1px solid #334155}
+  .b-low{color:var(--low)} .b-moderate{color:var(--moderate)} .b-high{color:var(--high)}
+  .b-critical{color:var(--critical)} .b-liquidation{color:var(--liq)} .b-unknown{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔥 Swipe + 💹 Margin Ratio — FUTURES <span class="mut" style="font-size:0.8rem">live</span></h1>
+  <div class="sub">
+    <span class="chip" id="clock">—</span>
+    <span class="chip" id="sums">—</span>
+    <span class="chip" id="mark">marks —</span>
+    <span class="chip" id="age">data —</span>
+    <span class="status" id="status"><span class="dot" id="dot"></span><span id="statusText">connecting…</span></span>
+    <span class="chip" id="wsInfo"></span>
+  </div>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="tblwrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="l">account</th><th class="c">en</th><th class="r">days</th>
+          <th class="r">start_eq</th><th class="r">equity</th><th class="r">total</th>
+          <th class="r">pnl</th><th class="r">ec</th><th class="r">own</th><th class="r">basis</th>
+          <th class="r">ALLTIME$</th><th class="r">ALLTIME%</th><th class="r">today%</th>
+          <th class="r">fbb</th><th class="r">unreal$</th><th class="r">unreal%</th>
+          <th class="c">gate</th><th class="r">swAT%</th><th class="r">sw%</th>
+          <th class="c">fire?</th><th class="c">phase</th>
+          <th class="r grp">pos</th><th class="l grp">coins</th><th class="r">wallet</th>
+          <th class="r">maint_mm</th><th class="r">notional</th>
+          <th class="r">mratio</th><th class="c">risk</th><th class="c">mstatus</th>
+        </tr>
+      </thead>
+      <tbody id="rows"><tr><td colspan="29" class="mut l">menunggu data…</td></tr></tbody>
+      <tfoot id="foot"></tfoot>
+    </table>
+  </div>
+</div>
+
+<script>
+// Endpoint relay (sama seperti halaman lain). Override: ?ws=ws://127.0.0.1:8787/ws
+const QS = new URLSearchParams(location.search);
+const WS_URL = QS.get("ws") || "wss://ws.kebonjeruk.xyz/ws";
+const MARKET = "swipe";
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+// Replicates scripts/swipe_dashboard._fmt / _fmt_pct / _fmt_days
+const money = v => (v===null||v===undefined||isNaN(v)) ? "-"
+  : (Math.abs(v) < 0.005 ? (0).toFixed(2) : Number(v)).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const pct = v => (v===null||v===undefined||isNaN(v)) ? "-"
+  : ((Math.abs(v) < 0.005 ? 0 : Number(v)) >= 0 ? "+" : "") +
+    (Math.abs(v) < 0.005 ? 0 : Number(v)).toFixed(2) + "%";
+const days = v => (v===null||v===undefined) ? "-" : (parseInt(v,10)+"d");
+const cls = v => (v===null||v===undefined||isNaN(v)||Math.abs(v)<1e-9) ? "flat" : (v>0?"up":"down");
+// Replicates scripts/margin_ratio.fmt_compact / _fmt_ratio
+const compact = v => {
+  if(v===null||v===undefined||isNaN(v)) return "—";
+  const n = Number(v); if(n===0) return "0";
+  const a = Math.abs(n);
+  if(a>=1e12) return (n/1e12).toFixed(2)+"T";
+  if(a>=1e9)  return (n/1e9).toFixed(2)+"B";
+  if(a>=1e6)  return (n/1e6).toFixed(2)+"M";
+  return n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+};
+const mratio = v => (v===null||v===undefined) ? "—" : (Number(v)>=100? "&gt;100%" : Number(v).toFixed(2)+"%");
+const bandLabel = b => b || "unknown";
+
+function fireCell(r){
+  if(r.fire === 2) return "<span class='tag t-yes'>YES</span>";
+  if(r.fire === 1) return "<span class='tag t-sw'>~sw</span>";
+  return "<span class='tag t-no'>-</span>";
+}
+
+function render(f){
+  const rows = f.rows || [];
+  const marginRows = (f.margin && f.margin.rows) || [];
+  const mBy = {};
+  marginRows.forEach(m => { mBy[m.account] = m; });
+  const msum = (f.margin && f.margin.summary) || {};
+  const mmark = (f.margin && f.margin.mark) || {};
+
+  $("clock").textContent = f.ts ? new Date(f.ts).toLocaleString() : "—";
+  const s = f.summary || {};
+  $("sums").textContent = (s.accounts||0) + " akun · enabled " + (s.enabled||0)
+    + " · ready " + (s.ready||0) + " · BLOCK " + (s.blocked||0) + " · holding " + (s.holding||0);
+  $("mark").textContent = "marks " + (mmark.prices||0) + "/" + (mmark.symbols||0)
+    + (mmark.connected ? " 🟢" : " 🔴");
+  $("age").textContent = f.data_age_s!=null ? "data " + f.data_age_s + "s" : "data —";
+
+  const missing = msum.missing_brackets || [];
+  $("banner").style.display = missing.length ? "block" : "none";
+  $("banner").innerHTML = missing.length
+    ? "⚠️ Bracket risk belum ada untuk: <code>" + esc(missing.join(", ")) + "</code> — jalankan <code>./scripts/margin-ratio.sh --refresh-brackets</code>."
+    : "";
+
+  const body = $("rows");
+  body.innerHTML = "";
+  if(!rows.length){
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 29; td.className = "mut l"; td.textContent = "(belum ada akun futures)";
+    tr.appendChild(td); body.appendChild(tr);
+  } else {
+    rows.forEach(r=>{
+      const m = mBy[r.account] || {};
+      const hasRatio = m.margin_ratio !== null && m.margin_ratio !== undefined;
+      const band = m.band || "unknown";
+      const tr = document.createElement("tr");
+      if(m.status === "live" && hasRatio && Number(m.margin_ratio) >= 80) tr.className = "rowwarn";
+      tr.innerHTML =
+        "<td class='l acct'>"+esc(r.account)+"</td>"
+        +"<td class='c'>"+(r.enabled ? "Y" : "<span class='mut'>n</span>")+"</td>"
+        +"<td class='r'>"+days(r.period_days)+"</td>"
+        +"<td class='r'>"+money(r.start_equity)+"</td>"
+        +"<td class='r'>"+money(r.equity)+"</td>"
+        +"<td class='r'>"+money(r.total_capital)+"</td>"
+        +"<td class='r "+cls(r.period_pnl_pct)+"'>"+pct(r.period_pnl_pct)+"</td>"
+        +"<td class='r'>"+money(r.extra_capital)+"</td>"
+        +"<td class='r'>"+money(r.equity_own)+"</td>"
+        +"<td class='r'>"+money(r.basis)+"</td>"
+        +"<td class='r "+cls(r.alltime_usd)+"'>"+money(r.alltime_usd)+"</td>"
+        +"<td class='r "+cls(r.alltime_pct)+"'>"+pct(r.alltime_pct)+"</td>"
+        +"<td class='r "+cls(r.today_pct)+"'>"+pct(r.today_pct)+"</td>"
+        +"<td class='r'>"+money(r.fbb)+"</td>"
+        +"<td class='r "+cls(r.unreal)+"'>"+money(r.unreal)+"</td>"
+        +"<td class='r "+cls(r.unreal_pct)+"'>"+pct(r.unreal_pct)+"</td>"
+        +"<td class='c'>"+(r.blocked ? "<span class='tag t-block'>BLOCK</span>"
+                         : "<span class='tag t-ok'>ok</span>")+"</td>"
+        +"<td class='r'>"+pct(r.alltime_thr)+"</td>"
+        +"<td class='r'>"+pct(r.swipe_pct)+"</td>"
+        +"<td class='c'>"+fireCell(r)+"</td>"
+        +"<td class='c mut'>"+esc(r.phase || "-")+"</td>"
+        // ---- margin ratio half (same account row) ----
+        +"<td class='r grp'>"+(m.n_positions ?? "—")+"</td>"
+        +"<td class='l'>"+esc(m.coins || "—")+"</td>"
+        +"<td class='r'>"+compact(m.wallet)+"</td>"
+        +"<td class='r'>"+compact(m.maint_margin)+"</td>"
+        +"<td class='r'>"+compact(m.notional)+"</td>"
+        +"<td class='r b-"+esc(band)+"'>"+(hasRatio ? mratio(m.margin_ratio) : "—")+"</td>"
+        +"<td class='c b-"+esc(band)+"'>"+(hasRatio ? esc(m.icon||"")+" "+esc(bandLabel(band)) : "—")+"</td>"
+        +"<td class='c mut' style='font-size:0.68rem'>"+esc(m.status_label || "—")+"</td>";
+      body.appendChild(tr);
+    });
+  }
+
+  const foot = $("foot");
+  foot.innerHTML = "";
+  const tr = document.createElement("tr");
+  const worst = msum.worst
+    ? " · mratio tertinggi " + msum.worst.account + " " + mratio(msum.worst.margin_ratio)
+      + " " + (msum.worst.icon||"") + " " + bandLabel(msum.worst.band)
+    : "";
+  const c = document.createElement("td");
+  c.colSpan = 29;
+  c.textContent = "margin: live " + (msum.live||0) + " · stale " + (msum.stale||0)
+    + " · unverified " + (msum.unverified||0) + worst;
+  tr.appendChild(c); foot.appendChild(tr);
+}
+
+function setStatus(on, txt){ $("dot").className = "dot " + (on?"on":"off"); $("statusText").textContent = txt; }
+let lastWsErr = "";
+function connect(){
+  setStatus(false, "connecting…");
+  let ws;
+  const url = new URL(WS_URL);
+  url.searchParams.set("market", MARKET);
+  try { ws = new WebSocket(url.toString()); }
+  catch(e){ setStatus(false, "ws init error: " + e.message); return; }
+  ws.onopen = ()=>{ lastWsErr = ""; setStatus(true, "live"); };
+  ws.onmessage = e=>{
+    try {
+      const f = JSON.parse(e.data);
+      if(f && f.market === "swipe") render(f);
+    } catch(err){ console.warn("frame", err); }
+  };
+  ws.onerror = ()=>{ lastWsErr = "network error"; };
+  ws.onclose = ev=>{
+    const code = (ev && ev.code!=null) ? " · code "+ev.code : "";
+    setStatus(false, "reconnecting… " + lastWsErr + code);
+    setTimeout(connect, 2000);
+  };
+}
+
+$("wsInfo").textContent = WS_URL.replace(/^wss?:\/\//, "") + "?market=" + MARKET;
+connect();
+</script>
+</body>
+</html>

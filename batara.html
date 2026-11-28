@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ambarawa Capital Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root { --up:#16a34a; --down:#dc2626; --flat:#6b7280; --warn:#f59e0b; --bg:#0f172a; --card:#1e293b; --txt:#e2e8f0; --muted:#94a3b8; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  .wrap { max-width:1100px; margin:0 auto; padding:24px 16px 60px; }
+  h1 { font-size:1.25rem; margin:0 0 4px; font-weight:600; }
+  .sub { color:var(--muted); font-size:0.85rem; margin-bottom:18px; }
+  .controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
+  .seg { display:inline-flex; background:var(--card); border-radius:8px; overflow:hidden; border:1px solid #334155; }
+  .seg button { background:transparent; color:var(--muted); border:0; padding:8px 14px; cursor:pointer; font-size:0.85rem; }
+  .seg button.active { background:#334155; color:var(--txt); }
+  select, .seg button { font-family:inherit; }
+  select { background:var(--card); color:var(--txt); border:1px solid #334155; border-radius:8px; padding:8px 10px; font-size:0.85rem; }
+  .card { background:var(--card); border:1px solid #334155; border-radius:12px; padding:18px 20px; }
+  .headline { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+  .big { font-size:2rem; font-weight:700; }
+  .usd { font-size:1.05rem; color:var(--muted); }
+  .up { color:var(--up); } .down { color:var(--down); } .flat { color:var(--flat); } .warn { color:var(--warn); }
+  .chartbox { position:relative; height:420px; }
+  .empty { text-align:center; color:var(--muted); padding:60px 0; }
+  .legend { color:var(--muted); font-size:0.8rem; margin-top:10px; }
+  .stats-row { display:grid; gap:12px; margin-bottom:16px; }
+  .stats-row-6 { grid-template-columns:repeat(6,1fr); }
+  .stats-row-5 { grid-template-columns:repeat(5,1fr); }
+  .stats-row-4 { grid-template-columns:repeat(4,1fr); }
+  .stats-row-3 { grid-template-columns:repeat(3,1fr); }
+  .stats-row-2 { grid-template-columns:repeat(2,1fr); }
+  .stat-card { background:var(--card); border:1px solid #334155; border-radius:12px; padding:14px 16px; }
+  .stat-label { color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+  .stat-big { font-size:1.5rem; font-weight:700; }
+  .stat-sub { color:var(--muted); font-size:0.8rem; margin-top:4px; }
+  .stat-sub.warn { color:var(--warn); }
+  .spotlive-wrap { border:1px solid #2b4a66; border-radius:12px; padding:14px 16px 10px; margin-bottom:18px; background:linear-gradient(180deg,#16233a,#101a2b); }
+  .spotlive-head { display:flex; align-items:center; gap:10px; color:#38bdf8; font-size:0.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:12px; }
+  .spotlive-head:after { content:""; flex:1; height:1px; background:#2b4a66; }
+  .spotlive-wrap .stats-row { margin-bottom:0; }
+  .spotlive-wrap .profit-card { margin-top:12px; }
+  .profit-card { padding:0; overflow:hidden; margin-top:16px; }
+  .profit-toggle { width:100%; background:transparent; border:0; color:var(--txt); padding:15px 20px; cursor:pointer; font-size:1rem; font-weight:600; display:flex; justify-content:space-between; align-items:center; font-family:inherit; }
+  .profit-toggle:hover { background:#243349; }
+  .profit-toggle .chevron { color:var(--muted); transition:transform .2s; font-size:0.8rem; }
+  .profit-toggle.open .chevron { transform:rotate(90deg); }
+  .profit-collapse { max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .profit-collapse.open { max-height:1400px; }
+  .profit-head { padding:4px 20px 12px; color:var(--muted); font-size:0.88rem; }
+  .profit-scroll { overflow-x:auto; padding:0 20px 8px; }
+  .profit-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+  .profit-table th, .profit-table td { padding:7px 8px; text-align:left; white-space:nowrap; border-bottom:1px solid #334155; }
+  .profit-table th { color:var(--muted); font-weight:600; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .profit-table th.r, .profit-table td.r { text-align:right; }
+  .profit-table tbody tr:hover { background:#243349; }
+  .profit-table tfoot td { font-weight:700; border-top:2px solid #475569; border-bottom:0; padding-top:9px; }
+  .profit-table tr.pnl-sub td { font-size:0.78rem; color:var(--muted); }
+  .profit-table tr.pnl-sub .pnl-sub-label { padding-left:28px; }
+  .pos { color:var(--up); } .neg { color:var(--down); } .td-mute { color:var(--muted); }
+  .profit-note { padding:0 20px 14px; color:var(--muted); font-size:0.73rem; line-height:1.4; }
+  .blocks-card { padding:0; overflow:hidden; margin-top:16px; }
+  .blocks-collapse { max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .blocks-collapse.open { max-height:6000px; }
+  .blocks-controls { display:flex; padding:14px 20px 6px; }
+  .blocks-head { padding:4px 20px 12px; color:var(--muted); font-size:0.88rem; }
+  .blocks-list { padding:0 20px 8px; }
+  .snap-controls { display:flex; align-items:center; gap:12px; padding:14px 20px 6px; flex-wrap:wrap; }
+  .snap-list { padding:6px 20px 8px; }
+  .snap-head { color:var(--muted); font-size:0.85rem; margin-bottom:8px; }
+  .snap-files { display:flex; flex-wrap:wrap; gap:6px; }
+  .snap-file { background:#1e293b; border:1px solid #334155; color:#e2e8f0; border-radius:6px; padding:3px 9px; font-size:0.76rem; cursor:pointer; }
+  .snap-file.active { background:#334155; border-color:#0ea5e9; }
+  .snap-pre { display:none; margin:8px 20px 12px; background:#0b1120; border:1px solid #334155; border-radius:8px; padding:10px 12px; font-size:0.72rem; color:#cbd5e1; white-space:pre-wrap; word-break:break-all; max-height:320px; overflow:auto; }
+  .snap-pre.open { display:block; }
+  .snapDiffBtn, #snapDiffBtn { background:#1e293b; border:1px solid #334155; color:#e2e8f0; border-radius:6px; padding:4px 10px; font-size:0.76rem; cursor:pointer; }
+  .blocks-bot { background:#0f172a; border:1px solid #334155; border-radius:10px; margin-bottom:12px; }
+  .blocks-bot-head { padding:10px 14px; background:#243349; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
+  .blocks-bot-name { font-weight:600; font-size:0.92rem; }
+  .blocks-bot-stats { color:var(--muted); font-size:0.76rem; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .blocks-bot-stats .upnl { font-weight:600; }
+  .blocks-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+  .blocks-table th, .blocks-table td { padding:6px 8px; text-align:left; white-space:nowrap; border-bottom:1px solid #1e293b; }
+  .blocks-table th { color:var(--muted); font-weight:600; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .blocks-table th.r, .blocks-table td.r { text-align:right; }
+  .blocks-table tbody tr:hover { background:#1e293b; }
+  .blocks-table tfoot td { font-weight:700; border-top:2px solid #475569; border-bottom:0; padding-top:9px; }
+  .blocks-sub { font-size:0.66rem; color:var(--muted); }
+  .blocks-recent { padding:8px 14px 12px; border-top:1px solid #1e293b; }
+  .blocks-recent-title { color:var(--muted); font-size:0.66rem; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.04em; }
+  .blocks-empty { padding:12px 14px; color:var(--muted); font-size:0.82rem; }
+  .badge { display:inline-block; padding:1px 6px; border-radius:4px; font-size:0.66rem; font-weight:600; vertical-align:middle; }
+  .badge-expired { background:var(--down); color:#fff; }
+  .badge-soon { background:var(--warn); color:#1e293b; }
+  .badge-mode { background:#334155; color:var(--muted); }
+  .badge-trail-on { background:var(--up); color:#fff; }
+  @media (max-width:640px) { .stats-row-6, .stats-row-5, .stats-row-4, .stats-row-3, .stats-row-2 { grid-template-columns:repeat(2,1fr); } .profit-table { font-size:0.78rem; } .blocks-table { font-size:0.7rem; } .blocks-bot-stats { font-size:0.7rem; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="titleEl">Ambarawa Capital Dashboard</h1>
+  <div class="sub" id="subtext">Account equity per hour (USDT)</div>
+  <div class="sub" id="periodBanner" style="display:none; color:var(--warn); font-weight:600;"></div>
+
+  <div class="spotlive-wrap" id="spotLiveWrap">
+    <div class="spotlive-head">Spot — live <span id="spotLiveBadge" style="font-weight:600;text-transform:none;letter-spacing:0;"></span></div>
+    <div class="stats-row stats-row-4" id="spotLiveRow">
+      <div class="stat-card">
+        <div class="stat-label">Equity</div>
+        <div class="stat-big flat" id="spotEqVal">—</div>
+        <div class="stat-sub" id="spotEqSub">cash + coin values · live</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Cash (USDT)</div>
+        <div class="stat-big flat" id="spotCashVal">—</div>
+        <div class="stat-sub" id="spotCashSub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Unrealized P&amp;L</div>
+        <div class="stat-big flat" id="spotUpnlVal">—</div>
+        <div class="stat-sub" id="spotUpnlSub">qty active vs avg entry · live</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Today P&amp;L</div>
+        <div class="stat-big flat" id="spotTodayVal">—</div>
+        <div class="stat-sub" id="spotTodaySub">—</div>
+      </div>
+    </div>
+    <div class="card profit-card">
+      <button class="profit-toggle" id="spotToggle" aria-expanded="true">
+        <span>🪙 Spot — Coins <span id="spotCount"></span></span>
+        <span class="chevron" id="spotChevron">▾</span>
+      </button>
+      <div class="blocks-collapse open" id="spotCollapse">
+        <div class="profit-scroll">
+          <table class="profit-table" id="spotTable">
+            <thead><tr>
+              <th>Coin</th><th class="r">Balance</th><th class="r">Qty active</th>
+              <th class="r">Avg entry</th><th class="r">Mark</th>
+              <th class="r">Value (USDT)</th><th class="r">Unrealized vs entry</th>
+            </tr></thead>
+            <tbody id="spotRows"></tbody>
+            <tfoot id="spotFoot"></tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="seg" id="rangeSeg">
+      <button data-range="today">Today</button>
+      <button data-range="3d" class="active">3 Days</button>
+      <button data-range="1m">30 Days</button>
+      <button data-range="month">Month</button>
+      <button data-range="all">All Time</button>
+    </div>
+    <select id="coinSel"><option value="total">Total Equity</option></select>
+  </div>
+
+  <div class="controls" id="overlayControls">
+    <div class="seg" id="overlaySeg">
+      <button data-overlay="equity" class="active">equity</button>
+      <button data-overlay="usdt">usdt</button>
+      <button data-overlay="wc">usage</button>
+      <button data-overlay="usdc">usdc</button>
+    </div>
+  </div>
+
+  <div class="controls" id="buyCoinControls" style="display:none">
+    <select id="buyCoinSel"><option value="BTC">BTC</option></select>
+  </div>
+
+  <div class="stats-row stats-row-2" id="statsRow">
+    <div class="stat-card">
+      <div class="stat-label" id="atLabel">All-Time P&amp;L</div>
+      <div class="stat-big flat" id="atPct">—</div>
+      <div class="stat-sub" id="atSub">—</div>
+      <div class="stat-sub warn" id="atEc" style="display:none">—</div>
+      <div class="stat-sub" id="atLive" style="display:none">● realtime dari WebSocket</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Periode (with fee)</div>
+      <div class="stat-big flat" id="allPct">—</div>
+      <div class="stat-sub" id="allSub">—</div>
+    </div>
+  </div>
+  <div class="stats-row stats-row-5">
+    <div class="stat-card">
+      <div class="stat-label">Block Success Rate</div>
+      <div class="stat-big flat" id="srPct">—</div>
+      <div class="stat-sub" id="srSub">—</div>
+      <div class="stat-sub" id="srOldest">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" id="athLabel">ATH Equity (30d)</div>
+      <div class="stat-big flat" id="athVal">—</div>
+      <div class="stat-sub" id="athSub">—</div>
+      <div class="stat-sub warn" id="athEc" style="display:none">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total usage</div>
+      <div class="stat-big warn" id="usageVal">—</div>
+      <div class="stat-sub" id="usageSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total USDT</div>
+      <div class="stat-big up" id="usdtVal">—</div>
+      <div class="stat-sub" id="usdtSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Force Sell (USDT)</div>
+      <div class="stat-big down" id="fsVal">—</div>
+      <div class="stat-sub" id="fsSub">—</div>
+    </div>
+  </div>
+  <div class="stats-row stats-row-5">
+    <div class="stat-card">
+      <div class="stat-label">Total Capital</div>
+      <div class="stat-big up" id="capVal">—</div>
+      <div class="stat-sub" id="capSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Block Size</div>
+      <div class="stat-big flat" id="bsVal">—</div>
+      <div class="stat-sub" id="bsSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Extra Capital</div>
+      <div class="stat-big warn" id="extraVal">—</div>
+      <div class="stat-sub" id="extraSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">💰 Funding USD1</div>
+      <div class="stat-big up" id="fundVal">—</div>
+      <div class="stat-sub" id="fundSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Funding / Capital</div>
+      <div class="stat-big up" id="fundPctVal">—</div>
+      <div class="stat-sub" id="fundPctSub">—</div>
+    </div>
+  </div>
+  <div class="stats-row stats-row-5">
+    <div class="stat-card">
+      <div class="stat-label" id="maxddLabel">📉 Max Drawdown</div>
+      <div class="stat-big down" id="maxddVal">—</div>
+      <div class="stat-sub" id="maxddSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🏁 First Buy Balance</div>
+      <div class="stat-big flat" id="fbbVal">—</div>
+      <div class="stat-sub" id="fbbSub">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" id="perLabel">📅 Periode</div>
+      <div class="stat-big flat" id="perVal">—</div>
+      <div class="stat-sub" id="perSub">—</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="headline">
+      <span class="big" id="pct">—</span>
+      <span class="usd" id="usd">—</span>
+      <span class="usd" id="count">—</span>
+    </div>
+    <div class="chartbox"><canvas id="chart"></canvas></div>
+    <div class="chartbox" id="chartbox2" style="display:none; height:210px;"><canvas id="chart2"></canvas></div>
+    <div class="legend" id="legend">Loading…</div>
+  </div>
+
+  <div class="card profit-card">
+    <button class="profit-toggle" id="profitToggle" aria-expanded="false">
+      <span>💰 Profit</span>
+      <span class="chevron" id="profitChevron">▸</span>
+    </button>
+    <div class="profit-collapse" id="profitCollapse">
+      <div class="profit-head" id="profitHead">💰 Profit — —</div>
+      <div class="profit-scroll">
+        <table class="profit-table" id="profitTable">
+          <thead>
+            <tr>
+              <th>#</th><th>Coin</th>
+              <th class="r">Realized</th><th class="r">Realized %</th>
+              <th class="r">Unrealized</th><th class="r">Unrealized %</th>
+              <th class="r">Total</th><th class="r">Total %</th>
+              <th class="r">Sold</th><th class="r">Active</th>
+            </tr>
+          </thead>
+          <tbody id="profitBody"></tbody>
+          <tfoot id="profitFoot"></tfoot>
+        </table>
+      </div>
+      <div class="profit-note" id="profitNote"></div>
+    </div>
+  </div>
+
+  <div class="card blocks-card">
+    <button class="profit-toggle" id="blocksToggle" aria-expanded="false">
+      <span>📦 Blocks</span>
+      <span class="chevron" id="blocksChevron">▸</span>
+    </button>
+    <div class="blocks-collapse" id="blocksCollapse">
+      <div class="blocks-controls">
+        <div class="seg" id="blocksFilterSeg">
+          <button data-filter="all" class="active">All</button>
+          <button data-filter="active">Active only</button>
+          <button data-filter="idle">Idle only</button>
+        </div>
+        <div class="period-wrap">
+          <label for="periodSel">Periode</label>
+          <select id="periodSel">
+            <option value="">Semua</option>
+          </select>
+        </div>
+      </div>
+      <div class="blocks-head" id="blocksHead">📦 Blocks — —</div>
+      <div class="blocks-list" id="blocksList"></div>
+      <div class="profit-note" id="blocksNote"></div>
+    </div>
+  </div>
+
+  <div class="card recent-sells-card">
+    <button class="profit-toggle" id="recentToggle" aria-expanded="false">
+      <span>🧾 Realized terakhir (40)</span>
+      <span class="chevron" id="recentChevron">▸</span>
+    </button>
+    <div class="blocks-collapse" id="recentCollapse">
+      <div class="profit-scroll">
+        <table class="blocks-table" id="recentTable">
+          <thead><tr>
+            <th>Exit</th><th>Coin</th>
+            <th class="r">Masuk</th><th class="r">Exit</th><th class="r">Mark</th>
+            <th class="r">Qty</th><th class="r">Modal</th><th class="r">Hasil</th>
+            <th class="r">Amount</th><th class="r">%</th>
+            <th>Alasan</th><th class="r">Age</th>
+          </tr></thead>
+          <tbody id="recentBody"></tbody>
+          <tfoot id="recentFoot"></tfoot>
+        </table>
+      </div>
+      <div class="profit-note" id="recentNote"></div>
+    </div>
+  </div>
+
+  <div class="card snapshots-card">
+    <button class="profit-toggle" id="snapToggle" aria-expanded="false">
+      <span>📜 Config Snapshots</span>
+      <span class="chevron" id="snapChevron">▸</span>
+    </button>
+    <div class="blocks-collapse" id="snapCollapse">
+      <div class="snap-controls">
+        <div class="period-wrap">
+          <label for="snapPeriodSel">Periode</label>
+          <select id="snapPeriodSel"><option value="">Semua</option></select>
+        </div>
+        <div class="seg" id="snapBoundarySeg">
+          <button data-b="all" class="active">All</button>
+          <button data-b="open">Open</button>
+          <button data-b="close">Close</button>
+        </div>
+        <button id="snapDiffBtn" title="bandingkan open vs close (versi terakhir)">Diff open↔close</button>
+      </div>
+      <div class="snap-list" id="snapList"></div>
+      <pre class="snap-pre" id="snapPre"></pre>
+      <div class="profit-note" id="snapNote"></div>
+    </div>
+  </div>
+
+  <div class="card pnl-card">
+    <button class="profit-toggle" id="pnlToggle" aria-expanded="false">
+      <span>📊 Periode P&L</span>
+      <span class="chevron" id="pnlChevron">▸</span>
+    </button>
+    <div class="blocks-collapse" id="pnlCollapse">
+      <table class="blocks-table" id="pnlTable">
+        <thead><tr>
+          <th>Periode</th><th>Status</th><th>Tanggal</th>
+          <th class="r">Beli</th><th class="r">Sold</th>
+          <th class="r">Days</th><th class="r">Success</th>
+          <th class="r">Equity akhir</th>
+          <th class="r">Net P/L</th><th class="r">Net %</th>
+          <th class="r">Max DD</th>
+        </tr></thead>
+        <tbody id="pnlBody"></tbody>
+        <tfoot id="pnlFoot"></tfoot>
+      </table>
+      <div class="profit-note" id="pnlNote"></div>
+    </div>
+  </div>
+</div>
+
+<script>window.__SNAPSHOT__ = {"accounts": ["batara"], "account": "batara", "exchanges": {"alvina": "Binance", "azel": "Binance", "bagus": "Binance", "batara": "Binance", "bima": "Binance", "christine": "Binance", "dian": "Binance", "edward": "Binance", "imelda": "Binance", "izak": "Binance", "kresna": "Binance", "setiaji": "Binance", "tommy": "Binance", "vennia": "Binance", "wildan": "Binance"}, "per_account": {"batara": {"coins": ["NEAR", "USDT", "WLD", "WLFI", "ZEC"], "buy_coins": ["NEAR", "WLD", "ZEC"], "stats": {"success_rate": {"pct": 0.0, "profitable": 0, "total_sold": 0}, "today": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time": {"pct": 0.0, "usd": 0.0, "from": null, "to": null}, "all_time_gross": {"pct": 0.0, "usd": 0.0}, "oldest_block": {"bot_name": null, "block_id": null, "age_days": null, "entry_price": null, "status": "none"}, "ath": {"value": null, "raw_value": null, "ec": 0.0, "ts": null, "age_days": null, "lookback_days": 30, "period_no": null}, "usdt_total": {"value": null, "ts": null, "total_capital": 0.0}, "total_usage": {"value": null, "ts": null}, "total_capital_card": {"value": 0.0}, "extra_capital_card": {"value": 0.0}, "block_size_card": {"value": 0.0}, "funding_card": {"value": null, "ts": null}, "max_drawdown": {"pct": null, "peak": null, "trough": null, "peak_ts": null, "trough_ts": null, "period_no": null}, "first_buy_balance": {"value": null, "ts": null}}, "equity": {"total": {"today": {"coin": "total", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "total", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "total", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "total", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "total", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}, "NEAR": {"today": {"coin": "NEAR", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "NEAR", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "NEAR", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "NEAR", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "NEAR", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}, "USDT": {"today": {"coin": "USDT", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "USDT", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "USDT", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "USDT", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "USDT", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}, "WLD": {"today": {"coin": "WLD", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "WLD", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "WLD", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "WLD", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "WLD", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}, "WLFI": {"today": {"coin": "WLFI", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "WLFI", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "WLFI", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "WLFI", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "WLFI", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}, "ZEC": {"today": {"coin": "ZEC", "range": "today", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "3d": {"coin": "ZEC", "range": "3d", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "1m": {"coin": "ZEC", "range": "1m", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "month": {"coin": "ZEC", "range": "month", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}, "all": {"coin": "ZEC", "range": "all", "points": [], "count": 0, "first": null, "last": null, "change_pct": 0, "change_usd": 0, "direction": "flat", "force_sells": [], "force_sell_total": 0.0}}}, "buys": {"NEAR": {"today": {"coin": "NEAR", "range": "today", "points": [], "sells": [], "count": 0, "first": null, "last": null}, "3d": {"coin": "NEAR", "range": "3d", "points": [], "sells": [], "count": 0, "first": null, "last": null}, "1m": {"coin": "NEAR", "range": "1m", "points": [{"ts": "2026-10-23T12:23:46.620119+00:00", "label": "23 Oct 19:23", "price": 4.891751, "status": "combined", "block_id": 29, "sold": true}, {"ts": "2026-10-26T06:29:42.637969+00:00", "label": "26 Oct 13:29", "price": 4.723896, "status": "loss", "block_id": 31, "sold": true}, {"ts": "2026-11-04T14:55:26.326482+00:00", "label": "04 Nov 21:55", "price": 4.153968, "status": "combined", "block_id": 30, "sold": true}], "sells": [{"ts": "2026-11-04T14:55:48.279796+00:00", "label": "04 Nov 21:55", "price": 4.891751, "status": "combined", "block_id": 29}, {"ts": "2026-11-23T14:38:29.043103+00:00", "label": "23 Nov 21:38", "price": 3.235, "status": "loss", "block_id": 31}, {"ts": "2026-11-04T14:55:48.279796+00:00", "label": "04 Nov 21:55", "price": 4.153968, "status": "combined", "block_id": 30}], "count": 3, "first": 4.891751, "last": 4.153968}, "month": {"coin": "NEAR", "range": "month", "points": [{"ts": "2026-10-23T12:23:46.620119+00:00", "label": "23 Oct 19:23", "price": 4.891751, "status": "combined", "block_id": 29, "sold": true}, {"ts": "2026-10-26T06:29:42.637969+00:00", "label": "26 Oct 13:29", "price": 4.723896, "status": "loss", "block_id": 31, "sold": true}, {"ts": "2026-11-04T14:55:26.326482+00:00", "label": "04 Nov 21:55", "price": 4.153968, "status": "combined", "block_id": 30, "sold": true}], "sells": [{"ts": "2026-11-04T14:55:48.279796+00:00", "label": "04 Nov 21:55", "price": 4.891751, "status": "combined", "block_id": 29}, {"ts": "2026-11-23T14:38:29.043103+00:00", "label": "23 Nov 21:38", "price": 3.235, "status": "loss", "block_id": 31}, {"ts": "2026-11-04T14:55:48.279796+00:00", "label": "04 Nov 21:55", "price": 4.153968, "status": "combined", "block_id": 30}], "count": 3, "first": 4.891751, "last": 4.153968}, "all": {"coin": "NEAR", "range": "all", "points": [{"ts": "2026-10-05T14:59:11.379812+00:00", "label": "05 Oct 21:59", "price": 4.966, "status": "profit", "block_id": 1, "sold": true}, {"ts": "2026-10-05T23:44:30.167119+00:00", "label": "06 Oct 06:44", "price": 5.11, "status": "profit", "block_id": 2, "sold": true}, {"ts": "2026-10-06T05:56:47.692599+00:00", "label": "06 Oct 12:56", "price": 5.206, "status": "profit", "block_id": 3, "sold": true}, {"ts": "2026-10-06T14:06:21.269549+00:00", "label": "06 Oct 21:06", "price": 5.116, "status": "profit", "block_id": 4, "sold": true}, {"ts": "2026-10-07T02:04:09.802326+00:00", "label": "07 Oct 09:04", "price": 4.933, "status": "profit", "block_id": 5, "sold": true}, {"ts": "2026-10-07T04:02:54.398172+00:00", "label": "07 Oct 11:02", "price": 4.933, "status": "profit", "block_id": 6, "sold": true}, {"ts": "2026-10-07T09:42:53.200205+00:00", "label": "07 Oct 16:42", "price": 5.033, "status": "profit", "block_id": 7, "sold": true}, {"ts": "2026-10-07T14:28:05.793052+00:00", "label": "07 Oct 21:28", "price": 5.006, "status": "profit", "block_id": 8, "sold": true}, {"ts": "2026-10-07T21:39:41.892888+00:00", "label": "08 Oct 04:39", "price": 5.265, "status": "profit", "block_id": 9, "sold": true}, {"ts": "2026-10-09T08:33:25.611683+00:00", "label": "09 Oct 15:33", "price": 4.805, "status": "profit", "block_id": 10, "sold": true}, {"ts": "2026-10-09T16:33:56.653452+00:00", "label": "09 Oct 23:33", "price": 4.733, "status": "profit", "block_id": 11, "sold": true}, {"ts": "2026-10-11T18:18:05.795782+00:00", "label": "12 Oct 01:18", "price": 5.664, "status": "profit", "block_id": 12, "sold": true}, {"ts": "2026-10-12T08:17:47.636344+00:00", "label": "12 Oct 15:17", "price": 5.78, "status": "combined", "block_id": 13, "sold": true}, {"ts": "2026-10-12T10:59:55.132648+00:00", "label": "12 Oct 17:59", "price": 5.685975, "status": "combined", "block_id": 15, "sold": true}, {"ts": "2026-10-12T13:02:33.735256+00:00", "label": "12 Oct 20:02", "price": 5.588038, "status": "combined", "block_id": 17, "sold": true}, {"ts": "2026-10-12T13:36:47.083770+00:00", "label": "12 Oct 20:36", "price": 5.595, "status": "combined", "block_id": 14, "sold": true}, {"ts": "2026-10-12T15:23:19.543204+00:00", "label": "12 Oct 22:23", "price": 5.448245, "status": "combined", "block_id": 19, "sold": true}, {"ts": "2026-10-12T16:55:31.901549+00:00", "label": "12 Oct 23:55", "price": 5.402, "status": "combined", "block_id": 16, "sold": true}, {"ts": "2026-10-12T21:46:15.221361+00:00", "label": "13 Oct 04:46", "price": 5.067956, "status": "combined", "block_id": 18, "sold": true}, {"ts": "2026-10-14T08:51:48.816605+00:00", "label": "14 Oct 15:51", "price": 5.286918, "status": "profit", "block_id": 21, "sold": true}, {"ts": "2026-10-20T08:48:36.427122+00:00", "label": "20 Oct 15:48", "price": 4.727, "status": "combined", "block_id": 20, "sold": true}, {"ts": "2026-10-21T23:37:26.602166+00:00", "label": "22 Oct 06:37", "price": 5.226, "status": "profit", "block_id": 22, "sold": true}, {"ts": "2026-10-22T02:22:52.070241+00:00", "label": "22 Oct 09:22", "price": 5.156, "status": "combined", "block_id": 23, "sold": true}, {"ts": "2026-10-22T04:35:53.082949+00:00", "label": "22 Oct 11:35", "price": 5.070637, "status": "combined", "block_id": 25, "sold": true}, {"ts": "2026-10-22T06:44:39.213015+00:00", "label": "22 Oct 13:44", "price": 4.988, "status": "combined", "block_id": 24, "sold": true}, {"ts": "2026-10-22T09:27:28.408758+00:00", "label": "22 Oct 16:27", "price": 4.989927, "status": "combined", "block_id": 27, "sold": true}, {"ts": "2026-10-22T18:43:34.736124+00:00", "label": "23 Oct 01:43", "price": 4.836, "status": "combined", "block_id": 26, "sold": true}, {"ts": "2026-10-23T12:23:46.620119+00:00", "label": "23 Oct 19:23", "price": 4.891751, "status": "combined", "block_id": 29, "sold": true}, {"ts": "2026-10-26T06:29:42.637969+00:00", "label": "26 Oct 13:29", "price": 4.723896, "status": "loss", "block_id": 31, "sold": true}, {"ts": "2026-10-26T15:14:10.375528+00:00", "label": "26 Oct 22:14", "price": 4.619, "status": "combined", "block_id": 28, "sold": true}, {"ts": "2026-11-04T14:55:26.326482+00:00", "label": "04 Nov 21:55", "price": 4.153968, "status": "combined", "block_id": 30, "sold": true}], "sells": [{"ts": "2026-10-05T16:00:21.367345627+00:00", "label": "05 Oct 23:00", "price": 5.015, "status": "profit", "block_id": 1}, {"ts": "2026-10-05T23:53:25.012005819+00:00", "label": "06 Oct 06:53", "price": 5.197, "status": "profit", "block_id": 2}, {"ts": "2026-10-06T09:20:11.731793718+00:00", "label": "06 Oct 16:20", "price": 5.252, "status": "profit", "block_id": 3}, {"ts": "2026-10-07T06:43:49.336459717+00:00", "label": "07 Oct 13:43", "price": 5.217, "status": "profit", "block_id": 4}, {"ts": "2026-10-07T02:33:27.981476891+00:00", "label": "07 Oct 09:33", "price": 4.982, "status": "profit", "block_id": 5}, {"ts": "2026-10-07T04:16:18.006371164+00:00", "label": "07 Oct 11:16", "price": 4.981, "status": "profit", "block_id": 6}, {"ts": "2026-10-07T12:51:05.026978241+00:00", "label": "07 Oct 19:51", "price": 5.134, "status": "profit", "block_id": 7}, {"ts": "2026-10-07T15:41:25.039667449+00:00", "label": "07 Oct 22:41", "price": 5.056, "status": "profit", "block_id": 8}, {"ts": "2026-10-07T22:08:27.981112280+00:00", "label": "08 Oct 05:08", "price": 5.317, "status": "profit", "block_id": 9}, {"ts": "2026-10-09T12:06:53.023216393+00:00", "label": "09 Oct 19:06", "price": 4.853, "status": "profit", "block_id": 10}, {"ts": "2026-10-09T22:02:04.983750735+00:00", "label": "10 Oct 05:02", "price": 4.828, "status": "profit", "block_id": 11}, {"ts": "2026-10-11T19:07:02.148905414+00:00", "label": "12 Oct 02:07", "price": 5.719, "status": "profit", "block_id": 12}, {"ts": "2026-10-12T13:37:21.129745+00:00", "label": "12 Oct 20:37", "price": 5.78, "status": "combined", "block_id": 13}, {"ts": "2026-10-12T17:01:15.747622+00:00", "label": "13 Oct 00:01", "price": 5.685975, "status": "combined", "block_id": 15}, {"ts": "2026-10-12T21:55:13.316151+00:00", "label": "13 Oct 04:55", "price": 5.588038, "status": "combined", "block_id": 17}, {"ts": "2026-10-12T13:37:21.129745+00:00", "label": "12 Oct 20:37", "price": 5.595, "status": "combined", "block_id": 14}, {"ts": "2026-10-20T08:50:25.242769+00:00", "label": "20 Oct 15:50", "price": 5.448245, "status": "combined", "block_id": 19}, {"ts": "2026-10-12T17:01:15.747622+00:00", "label": "13 Oct 00:01", "price": 5.402, "status": "combined", "block_id": 16}, {"ts": "2026-10-12T21:55:13.316151+00:00", "label": "13 Oct 04:55", "price": 5.067956, "status": "combined", "block_id": 18}, {"ts": "2026-10-21T15:03:20.692319+00:00", "label": "21 Oct 22:03", "price": 5.314, "status": "profit", "block_id": 21}, {"ts": "2026-10-20T08:50:25.242769+00:00", "label": "20 Oct 15:50", "price": 4.727, "status": "combined", "block_id": 20}, {"ts": "2026-10-22T01:01:10.414082991+00:00", "label": "22 Oct 08:01", "price": 5.279, "status": "profit", "block_id": 22}, {"ts": "2026-10-22T06:44:55.315066+00:00", "label": "22 Oct 13:44", "price": 5.156, "status": "combined", "block_id": 23}, {"ts": "2026-10-22T18:44:30.365985+00:00", "label": "23 Oct 01:44", "price": 5.070637, "status": "combined", "block_id": 25}, {"ts": "2026-10-22T06:44:55.315066+00:00", "label": "22 Oct 13:44", "price": 4.988, "status": "combined", "block_id": 24}, {"ts": "2026-10-26T15:15:53.433945+00:00", "label": "26 Oct 22:15", "price": 4.989927, "status": "combined", "block_id": 27}, {"ts": "2026-10-22T18:44:30.365985+00:00", "label": "23 Oct 01:44", "price": 4.836, "status": "combined", "block_id": 26}, {"ts": "2026-11-04T14:55:48.279796+00:00", "label": "04 Nov 21:55", "price": 4.891751, "status": "combined", "block_id": 29}, {"ts": "2026-11-23T14:38:29.043103+00:00", "label": "23 Nov 21:38", "price": 3.235, "status": "loss", "block_id": 31}, {"ts": "2026-10-26T15:15:53.433945+00:00", "label": "26 Oct 22:15", "price": 4.619, "status": "combined", "block_id": 28}, {"ts": "2026-11-04T14:55:48.279796+00:00", "label": "04 Nov 21:55", "price": 4.153968, "status": "combined", "block_id": 30}], "count": 31, "first": 4.966, "last": 4.153968}}, "WLD": {"today": {"coin": "WLD", "range": "today", "points": [], "sells": [], "count": 0, "first": null, "last": null}, "3d": {"coin": "WLD", "range": "3d", "points": [], "sells": [], "count": 0, "first": null, "last": null}, "1m": {"coin": "WLD", "range": "1m", "points": [{"ts": "2026-10-24T09:42:00.135003+00:00", "label": "24 Oct 16:42", "price": 0.501245, "status": "loss", "block_id": 38, "sold": true}], "sells": [{"ts": "2026-11-15T23:49:42.949530+00:00", "label": "16 Nov 06:49", "price": 0.2711, "status": "loss", "block_id": 38}], "count": 1, "first": 0.501245, "last": 0.501245}, "month": {"coin": "WLD", "range": "month", "points": [{"ts": "2026-10-24T09:42:00.135003+00:00", "label": "24 Oct 16:42", "price": 0.501245, "status": "loss", "block_id": 38, "sold": true}], "sells": [{"ts": "2026-11-15T23:49:42.949530+00:00", "label": "16 Nov 06:49", "price": 0.2711, "status": "loss", "block_id": 38}], "count": 1, "first": 0.501245, "last": 0.501245}, "all": {"coin": "WLD", "range": "all", "points": [{"ts": "2026-10-05T10:40:50.485563+00:00", "label": "05 Oct 17:40", "price": 0.573, "status": "combined", "block_id": 1, "sold": true}, {"ts": "2026-10-06T10:11:38.964557+00:00", "label": "06 Oct 17:11", "price": 0.549565, "status": "combined", "block_id": 4, "sold": true}, {"ts": "2026-10-06T16:07:28.168532+00:00", "label": "06 Oct 23:07", "price": 0.5546, "status": "combined", "block_id": 2, "sold": true}, {"ts": "2026-10-06T17:54:42.837525+00:00", "label": "07 Oct 00:54", "price": 0.540191, "status": "combined", "block_id": 6, "sold": true}, {"ts": "2026-10-06T22:27:29.488169+00:00", "label": "07 Oct 05:27", "price": 0.535066, "status": "combined", "block_id": 8, "sold": true}, {"ts": "2026-10-07T01:36:23.722131+00:00", "label": "07 Oct 08:36", "price": 0.532085, "status": "combined", "block_id": 10, "sold": true}, {"ts": "2026-10-07T02:04:40.082290+00:00", "label": "07 Oct 09:04", "price": 0.5234, "status": "combined", "block_id": 3, "sold": true}, {"ts": "2026-10-07T03:55:52.167986+00:00", "label": "07 Oct 10:55", "price": 0.5295, "status": "combined", "block_id": 12, "sold": true}, {"ts": "2026-10-07T05:42:52.094181+00:00", "label": "07 Oct 12:42", "price": 0.527125, "status": "loss", "block_id": 14, "sold": true}, {"ts": "2026-10-07T15:33:32.446896+00:00", "label": "07 Oct 22:33", "price": 0.5139, "status": "combined", "block_id": 5, "sold": true}, {"ts": "2026-10-07T15:48:47.603447+00:00", "label": "07 Oct 22:48", "price": 0.5155, "status": "combined", "block_id": 7, "sold": true}, {"ts": "2026-10-07T16:49:43.054463+00:00", "label": "07 Oct 23:49", "price": 0.517673, "status": "combined", "block_id": 9, "sold": true}, {"ts": "2026-10-07T17:25:19.471907+00:00", "label": "08 Oct 00:25", "price": 0.5145, "status": "combined", "block_id": 11, "sold": true}, {"ts": "2026-10-07T17:45:42.845454+00:00", "label": "08 Oct 00:45", "price": 0.511082, "status": "combined", "block_id": 13, "sold": true}, {"ts": "2026-10-11T18:13:04.732286+00:00", "label": "12 Oct 01:13", "price": 0.5641, "status": "combined", "block_id": 15, "sold": true}, {"ts": "2026-10-11T19:51:29.263946+00:00", "label": "12 Oct 02:51", "price": 0.554753, "status": "combined", "block_id": 17, "sold": true}, {"ts": "2026-10-11T21:26:41.123450+00:00", "label": "12 Oct 04:26", "price": 0.545712, "status": "combined", "block_id": 16, "sold": true}, {"ts": "2026-10-12T02:13:41.833416+00:00", "label": "12 Oct 09:13", "price": 0.545609, "status": "profit", "block_id": 19, "sold": true}, {"ts": "2026-10-12T14:21:25.271294+00:00", "label": "12 Oct 21:21", "price": 0.528199, "status": "combined", "block_id": 18, "sold": true}, {"ts": "2026-10-20T06:00:01.554175+00:00", "label": "20 Oct 13:00", "price": 0.537, "status": "profit", "block_id": 20, "sold": true}, {"ts": "2026-10-20T15:22:48.643875+00:00", "label": "20 Oct 22:22", "price": 0.564, "status": "profit", "block_id": 21, "sold": true}, {"ts": "2026-10-21T10:05:17.444921+00:00", "label": "21 Oct 17:05", "price": 0.5796, "status": "profit", "block_id": 22, "sold": true}, {"ts": "2026-10-21T14:00:51.942224+00:00", "label": "21 Oct 21:00", "price": 0.5703, "status": "profit", "block_id": 23, "sold": true}, {"ts": "2026-10-22T02:19:39.757336+00:00", "label": "22 Oct 09:19", "price": 0.5701, "status": "combined", "block_id": 24, "sold": true}, {"ts": "2026-10-22T03:55:20.593467+00:00", "label": "22 Oct 10:55", "price": 0.560542, "status": "combined", "block_id": 26, "sold": true}, {"ts": "2026-10-22T05:27:52.157352+00:00", "label": "22 Oct 12:27", "price": 0.5513, "status": "combined", "block_id": 25, "sold": true}, {"ts": "2026-10-22T08:00:25.906954+00:00", "label": "22 Oct 15:00", "price": 0.54998, "status": "profit", "block_id": 28, "sold": true}, {"ts": "2026-10-22T15:44:04.367959+00:00", "label": "22 Oct 22:44", "price": 0.53, "status": "combined", "block_id": 27, "sold": true}, {"ts": "2026-10-22T20:12:52.611457+00:00", "label": "23 Oct 03:12", "price": 0.5502, "status": "profit", "block_id": 29, "sold": true}, {"ts": "2026-10-23T09:22:07.398943+00:00", "label": "23 Oct 16:22", "price": 0.5455, "status": "combined", "block_id": 30, "sold": true}, {"ts": "2026-10-23T14:19:06.589616+00:00", "label": "23 Oct 21:19", "price": 0.535935, "status": "combined", "block_id": 32, "sold": true}, {"ts": "2026-10-23T16:47:18.720609+00:00", "label": "23 Oct 23:47", "price": 0.527498, "status": "combined", "block_id": 34, "sold": true}, {"ts": "2026-10-23T18:18:53.331471+00:00", "label": "24 Oct 01:18", "price": 0.516422, "status": "combined", "block_id": 36, "sold": true}, {"ts": "2026-10-23T19:05:51.972710+00:00", "label": "24 Oct 02:05", "price": 0.5267, "status": "combined", "block_id": 31, "sold": true}, {"ts": "2026-10-23T21:30:05.513963+00:00", "label": "24 Oct 04:30", "price": 0.5114, "status": "combined", "block_id": 33, "sold": true}, {"ts": "2026-10-23T22:32:04.440132+00:00", "label": "24 Oct 05:32", "price": 0.4858, "status": "combined", "block_id": 35, "sold": true}, {"ts": "2026-10-24T09:42:00.135003+00:00", "label": "24 Oct 16:42", "price": 0.501245, "status": "loss", "block_id": 38, "sold": true}, {"ts": "2026-10-26T15:08:33.262019+00:00", "label": "26 Oct 22:08", "price": 0.448524, "status": "combined", "block_id": 37, "sold": true}], "sells": [{"ts": "2026-10-07T15:31:28.685513+00:00", "label": "07 Oct 22:31", "price": 0.573, "status": "combined", "block_id": 1}, {"ts": "2026-10-07T15:46:27.154240+00:00", "label": "07 Oct 22:46", "price": 0.549565, "status": "combined", "block_id": 4}, {"ts": "2026-10-07T15:31:28.685513+00:00", "label": "07 Oct 22:31", "price": 0.5546, "status": "combined", "block_id": 2}, {"ts": "2026-10-07T16:01:23.913291+00:00", "label": "07 Oct 23:01", "price": 0.540191, "status": "combined", "block_id": 6}, {"ts": "2026-10-07T17:02:56.062395+00:00", "label": "08 Oct 00:02", "price": 0.535066, "status": "combined", "block_id": 8}, {"ts": "2026-10-07T17:34:52.348370+00:00", "label": "08 Oct 00:34", "price": 0.532085, "status": "combined", "block_id": 10}, {"ts": "2026-10-07T15:31:28.685513+00:00", "label": "07 Oct 22:31", "price": 0.5234, "status": "combined", "block_id": 3}, {"ts": "2026-10-07T17:49:38.375566+00:00", "label": "08 Oct 00:49", "price": 0.5295, "status": "combined", "block_id": 12}, {"ts": "2026-10-09T08:33:08.576692096+00:00", "label": "09 Oct 15:33", "price": 0.497241, "status": "loss", "block_id": 14}, {"ts": "2026-10-07T15:46:27.154240+00:00", "label": "07 Oct 22:46", "price": 0.5139, "status": "combined", "block_id": 5}, {"ts": "2026-10-07T16:01:23.913291+00:00", "label": "07 Oct 23:01", "price": 0.5155, "status": "combined", "block_id": 7}, {"ts": "2026-10-07T17:02:56.062395+00:00", "label": "08 Oct 00:02", "price": 0.517673, "status": "combined", "block_id": 9}, {"ts": "2026-10-07T17:34:52.348370+00:00", "label": "08 Oct 00:34", "price": 0.5145, "status": "combined", "block_id": 11}, {"ts": "2026-10-07T17:49:38.375566+00:00", "label": "08 Oct 00:49", "price": 0.511082, "status": "combined", "block_id": 13}, {"ts": "2026-10-11T21:40:38.927224+00:00", "label": "12 Oct 04:40", "price": 0.5641, "status": "combined", "block_id": 15}, {"ts": "2026-10-12T14:28:45.126630+00:00", "label": "12 Oct 21:28", "price": 0.554753, "status": "combined", "block_id": 17}, {"ts": "2026-10-11T21:40:38.927224+00:00", "label": "12 Oct 04:40", "price": 0.545712, "status": "combined", "block_id": 16}, {"ts": "2026-10-20T03:42:29.901635+00:00", "label": "20 Oct 10:42", "price": 0.547308, "status": "profit", "block_id": 19}, {"ts": "2026-10-12T14:28:45.126630+00:00", "label": "12 Oct 21:28", "price": 0.528199, "status": "combined", "block_id": 18}, {"ts": "2026-10-20T06:47:07.253841483+00:00", "label": "20 Oct 13:47", "price": 0.5422, "status": "profit", "block_id": 20}, {"ts": "2026-10-20T18:33:02.503066805+00:00", "label": "21 Oct 01:33", "price": 0.5753, "status": "profit", "block_id": 21}, {"ts": "2026-10-21T12:15:27.418375723+00:00", "label": "21 Oct 19:15", "price": 0.5908, "status": "profit", "block_id": 22}, {"ts": "2026-10-21T15:03:55.540324599+00:00", "label": "21 Oct 22:03", "price": 0.576104, "status": "profit", "block_id": 23}, {"ts": "2026-10-22T05:28:53.768438+00:00", "label": "22 Oct 12:28", "price": 0.5701, "status": "combined", "block_id": 24}, {"ts": "2026-10-22T15:44:25.291524+00:00", "label": "22 Oct 22:44", "price": 0.560542, "status": "combined", "block_id": 26}, {"ts": "2026-10-22T05:28:53.768438+00:00", "label": "22 Oct 12:28", "price": 0.5513, "status": "combined", "block_id": 25}, {"ts": "2026-10-22T18:50:57.231665214+00:00", "label": "23 Oct 01:50", "price": 0.5608, "status": "profit", "block_id": 28}, {"ts": "2026-10-22T15:44:25.291524+00:00", "label": "22 Oct 22:44", "price": 0.53, "status": "combined", "block_id": 27}, {"ts": "2026-10-23T02:00:04.675945510+00:00", "label": "23 Oct 09:00", "price": 0.5555, "status": "profit", "block_id": 29}, {"ts": "2026-10-23T19:07:05.470119+00:00", "label": "24 Oct 02:07", "price": 0.5455, "status": "combined", "block_id": 30}, {"ts": "2026-10-23T21:31:06.613694+00:00", "label": "24 Oct 04:31", "price": 0.535935, "status": "combined", "block_id": 32}, {"ts": "2026-10-23T22:33:13.635440+00:00", "label": "24 Oct 05:33", "price": 0.527498, "status": "combined", "block_id": 34}, {"ts": "2026-10-26T15:09:53.435969+00:00", "label": "26 Oct 22:09", "price": 0.516422, "status": "combined", "block_id": 36}, {"ts": "2026-10-23T19:07:05.470119+00:00", "label": "24 Oct 02:07", "price": 0.5267, "status": "combined", "block_id": 31}, {"ts": "2026-10-23T21:31:06.613694+00:00", "label": "24 Oct 04:31", "price": 0.5114, "status": "combined", "block_id": 33}, {"ts": "2026-10-23T22:33:13.635440+00:00", "label": "24 Oct 05:33", "price": 0.4858, "status": "combined", "block_id": 35}, {"ts": "2026-11-15T23:49:42.949530+00:00", "label": "16 Nov 06:49", "price": 0.2711, "status": "loss", "block_id": 38}, {"ts": "2026-10-26T15:09:53.435969+00:00", "label": "26 Oct 22:09", "price": 0.448524, "status": "combined", "block_id": 37}], "count": 38, "first": 0.573, "last": 0.448524}}, "ZEC": {"today": {"coin": "ZEC", "range": "today", "points": [], "sells": [], "count": 0, "first": null, "last": null}, "3d": {"coin": "ZEC", "range": "3d", "points": [], "sells": [], "count": 0, "first": null, "last": null}, "1m": {"coin": "ZEC", "range": "1m", "points": [{"ts": "2026-10-29T17:54:40.137284+00:00", "label": "30 Oct 00:54", "price": 1330.65, "status": "profit", "block_id": 26, "sold": true}, {"ts": "2026-11-15T23:51:39.723290+00:00", "label": "16 Nov 06:51", "price": 909.992127, "status": "combined", "block_id": 27, "sold": true}, {"ts": "2026-11-16T02:54:28.998096+00:00", "label": "16 Nov 09:54", "price": 894.150831, "status": "combined", "block_id": 29, "sold": true}, {"ts": "2026-11-16T05:51:11.987803+00:00", "label": "16 Nov 12:51", "price": 878.838506, "status": "combined", "block_id": 28, "sold": true}, {"ts": "2026-11-16T07:10:06.928318+00:00", "label": "16 Nov 14:10", "price": 879.028576, "status": "profit", "block_id": 31, "sold": true}, {"ts": "2026-11-16T15:16:35.948587+00:00", "label": "16 Nov 22:16", "price": 850.25, "status": "combined", "block_id": 30, "sold": true}, {"ts": "2026-11-17T15:48:51.561430+00:00", "label": "17 Nov 22:48", "price": 923.493911, "status": "profit", "block_id": 32, "sold": true}, {"ts": "2026-11-17T18:18:22.286121+00:00", "label": "18 Nov 01:18", "price": 919.35, "status": "profit", "block_id": 33, "sold": true}, {"ts": "2026-11-18T10:22:12.190006+00:00", "label": "18 Nov 17:22", "price": 941.619605, "status": "combined", "block_id": 34, "sold": true}, {"ts": "2026-11-18T14:50:10.562117+00:00", "label": "18 Nov 21:50", "price": 923.309141, "status": "profit", "block_id": 36, "sold": true}, {"ts": "2026-11-18T19:07:57.257028+00:00", "label": "19 Nov 02:07", "price": 905.695272, "status": "combined", "block_id": 35, "sold": true}, {"ts": "2026-11-19T15:36:03.718733+00:00", "label": "19 Nov 22:36", "price": 923.80281, "status": "combined", "block_id": 37, "sold": true}, {"ts": "2026-11-19T18:06:21.924634+00:00", "label": "20 Nov 01:06", "price": 904.987765, "status": "combined", "block_id": 39, "sold": true}, {"ts": "2026-11-19T20:30:32.366818+00:00", "label": "20 Nov 03:30", "price": 886.94, "status": "combined", "block_id": 38, "sold": true}, {"ts": "2026-11-19T20:58:49.423946+00:00", "label": "20 Nov 03:58", "price": 890.387383, "status": "loss", "block_id": 41, "sold": true}, {"ts": "2026-11-20T02:27:23.194186+00:00", "label": "20 Nov 09:27", "price": 862.571138, "status": "combined", "block_id": 40, "sold": true}], "sells": [{"ts": "2026-11-04T14:52:51.676245+00:00", "label": "04 Nov 21:52", "price": 1334.914787, "status": "profit", "block_id": 26}, {"ts": "2026-11-16T05:51:26.074994+00:00", "label": "16 Nov 12:51", "price": 909.992127, "status": "combined", "block_id": 27}, {"ts": "2026-11-16T15:18:45.068291+00:00", "label": "16 Nov 22:18", "price": 894.150831, "status": "combined", "block_id": 29}, {"ts": "2026-11-16T05:51:26.074994+00:00", "label": "16 Nov 12:51", "price": 878.838506, "status": "combined", "block_id": 28}, {"ts": "2026-11-16T16:30:49.468851209+00:00", "label": "16 Nov 23:30", "price": 887.440575, "status": "profit", "block_id": 31}, {"ts": "2026-11-16T15:18:45.068291+00:00", "label": "16 Nov 22:18", "price": 850.25, "status": "combined", "block_id": 30}, {"ts": "2026-11-17T16:06:03.578794653+00:00", "label": "17 Nov 23:06", "price": 941.71, "status": "profit", "block_id": 32}, {"ts": "2026-11-17T18:31:01.469331476+00:00", "label": "18 Nov 01:31", "price": 928.457864, "status": "profit", "block_id": 33}, {"ts": "2026-11-18T19:08:44.431041+00:00", "label": "19 Nov 02:08", "price": 941.619605, "status": "combined", "block_id": 34}, {"ts": "2026-11-19T10:57:45.451083993+00:00", "label": "19 Nov 17:57", "price": 950.547006, "status": "profit", "block_id": 36}, {"ts": "2026-11-18T19:08:44.431041+00:00", "label": "19 Nov 02:08", "price": 905.695272, "status": "combined", "block_id": 35}, {"ts": "2026-11-19T20:31:32.699035+00:00", "label": "20 Nov 03:31", "price": 923.80281, "status": "combined", "block_id": 37}, {"ts": "2026-11-20T02:28:16.080527+00:00", "label": "20 Nov 09:28", "price": 904.987765, "status": "combined", "block_id": 39}, {"ts": "2026-11-19T20:31:32.699035+00:00", "label": "20 Nov 03:31", "price": 886.94, "status": "combined", "block_id": 38}, {"ts": "2026-11-23T14:38:32.346298+00:00", "label": "23 Nov 21:38", "price": 879.963922, "status": "loss", "block_id": 41}, {"ts": "2026-11-20T02:28:16.080527+00:00", "label": "20 Nov 09:28", "price": 862.571138, "status": "combined", "block_id": 40}], "count": 16, "first": 1330.65, "last": 862.571138}, "month": {"coin": "ZEC", "range": "month", "points": [{"ts": "2026-10-29T17:54:40.137284+00:00", "label": "30 Oct 00:54", "price": 1330.65, "status": "profit", "block_id": 26, "sold": true}, {"ts": "2026-11-15T23:51:39.723290+00:00", "label": "16 Nov 06:51", "price": 909.992127, "status": "combined", "block_id": 27, "sold": true}, {"ts": "2026-11-16T02:54:28.998096+00:00", "label": "16 Nov 09:54", "price": 894.150831, "status": "combined", "block_id": 29, "sold": true}, {"ts": "2026-11-16T05:51:11.987803+00:00", "label": "16 Nov 12:51", "price": 878.838506, "status": "combined", "block_id": 28, "sold": true}, {"ts": "2026-11-16T07:10:06.928318+00:00", "label": "16 Nov 14:10", "price": 879.028576, "status": "profit", "block_id": 31, "sold": true}, {"ts": "2026-11-16T15:16:35.948587+00:00", "label": "16 Nov 22:16", "price": 850.25, "status": "combined", "block_id": 30, "sold": true}, {"ts": "2026-11-17T15:48:51.561430+00:00", "label": "17 Nov 22:48", "price": 923.493911, "status": "profit", "block_id": 32, "sold": true}, {"ts": "2026-11-17T18:18:22.286121+00:00", "label": "18 Nov 01:18", "price": 919.35, "status": "profit", "block_id": 33, "sold": true}, {"ts": "2026-11-18T10:22:12.190006+00:00", "label": "18 Nov 17:22", "price": 941.619605, "status": "combined", "block_id": 34, "sold": true}, {"ts": "2026-11-18T14:50:10.562117+00:00", "label": "18 Nov 21:50", "price": 923.309141, "status": "profit", "block_id": 36, "sold": true}, {"ts": "2026-11-18T19:07:57.257028+00:00", "label": "19 Nov 02:07", "price": 905.695272, "status": "combined", "block_id": 35, "sold": true}, {"ts": "2026-11-19T15:36:03.718733+00:00", "label": "19 Nov 22:36", "price": 923.80281, "status": "combined", "block_id": 37, "sold": true}, {"ts": "2026-11-19T18:06:21.924634+00:00", "label": "20 Nov 01:06", "price": 904.987765, "status": "combined", "block_id": 39, "sold": true}, {"ts": "2026-11-19T20:30:32.366818+00:00", "label": "20 Nov 03:30", "price": 886.94, "status": "combined", "block_id": 38, "sold": true}, {"ts": "2026-11-19T20:58:49.423946+00:00", "label": "20 Nov 03:58", "price": 890.387383, "status": "loss", "block_id": 41, "sold": true}, {"ts": "2026-11-20T02:27:23.194186+00:00", "label": "20 Nov 09:27", "price": 862.571138, "status": "combined", "block_id": 40, "sold": true}], "sells": [{"ts": "2026-11-04T14:52:51.676245+00:00", "label": "04 Nov 21:52", "price": 1334.914787, "status": "profit", "block_id": 26}, {"ts": "2026-11-16T05:51:26.074994+00:00", "label": "16 Nov 12:51", "price": 909.992127, "status": "combined", "block_id": 27}, {"ts": "2026-11-16T15:18:45.068291+00:00", "label": "16 Nov 22:18", "price": 894.150831, "status": "combined", "block_id": 29}, {"ts": "2026-11-16T05:51:26.074994+00:00", "label": "16 Nov 12:51", "price": 878.838506, "status": "combined", "block_id": 28}, {"ts": "2026-11-16T16:30:49.468851209+00:00", "label": "16 Nov 23:30", "price": 887.440575, "status": "profit", "block_id": 31}, {"ts": "2026-11-16T15:18:45.068291+00:00", "label": "16 Nov 22:18", "price": 850.25, "status": "combined", "block_id": 30}, {"ts": "2026-11-17T16:06:03.578794653+00:00", "label": "17 Nov 23:06", "price": 941.71, "status": "profit", "block_id": 32}, {"ts": "2026-11-17T18:31:01.469331476+00:00", "label": "18 Nov 01:31", "price": 928.457864, "status": "profit", "block_id": 33}, {"ts": "2026-11-18T19:08:44.431041+00:00", "label": "19 Nov 02:08", "price": 941.619605, "status": "combined", "block_id": 34}, {"ts": "2026-11-19T10:57:45.451083993+00:00", "label": "19 Nov 17:57", "price": 950.547006, "status": "profit", "block_id": 36}, {"ts": "2026-11-18T19:08:44.431041+00:00", "label": "19 Nov 02:08", "price": 905.695272, "status": "combined", "block_id": 35}, {"ts": "2026-11-19T20:31:32.699035+00:00", "label": "20 Nov 03:31", "price": 923.80281, "status": "combined", "block_id": 37}, {"ts": "2026-11-20T02:28:16.080527+00:00", "label": "20 Nov 09:28", "price": 904.987765, "status": "combined", "block_id": 39}, {"ts": "2026-11-19T20:31:32.699035+00:00", "label": "20 Nov 03:31", "price": 886.94, "status": "combined", "block_id": 38}, {"ts": "2026-11-23T14:38:32.346298+00:00", "label": "23 Nov 21:38", "price": 879.963922, "status": "loss", "block_id": 41}, {"ts": "2026-11-20T02:28:16.080527+00:00", "label": "20 Nov 09:28", "price": 862.571138, "status": "combined", "block_id": 40}], "count": 16, "first": 1330.65, "last": 862.571138}, "all": {"coin": "ZEC", "range": "all", "points": [{"ts": "2026-10-05T14:59:16.005858+00:00", "label": "05 Oct 21:59", "price": 1316.65, "status": "profit", "block_id": 1, "sold": true}, {"ts": "2026-10-06T21:05:40.079912+00:00", "label": "07 Oct 04:05", "price": 1337.18, "status": "profit", "block_id": 2, "sold": true}, {"ts": "2026-10-07T01:59:50.635899+00:00", "label": "07 Oct 08:59", "price": 1325.89, "status": "profit", "block_id": 3, "sold": true}, {"ts": "2026-10-08T03:45:54.511814+00:00", "label": "08 Oct 10:45", "price": 1303.92, "status": "combined", "block_id": 4, "sold": true}, {"ts": "2026-10-08T04:04:07.350808+00:00", "label": "08 Oct 11:04", "price": 1270.998132, "status": "loss", "block_id": 6, "sold": true}, {"ts": "2026-10-08T04:21:23.383814+00:00", "label": "08 Oct 11:21", "price": 1239.78755, "status": "combined", "block_id": 5, "sold": true}, {"ts": "2026-10-09T14:01:25.761811+00:00", "label": "09 Oct 21:01", "price": 1209.27, "status": "profit", "block_id": 7, "sold": true}, {"ts": "2026-10-11T19:08:08.507506+00:00", "label": "12 Oct 02:08", "price": 1264.14, "status": "profit", "block_id": 8, "sold": true}, {"ts": "2026-10-12T08:20:10.373444+00:00", "label": "12 Oct 15:20", "price": 1309.47, "status": "combined", "block_id": 9, "sold": true}, {"ts": "2026-10-12T11:39:02.386352+00:00", "label": "12 Oct 18:39", "price": 1287.985187, "status": "combined", "block_id": 11, "sold": true}, {"ts": "2026-10-12T14:17:46.177790+00:00", "label": "12 Oct 21:17", "price": 1267.664688, "status": "combined", "block_id": 13, "sold": true}, {"ts": "2026-10-12T14:51:21.700101+00:00", "label": "12 Oct 21:51", "price": 1267.207468, "status": "combined", "block_id": 10, "sold": true}, {"ts": "2026-10-12T19:20:47.961444+00:00", "label": "13 Oct 02:20", "price": 1228.871007, "status": "combined", "block_id": 12, "sold": true}, {"ts": "2026-10-14T15:08:22.098093+00:00", "label": "14 Oct 22:08", "price": 1235.380586, "status": "profit", "block_id": 15, "sold": true}, {"ts": "2026-10-20T03:46:41.477999+00:00", "label": "20 Oct 10:46", "price": 1147.71, "status": "combined", "block_id": 14, "sold": true}, {"ts": "2026-10-21T05:53:18.860725+00:00", "label": "21 Oct 12:53", "price": 1253.37, "status": "profit", "block_id": 16, "sold": true}, {"ts": "2026-10-21T23:32:46.337717+00:00", "label": "22 Oct 06:32", "price": 1315.86, "status": "profit", "block_id": 17, "sold": true}, {"ts": "2026-10-22T02:22:17.523755+00:00", "label": "22 Oct 09:22", "price": 1294.795026, "status": "combined", "block_id": 18, "sold": true}, {"ts": "2026-10-22T05:32:27.715520+00:00", "label": "22 Oct 12:32", "price": 1272.860178, "status": "combined", "block_id": 20, "sold": true}, {"ts": "2026-10-22T08:36:26.146652+00:00", "label": "22 Oct 15:36", "price": 1251.64, "status": "combined", "block_id": 19, "sold": true}, {"ts": "2026-10-22T09:26:21.437734+00:00", "label": "22 Oct 16:26", "price": 1250.685738, "status": "profit", "block_id": 22, "sold": true}, {"ts": "2026-10-22T16:49:51.273333+00:00", "label": "22 Oct 23:49", "price": 1208.64, "status": "combined", "block_id": 21, "sold": true}, {"ts": "2026-10-26T16:31:59.587074+00:00", "label": "26 Oct 23:31", "price": 1226.29, "status": "profit", "block_id": 23, "sold": true}, {"ts": "2026-10-28T12:14:06.648720+00:00", "label": "28 Oct 19:14", "price": 1293.33, "status": "profit", "block_id": 24, "sold": true}, {"ts": "2026-10-29T01:57:12.689215+00:00", "label": "29 Oct 08:57", "price": 1268.887513, "status": "profit", "block_id": 25, "sold": true}, {"ts": "2026-10-29T17:54:40.137284+00:00", "label": "30 Oct 00:54", "price": 1330.65, "status": "profit", "block_id": 26, "sold": true}, {"ts": "2026-11-15T23:51:39.723290+00:00", "label": "16 Nov 06:51", "price": 909.992127, "status": "combined", "block_id": 27, "sold": true}, {"ts": "2026-11-16T02:54:28.998096+00:00", "label": "16 Nov 09:54", "price": 894.150831, "status": "combined", "block_id": 29, "sold": true}, {"ts": "2026-11-16T05:51:11.987803+00:00", "label": "16 Nov 12:51", "price": 878.838506, "status": "combined", "block_id": 28, "sold": true}, {"ts": "2026-11-16T07:10:06.928318+00:00", "label": "16 Nov 14:10", "price": 879.028576, "status": "profit", "block_id": 31, "sold": true}, {"ts": "2026-11-16T15:16:35.948587+00:00", "label": "16 Nov 22:16", "price": 850.25, "status": "combined", "block_id": 30, "sold": true}, {"ts": "2026-11-17T15:48:51.561430+00:00", "label": "17 Nov 22:48", "price": 923.493911, "status": "profit", "block_id": 32, "sold": true}, {"ts": "2026-11-17T18:18:22.286121+00:00", "label": "18 Nov 01:18", "price": 919.35, "status": "profit", "block_id": 33, "sold": true}, {"ts": "2026-11-18T10:22:12.190006+00:00", "label": "18 Nov 17:22", "price": 941.619605, "status": "combined", "block_id": 34, "sold": true}, {"ts": "2026-11-18T14:50:10.562117+00:00", "label": "18 Nov 21:50", "price": 923.309141, "status": "profit", "block_id": 36, "sold": true}, {"ts": "2026-11-18T19:07:57.257028+00:00", "label": "19 Nov 02:07", "price": 905.695272, "status": "combined", "block_id": 35, "sold": true}, {"ts": "2026-11-19T15:36:03.718733+00:00", "label": "19 Nov 22:36", "price": 923.80281, "status": "combined", "block_id": 37, "sold": true}, {"ts": "2026-11-19T18:06:21.924634+00:00", "label": "20 Nov 01:06", "price": 904.987765, "status": "combined", "block_id": 39, "sold": true}, {"ts": "2026-11-19T20:30:32.366818+00:00", "label": "20 Nov 03:30", "price": 886.94, "status": "combined", "block_id": 38, "sold": true}, {"ts": "2026-11-19T20:58:49.423946+00:00", "label": "20 Nov 03:58", "price": 890.387383, "status": "loss", "block_id": 41, "sold": true}, {"ts": "2026-11-20T02:27:23.194186+00:00", "label": "20 Nov 09:27", "price": 862.571138, "status": "combined", "block_id": 40, "sold": true}], "sells": [{"ts": "2026-10-05T22:31:12.636323618+00:00", "label": "06 Oct 05:31", "price": 1342.76, "status": "profit", "block_id": 1}, {"ts": "2026-10-06T23:38:36.572520131+00:00", "label": "07 Oct 06:38", "price": 1365.41, "status": "profit", "block_id": 2}, {"ts": "2026-10-07T19:36:53.355510769+00:00", "label": "08 Oct 02:36", "price": 1337.98, "status": "profit", "block_id": 3}, {"ts": "2026-10-08T04:38:24.553882+00:00", "label": "08 Oct 11:38", "price": 1303.92, "status": "combined", "block_id": 4}, {"ts": "2026-10-09T10:49:16.375158777+00:00", "label": "09 Oct 17:49", "price": 1219.804892, "status": "loss", "block_id": 6}, {"ts": "2026-10-08T04:38:24.553882+00:00", "label": "08 Oct 11:38", "price": 1239.78755, "status": "combined", "block_id": 5}, {"ts": "2026-10-09T14:38:10.640006179+00:00", "label": "09 Oct 21:38", "price": 1221.1, "status": "profit", "block_id": 7}, {"ts": "2026-10-12T01:10:15.810470947+00:00", "label": "12 Oct 08:10", "price": 1276.6, "status": "profit", "block_id": 8}, {"ts": "2026-10-12T15:04:02.183553+00:00", "label": "12 Oct 22:04", "price": 1309.47, "status": "combined", "block_id": 9}, {"ts": "2026-10-12T19:30:28.468620+00:00", "label": "13 Oct 02:30", "price": 1287.985187, "status": "combined", "block_id": 11}, {"ts": "2026-10-20T03:47:56.764971+00:00", "label": "20 Oct 10:47", "price": 1267.664688, "status": "combined", "block_id": 13}, {"ts": "2026-10-12T15:04:02.183553+00:00", "label": "12 Oct 22:04", "price": 1267.207468, "status": "combined", "block_id": 10}, {"ts": "2026-10-12T19:30:28.468620+00:00", "label": "13 Oct 02:30", "price": 1228.871007, "status": "combined", "block_id": 12}, {"ts": "2026-10-20T21:11:45.518792460+00:00", "label": "21 Oct 04:11", "price": 1247.411984, "status": "profit", "block_id": 15}, {"ts": "2026-10-20T03:47:56.764971+00:00", "label": "20 Oct 10:47", "price": 1147.71, "status": "combined", "block_id": 14}, {"ts": "2026-10-21T08:53:00.447276168+00:00", "label": "21 Oct 15:53", "price": 1265.02, "status": "profit", "block_id": 16}, {"ts": "2026-10-22T01:19:30.491085478+00:00", "label": "22 Oct 08:19", "price": 1328.94, "status": "profit", "block_id": 17}, {"ts": "2026-10-22T08:38:05.337121+00:00", "label": "22 Oct 15:38", "price": 1294.795026, "status": "combined", "block_id": 18}, {"ts": "2026-10-22T16:51:05.188076+00:00", "label": "22 Oct 23:51", "price": 1272.860178, "status": "combined", "block_id": 20}, {"ts": "2026-10-22T08:38:05.337121+00:00", "label": "22 Oct 15:38", "price": 1251.64, "status": "combined", "block_id": 19}, {"ts": "2026-10-26T15:05:46.887163+00:00", "label": "26 Oct 22:05", "price": 1256.27712, "status": "profit", "block_id": 22}, {"ts": "2026-10-22T16:51:05.188076+00:00", "label": "22 Oct 23:51", "price": 1208.64, "status": "combined", "block_id": 21}, {"ts": "2026-10-26T17:47:55.441191614+00:00", "label": "27 Oct 00:47", "price": 1238.120567, "status": "profit", "block_id": 23}, {"ts": "2026-10-28T20:12:23.444094047+00:00", "label": "29 Oct 03:12", "price": 1306.42, "status": "profit", "block_id": 24}, {"ts": "2026-10-29T13:31:52.442981262+00:00", "label": "29 Oct 20:31", "price": 1281.25542, "status": "profit", "block_id": 25}, {"ts": "2026-11-04T14:52:51.676245+00:00", "label": "04 Nov 21:52", "price": 1334.914787, "status": "profit", "block_id": 26}, {"ts": "2026-11-16T05:51:26.074994+00:00", "label": "16 Nov 12:51", "price": 909.992127, "status": "combined", "block_id": 27}, {"ts": "2026-11-16T15:18:45.068291+00:00", "label": "16 Nov 22:18", "price": 894.150831, "status": "combined", "block_id": 29}, {"ts": "2026-11-16T05:51:26.074994+00:00", "label": "16 Nov 12:51", "price": 878.838506, "status": "combined", "block_id": 28}, {"ts": "2026-11-16T16:30:49.468851209+00:00", "label": "16 Nov 23:30", "price": 887.440575, "status": "profit", "block_id": 31}, {"ts": "2026-11-16T15:18:45.068291+00:00", "label": "16 Nov 22:18", "price": 850.25, "status": "combined", "block_id": 30}, {"ts": "2026-11-17T16:06:03.578794653+00:00", "label": "17 Nov 23:06", "price": 941.71, "status": "profit", "block_id": 32}, {"ts": "2026-11-17T18:31:01.469331476+00:00", "label": "18 Nov 01:31", "price": 928.457864, "status": "profit", "block_id": 33}, {"ts": "2026-11-18T19:08:44.431041+00:00", "label": "19 Nov 02:08", "price": 941.619605, "status": "combined", "block_id": 34}, {"ts": "2026-11-19T10:57:45.451083993+00:00", "label": "19 Nov 17:57", "price": 950.547006, "status": "profit", "block_id": 36}, {"ts": "2026-11-18T19:08:44.431041+00:00", "label": "19 Nov 02:08", "price": 905.695272, "status": "combined", "block_id": 35}, {"ts": "2026-11-19T20:31:32.699035+00:00", "label": "20 Nov 03:31", "price": 923.80281, "status": "combined", "block_id": 37}, {"ts": "2026-11-20T02:28:16.080527+00:00", "label": "20 Nov 09:28", "price": 904.987765, "status": "combined", "block_id": 39}, {"ts": "2026-11-19T20:31:32.699035+00:00", "label": "20 Nov 03:31", "price": 886.94, "status": "combined", "block_id": 38}, {"ts": "2026-11-23T14:38:32.346298+00:00", "label": "23 Nov 21:38", "price": 879.963922, "status": "loss", "block_id": 41}, {"ts": "2026-11-20T02:28:16.080527+00:00", "label": "20 Nov 09:28", "price": 862.571138, "status": "combined", "block_id": 40}], "count": 41, "first": 1316.65, "last": 862.571138}}}, "profit": {"today": {"range": "today", "label": "Today", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "3d": {"range": "3d", "label": "Last 3 Days", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "1m": {"range": "1m", "label": "Last 30 Days", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "month": {"range": "month", "label": "This Month", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}, "all": {"range": "all", "label": "All Time", "rankings": [], "totals": {"realized": 0.0, "unrealized": 0.0, "realized_pct": 0.0, "unrealized_pct": 0.0, "total_pct": 0.0, "bot_count": 0}}}, "blocks": {"bots": [{"bot_name": "batara-nearusdt", "base_asset": "NEAR", "symbol": "NEARUSDT", "current_price": 3.113, "start_price": 3.046, "is_idle": true, "active_count": 0, "sold_count": 31, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": -692.6902, "total_capital": 5149.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": [{"id": 31, "entry_price": 4.723895502645503, "sold_price": 3.235, "qty": 529.2, "realized_pnl": -787.9235, "sold_reason": "extra_capital_return", "sold_reason_label": "ECR", "entry_time": "2026-10-26T06:29:42.637969+00:00", "sold_time": "2026-11-23T14:38:29.043103+00:00", "age_days": 28.339}, {"id": 29, "entry_price": 4.891750978473581, "sold_price": 4.891750978473581, "qty": 408.8, "realized_pnl": 0.0, "sold_reason": "combined", "sold_reason_label": "combined", "entry_time": "2026-10-23T12:23:46.620119+00:00", "sold_time": "2026-11-04T14:55:48.279796+00:00", "age_days": 12.106}, {"id": 30, "entry_price": 4.1539676079734225, "sold_price": 4.1539676079734225, "qty": 120.4, "realized_pnl": 0.0, "sold_reason": "combined", "sold_reason_label": "combined", "entry_time": "2026-11-04T14:55:26.326482+00:00", "sold_time": "2026-11-04T14:55:48.279796+00:00", "age_days": 0.0}]}, {"bot_name": "batara-wldusdt", "base_asset": "WLD", "symbol": "WLDUSDT", "current_price": 0.2459, "start_price": 0.2404, "is_idle": true, "active_count": 0, "sold_count": 38, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": -1305.796198, "total_capital": 5149.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": [{"id": 38, "entry_price": 0.501244902951556, "sold_price": 0.27110000000000006, "qty": 4987.2, "realized_pnl": -1147.77866, "sold_reason": "manual cut-loss", "sold_reason_label": "manual cut-loss", "entry_time": "2026-10-24T09:42:00.135003+00:00", "sold_time": "2026-11-15T23:49:42.949530+00:00", "age_days": 22.589}, {"id": 36, "entry_price": 0.5164222575147195, "sold_price": 0.5164222575147195, "qty": 3872.4, "realized_pnl": 0.0, "sold_reason": "combined", "sold_reason_label": "combined", "entry_time": "2026-10-23T18:18:53.331471+00:00", "sold_time": "2026-10-26T15:09:53.435969+00:00", "age_days": 2.869}, {"id": 37, "entry_price": 0.4485244259059921, "sold_price": 0.4485244259059921, "qty": 1114.8, "realized_pnl": 0.0, "sold_reason": "combined", "sold_reason_label": "combined", "entry_time": "2026-10-26T15:08:33.262019+00:00", "sold_time": "2026-10-26T15:09:53.435969+00:00", "age_days": 0.001}]}, {"bot_name": "batara-zecusdt", "base_asset": "ZEC", "symbol": "ZECUSDT", "current_price": 841.46, "start_price": 881.75, "is_idle": true, "active_count": 0, "sold_count": 41, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_pnl": 87.68546, "total_capital": 5149.0, "tp_mode": "trailing", "active_blocks": [], "recent_sold": [{"id": 41, "entry_price": 890.3873827893174, "sold_price": 879.9639215686276, "qty": 1.685, "realized_pnl": -17.563532, "sold_reason": "extra_capital_return", "sold_reason_label": "ECR", "entry_time": "2026-11-19T20:58:49.423946+00:00", "sold_time": "2026-11-23T14:38:32.346298+00:00", "age_days": 3.736}, {"id": 39, "entry_price": 904.9877647058823, "sold_price": 904.9877647058823, "qty": 1.105, "realized_pnl": 0.0, "sold_reason": "combined", "sold_reason_label": "combined", "entry_time": "2026-11-19T18:06:21.924634+00:00", "sold_time": "2026-11-20T02:28:16.080527+00:00", "age_days": 0.349}, {"id": 40, "entry_price": 862.5711379310344, "sold_price": 862.5711379310344, "qty": 0.58, "realized_pnl": 0.0, "sold_reason": "combined", "sold_reason_label": "combined", "entry_time": "2026-11-20T02:27:23.194186+00:00", "sold_time": "2026-11-20T02:28:16.080527+00:00", "age_days": 0.001}]}], "totals": {"bot_count": 3, "active_blocks": 0, "active_spent": 0, "active_value": 0.0, "unrealized_total": 0.0, "realized_total": -1910.800938, "expired_days_threshold": 0}}, "periods": [{"account": "batara", "period_no": 2, "start_date": "2026-10-11", "end_date": "2026-11-23", "status": "closed", "start_equity": 5149.0, "start_equity_eff": 5149.0, "closed_equity": 3292.80499304, "realized_pnl": -940.844269337281, "extra_returned": 0.0, "profit_returned": 60.88453085, "bought": 78, "sold": 26, "days": 43, "success_pct": 88.46, "period_realized": -1746.3313, "unrealized": 0.0, "end_equity": 3292.805, "extra_used": 0.0, "net": 60.8845, "net_pct": 1.1825, "max_dd_pct": 49.47}, {"account": "batara", "period_no": 1, "start_date": "2026-10-05", "end_date": "2026-10-11", "status": "closed", "start_equity": 5340.0, "start_equity_eff": 5340.0, "closed_equity": 5149.81573313, "realized_pnl": -164.46963642728315, "extra_returned": 0.0, "profit_returned": 0.0, "bought": 32, "sold": 17, "days": 6, "success_pct": 88.24, "period_realized": -164.4696, "unrealized": 0.0, "end_equity": 5149.8157, "extra_used": 0.0, "net": -190.1843, "net_pct": -3.5615, "max_dd_pct": 10.1}], "recent_sells": {"rows": [{"id": 41, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 890.3873827893174, "sold_price": 879.9639215686276, "mark_price": 841.46, "qty": 1.685, "cost": 1500.30274, "proceeds": 1482.739208, "realized_pnl": -17.563532, "pnl_pct": -1.1707, "sold_reason": "extra_capital_return", "sold_reason_label": "ECR", "entry_time": "2026-11-19T20:58:49.423946+00:00", "sold_time": "2026-11-23T14:38:32.346298+00:00", "age_days": 3.736}, {"id": 31, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 4.723895502645503, "sold_price": 3.235, "mark_price": 3.113, "qty": 529.2, "cost": 2499.8855, "proceeds": 1711.962, "realized_pnl": -787.9235, "pnl_pct": -31.5184, "sold_reason": "extra_capital_return", "sold_reason_label": "ECR", "entry_time": "2026-10-26T06:29:42.637969+00:00", "sold_time": "2026-11-23T14:38:29.043103+00:00", "age_days": 28.339}, {"id": 36, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 923.3091412742382, "sold_price": 950.5470055452865, "mark_price": 841.46, "qty": 1.0830000000000002, "cost": 999.9438, "proceeds": 1029.442407, "realized_pnl": 29.471369, "pnl_pct": 2.9473, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-11-18T14:50:10.562117+00:00", "sold_time": "2026-11-19T10:57:45.451083993+00:00", "age_days": 0.839}, {"id": 33, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 919.35, "sold_price": 928.4578637200738, "mark_price": 841.46, "qty": 0.544, "cost": 500.1264, "proceeds": 505.081078, "realized_pnl": 4.94557, "pnl_pct": 0.9889, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-11-17T18:18:22.286121+00:00", "sold_time": "2026-11-17T18:31:01.469331476+00:00", "age_days": 0.009}, {"id": 32, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 923.4939114391143, "sold_price": 941.71, "mark_price": 841.46, "qty": 0.542, "cost": 500.5337, "proceeds": 510.40682, "realized_pnl": 9.87312, "pnl_pct": 1.9725, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-11-17T15:48:51.561430+00:00", "sold_time": "2026-11-17T16:06:03.578794653+00:00", "age_days": 0.012}, {"id": 31, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 879.0285764499121, "sold_price": 887.4405747800585, "mark_price": 841.46, "qty": 1.7069999999999999, "cost": 1500.50178, "proceeds": 1514.861061, "realized_pnl": 14.342457, "pnl_pct": 0.9558, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-11-16T07:10:06.928318+00:00", "sold_time": "2026-11-16T16:30:49.468851209+00:00", "age_days": 0.389}, {"id": 38, "coin": "WLD", "symbol": "WLDUSDT", "entry_price": 0.501244902951556, "sold_price": 0.27110000000000006, "mark_price": 0.2459, "qty": 4987.2, "cost": 2499.80858, "proceeds": 1352.02992, "realized_pnl": -1147.77866, "pnl_pct": -45.9147, "sold_reason": "manual cut-loss", "sold_reason_label": "manual cut-loss", "entry_time": "2026-10-24T09:42:00.135003+00:00", "sold_time": "2026-11-15T23:49:42.949530+00:00", "age_days": 22.589}, {"id": 26, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1330.6499999999999, "sold_price": 1334.9147872340425, "mark_price": 841.46, "qty": 0.376, "cost": 500.3244, "proceeds": 501.92796, "realized_pnl": 1.60356, "pnl_pct": 0.3205, "sold_reason": "sell_profit_on_failed_buy", "sold_reason_label": "sell profit", "entry_time": "2026-10-29T17:54:40.137284+00:00", "sold_time": "2026-11-04T14:52:51.676245+00:00", "age_days": 5.874}, {"id": 25, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1268.8875126903556, "sold_price": 1281.2554198473283, "mark_price": 841.46, "qty": 0.394, "cost": 499.94168, "proceeds": 504.814635, "realized_pnl": 4.860588, "pnl_pct": 0.9722, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-29T01:57:12.689215+00:00", "sold_time": "2026-10-29T13:31:52.442981262+00:00", "age_days": 0.482}, {"id": 24, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1293.33, "sold_price": 1306.42, "mark_price": 841.46, "qty": 0.387, "cost": 500.51871, "proceeds": 505.58454, "realized_pnl": 5.06583, "pnl_pct": 1.0121, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-28T12:14:06.648720+00:00", "sold_time": "2026-10-28T20:12:23.444094047+00:00", "age_days": 0.332}, {"id": 23, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1226.29, "sold_price": 1238.120566502463, "mark_price": 841.46, "qty": 0.407, "cost": 499.10003, "proceeds": 503.915071, "realized_pnl": 4.80321, "pnl_pct": 0.9624, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-26T16:31:59.587074+00:00", "sold_time": "2026-10-26T17:47:55.441191614+00:00", "age_days": 0.053}, {"id": 22, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1250.685738115096, "sold_price": 1256.2771202003337, "mark_price": 841.46, "qty": 1.199, "cost": 1499.5722, "proceeds": 1506.276267, "realized_pnl": 6.704067, "pnl_pct": 0.4471, "sold_reason": "sell_profit_on_failed_buy", "sold_reason_label": "sell profit", "entry_time": "2026-10-22T09:26:21.437734+00:00", "sold_time": "2026-10-26T15:05:46.887163+00:00", "age_days": 4.236}, {"id": 29, "coin": "WLD", "symbol": "WLDUSDT", "entry_price": 0.5502, "sold_price": 0.5555, "mark_price": 0.2459, "qty": 908.9, "cost": 500.07678, "proceeds": 504.89395, "realized_pnl": 4.8124, "pnl_pct": 0.9623, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-22T20:12:52.611457+00:00", "sold_time": "2026-10-23T02:00:04.675945510+00:00", "age_days": 0.241}, {"id": 28, "coin": "WLD", "symbol": "WLDUSDT", "entry_price": 0.5499804429938758, "sold_price": 0.5607999999999999, "mark_price": 0.2459, "qty": 2726.9, "cost": 1499.74167, "proceeds": 1529.24552, "realized_pnl": 29.474637, "pnl_pct": 1.9653, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-22T08:00:25.906954+00:00", "sold_time": "2026-10-22T18:50:57.231665214+00:00", "age_days": 0.452}, {"id": 17, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1315.86, "sold_price": 1328.94, "mark_price": 841.46, "qty": 0.38, "cost": 500.0268, "proceeds": 504.9972, "realized_pnl": 4.9704, "pnl_pct": 0.994, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-21T23:32:46.337717+00:00", "sold_time": "2026-10-22T01:19:30.491085478+00:00", "age_days": 0.074}, {"id": 22, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 5.226, "sold_price": 5.279, "mark_price": 3.113, "qty": 95.7, "cost": 500.1282, "proceeds": 505.2003, "realized_pnl": 5.0668, "pnl_pct": 1.0131, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-21T23:37:26.602166+00:00", "sold_time": "2026-10-22T01:01:10.414082991+00:00", "age_days": 0.058}, {"id": 23, "coin": "WLD", "symbol": "WLDUSDT", "entry_price": 0.5703, "sold_price": 0.5761036415525114, "mark_price": 0.2459, "qty": 876.9, "cost": 500.09607, "proceeds": 505.185283, "realized_pnl": 5.08399, "pnl_pct": 1.0166, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-21T14:00:51.942224+00:00", "sold_time": "2026-10-21T15:03:55.540324599+00:00", "age_days": 0.044}, {"id": 21, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 5.2869177589852, "sold_price": 5.314, "mark_price": 3.113, "qty": 473.0, "cost": 2500.7121, "proceeds": 2513.522, "realized_pnl": 12.8099, "pnl_pct": 0.5123, "sold_reason": "aged_tp", "sold_reason_label": "aged TP", "entry_time": "2026-10-14T08:51:48.816605+00:00", "sold_time": "2026-10-21T15:03:20.692319+00:00", "age_days": 7.258}, {"id": 22, "coin": "WLD", "symbol": "WLDUSDT", "entry_price": 0.5796, "sold_price": 0.5908000000000001, "mark_price": 0.2459, "qty": 862.7, "cost": 500.02092, "proceeds": 509.68316, "realized_pnl": 9.65216, "pnl_pct": 1.9304, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-21T10:05:17.444921+00:00", "sold_time": "2026-10-21T12:15:27.418375723+00:00", "age_days": 0.09}, {"id": 16, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1253.37, "sold_price": 1265.02, "mark_price": 841.46, "qty": 0.399, "cost": 500.09463, "proceeds": 504.74298, "realized_pnl": 4.64835, "pnl_pct": 0.9295, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-21T05:53:18.860725+00:00", "sold_time": "2026-10-21T08:53:00.447276168+00:00", "age_days": 0.125}, {"id": 15, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1235.3805864197532, "sold_price": 1247.411983930779, "mark_price": 841.46, "qty": 1.6199999999999999, "cost": 2001.31655, "proceeds": 2020.807414, "realized_pnl": 19.466801, "pnl_pct": 0.9727, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-14T15:08:22.098093+00:00", "sold_time": "2026-10-20T21:11:45.518792460+00:00", "age_days": 6.252}, {"id": 21, "coin": "WLD", "symbol": "WLDUSDT", "entry_price": 0.564, "sold_price": 0.5753, "mark_price": 0.2459, "qty": 886.7, "cost": 500.0988, "proceeds": 510.11851, "realized_pnl": 10.00954, "pnl_pct": 2.0015, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-20T15:22:48.643875+00:00", "sold_time": "2026-10-20T18:33:02.503066805+00:00", "age_days": 0.132}, {"id": 20, "coin": "WLD", "symbol": "WLDUSDT", "entry_price": 0.5370000000000001, "sold_price": 0.5422, "mark_price": 0.2459, "qty": 931.6, "cost": 500.2692, "proceeds": 505.11352, "realized_pnl": 4.83964, "pnl_pct": 0.9674, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-20T06:00:01.554175+00:00", "sold_time": "2026-10-20T06:47:07.253841483+00:00", "age_days": 0.033}, {"id": 19, "coin": "WLD", "symbol": "WLDUSDT", "entry_price": 0.5456092271322057, "sold_price": 0.5473076309753523, "mark_price": 0.2459, "qty": 2749.5, "cost": 1500.15257, "proceeds": 1504.822331, "realized_pnl": 4.669761, "pnl_pct": 0.3113, "sold_reason": "sell_profit_on_failed_buy", "sold_reason_label": "sell profit", "entry_time": "2026-10-12T02:13:41.833416+00:00", "sold_time": "2026-10-20T03:42:29.901635+00:00", "age_days": 8.062}, {"id": 8, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1264.14, "sold_price": 1276.6000000000001, "mark_price": 841.46, "qty": 0.395, "cost": 499.3353, "proceeds": 504.257, "realized_pnl": 4.90924, "pnl_pct": 0.9832, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-11T19:08:08.507506+00:00", "sold_time": "2026-10-12T01:10:15.810470947+00:00", "age_days": 0.251}, {"id": 12, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 5.664, "sold_price": 5.719, "mark_price": 3.113, "qty": 88.3, "cost": 500.1312, "proceeds": 504.9877, "realized_pnl": 4.851, "pnl_pct": 0.9699, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-11T18:18:05.795782+00:00", "sold_time": "2026-10-11T19:07:02.148905414+00:00", "age_days": 0.034}, {"id": 11, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 4.733, "sold_price": 4.828, "mark_price": 3.113, "qty": 105.7, "cost": 500.2781, "proceeds": 510.3196, "realized_pnl": 10.032, "pnl_pct": 2.0053, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-09T16:33:56.653452+00:00", "sold_time": "2026-10-09T22:02:04.983750735+00:00", "age_days": 0.228}, {"id": 7, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1209.27, "sold_price": 1221.1, "mark_price": 841.46, "qty": 0.413, "cost": 499.42851, "proceeds": 504.3143, "realized_pnl": 4.87396, "pnl_pct": 0.9759, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-09T14:01:25.761811+00:00", "sold_time": "2026-10-09T14:38:10.640006179+00:00", "age_days": 0.026}, {"id": 10, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 4.805, "sold_price": 4.853, "mark_price": 3.113, "qty": 104.1, "cost": 500.2005, "proceeds": 505.1973, "realized_pnl": 4.992, "pnl_pct": 0.998, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-09T08:33:25.611683+00:00", "sold_time": "2026-10-09T12:06:53.023216393+00:00", "age_days": 0.148}, {"id": 6, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1270.998132147395, "sold_price": 1219.8048919949174, "mark_price": 841.46, "qty": 0.787, "cost": 1000.27553, "proceeds": 959.98645, "realized_pnl": -40.28908, "pnl_pct": -4.0278, "sold_reason": "swipe/trail-sl", "sold_reason_label": "swipe/trail-sl", "entry_time": "2026-10-08T04:04:07.350808+00:00", "sold_time": "2026-10-09T10:49:16.375158777+00:00", "age_days": 1.281}, {"id": 14, "coin": "WLD", "symbol": "WLDUSDT", "entry_price": 0.5271254700944802, "sold_price": 0.4972414572698613, "mark_price": 0.2459, "qty": 7588.9, "cost": 4000.30248, "proceeds": 3773.515695, "realized_pnl": -226.559666, "pnl_pct": -5.6636, "sold_reason": "swipe/trail-sl", "sold_reason_label": "swipe/trail-sl", "entry_time": "2026-10-07T05:42:52.094181+00:00", "sold_time": "2026-10-09T08:33:08.576692096+00:00", "age_days": 2.118}, {"id": 9, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 5.265, "sold_price": 5.317, "mark_price": 3.113, "qty": 95.0, "cost": 500.175, "proceeds": 505.115, "realized_pnl": 4.9348, "pnl_pct": 0.9866, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-07T21:39:41.892888+00:00", "sold_time": "2026-10-07T22:08:27.981112280+00:00", "age_days": 0.02}, {"id": 3, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1325.89, "sold_price": 1337.98, "mark_price": 841.46, "qty": 0.377, "cost": 499.86053, "proceeds": 504.41846, "realized_pnl": 4.54584, "pnl_pct": 0.9094, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-07T01:59:50.635899+00:00", "sold_time": "2026-10-07T19:36:53.355510769+00:00", "age_days": 0.734}, {"id": 8, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 5.006, "sold_price": 5.055999999999999, "mark_price": 3.113, "qty": 99.9, "cost": 500.0994, "proceeds": 505.0944, "realized_pnl": 4.99, "pnl_pct": 0.9978, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-07T14:28:05.793052+00:00", "sold_time": "2026-10-07T15:41:25.039667449+00:00", "age_days": 0.051}, {"id": 7, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 5.033, "sold_price": 5.134, "mark_price": 3.113, "qty": 99.4, "cost": 500.2802, "proceeds": 510.3196, "realized_pnl": 10.0293, "pnl_pct": 2.0047, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-07T09:42:53.200205+00:00", "sold_time": "2026-10-07T12:51:05.026978241+00:00", "age_days": 0.131}, {"id": 4, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 5.116, "sold_price": 5.217, "mark_price": 3.113, "qty": 97.8, "cost": 500.3448, "proceeds": 510.2226, "realized_pnl": 9.8475, "pnl_pct": 1.9681, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-06T14:06:21.269549+00:00", "sold_time": "2026-10-07T06:43:49.336459717+00:00", "age_days": 0.693}, {"id": 6, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 4.933, "sold_price": 4.981, "mark_price": 3.113, "qty": 101.4, "cost": 500.2062, "proceeds": 505.0734, "realized_pnl": 4.8672, "pnl_pct": 0.973, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-07T04:02:54.398172+00:00", "sold_time": "2026-10-07T04:16:18.006371164+00:00", "age_days": 0.009}, {"id": 5, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 4.933, "sold_price": 4.982, "mark_price": 3.113, "qty": 101.3, "cost": 499.7129, "proceeds": 504.6766, "realized_pnl": 4.9637, "pnl_pct": 0.9933, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-07T02:04:09.802326+00:00", "sold_time": "2026-10-07T02:33:27.981476891+00:00", "age_days": 0.02}, {"id": 2, "coin": "ZEC", "symbol": "ZECUSDT", "entry_price": 1337.18, "sold_price": 1365.41, "mark_price": 841.46, "qty": 0.374, "cost": 500.10532, "proceeds": 510.66334, "realized_pnl": 10.55802, "pnl_pct": 2.1112, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-06T21:05:40.079912+00:00", "sold_time": "2026-10-06T23:38:36.572520131+00:00", "age_days": 0.106}, {"id": 3, "coin": "NEAR", "symbol": "NEARUSDT", "entry_price": 5.206, "sold_price": 5.252, "mark_price": 3.113, "qty": 96.1, "cost": 500.2966, "proceeds": 504.7172, "realized_pnl": 4.416, "pnl_pct": 0.8827, "sold_reason": "natural/trail-sl", "sold_reason_label": "natural/trail-sl", "entry_time": "2026-10-06T05:56:47.692599+00:00", "sold_time": "2026-10-06T09:20:11.731793718+00:00", "age_days": 0.141}], "totals": {"count": 40, "wins": 35, "losses": 5, "win_rate": 87.5, "total_pnl": -1934.129728}}}}, "generated_at": "2026-11-29 03:00 WIB"};</script>
+<script>
+let chart = null;
+let chart2 = null;
+let deltas = [];
+let state = { range: "3d", coin: "total", overlay: "equity", account: "", buyCoin: "BTC", period: "" };
+let profitOpen = false;
+let fsByIndex = {};
+const SNAP = window.__SNAPSHOT__ || null;
+const RANGE_SUB = {today:"today", "3d":"last 3 days", "1m":"last 30 days", "month":"this month (calendar)", "all":"all time"};
+
+const pctEl = document.getElementById("pct");
+const usdEl = document.getElementById("usd");
+const cntEl = document.getElementById("count");
+const legendEl = document.getElementById("legend");
+const subEl = document.getElementById("subtext");
+
+function fmtUsd(v) {
+  const sign = v < 0 ? "-" : "+";
+  return sign + "$" + Math.abs(v).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+// Chart Y-axis tick formatter: rounds away JS float artifacts (Chart.js auto
+// ticks over a tiny range produce e.g. 400.30000000000007). Magnitude-aware so
+// cheap-coin price axes (XLM ~0.4) keep enough decimals. Trailing zeros dropped.
+function fmtAxisUsd(v) {
+  if (v == null || !isFinite(v)) return "";
+  const a = Math.abs(v);
+  let dec = a >= 1000 ? 0 : (a >= 1 ? 2 : (a >= 0.01 ? 4 : 6));
+  return "$" + Number(v.toFixed(dec)).toLocaleString("en-US", {minimumFractionDigits:0, maximumFractionDigits:dec});
+}
+function fmtPct(v) { return (v >= 0 ? "+" : "") + v.toFixed(2) + "%"; }
+
+// Per-account snapshot resolution: SNAP.per_account[state.account].
+function perSnap() {
+  if (!SNAP || !SNAP.per_account) return {};
+  return SNAP.per_account[state.account] || {};
+}
+
+async function fetchJson(url) {
+  if (SNAP) {
+    if (url === "/api/accounts") return { accounts: SNAP.accounts || [], exchanges: SNAP.exchanges || {} };
+    const per = perSnap();
+    if (url === "/api/coins") return { coins: per.coins || [], buy_coins: per.buy_coins || [] };
+    if (url.indexOf("/api/buys") === 0) {
+      const params = new URLSearchParams(url.split("?")[1] || "");
+      const coin = params.get("coin") || "BTC";
+      const range = params.get("range") || "3d";
+      return (per.buys && per.buys[coin] && per.buys[coin][range]) || {
+        coin: coin, range: range, points: [], sells: [], count: 0, first: null, last: null
+      };
+    }
+    if (url === "/api/stats") return per.stats || {success_rate:{pct:0,profitable:0,total_sold:0}};
+    if (url.indexOf("/api/equity") === 0) {
+      const params = new URLSearchParams(url.split("?")[1] || "");
+      const range = params.get("range") || "3d";
+      const coin = params.get("coin") || "total";
+      const byCoin = (per.equity && per.equity[coin]) || (per.equity && per.equity["total"]) || {};
+      return byCoin[range] || byCoin["3d"] || {
+        coin: coin, range: range, points: [], first: null, last: null,
+        change_pct: 0, change_usd: 0, direction: "flat", count: 0
+      };
+    }
+    if (url.indexOf("/api/profit") === 0) {
+      const params = new URLSearchParams(url.split("?")[1] || "");
+      const range = params.get("range") || "3d";
+      return (per.profit && per.profit[range]) || {
+        range: range, label: range, rankings: [],
+        totals: {realized: 0, unrealized: 0, realized_pct: 0, unrealized_pct: 0, total_pct: 0, bot_count: 0}
+      };
+    }
+    if (url.indexOf("/api/blocks") === 0) {
+      return (per.blocks) || {bots: [], totals: {bot_count:0, active_blocks:0, active_spent:0, active_value:0, unrealized_total:0, realized_total:0}};
+    }
+    if (url.indexOf("/api/recent_sells") === 0) {
+      return per.recent_sells || {rows: [], totals: {count:0, wins:0, losses:0, win_rate:null, total_pnl:0}};
+    }
+    if (url === "/api/periods") {
+      return { periods: per.periods || [], current: {} };
+    }
+    if (url.indexOf("/api/period_snapshots") === 0) {
+      return { snapshots: [] };
+    }
+    return {};
+  }
+  const sep = url.indexOf("?") >= 0 ? "&" : "?";
+  const r = await fetch(url + sep + "account=" + encodeURIComponent(state.account || ""));
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+async function resolveAccount() {
+  // Single-account dashboard: resolve the account from the baked snapshot or
+  // (live mode) the first discovered account, and set the page title to
+  // "Account <NAME> (<EXCHANGE>)".
+  let account = "";
+  let exchange = "";
+  try {
+    if (SNAP) {
+      account = SNAP.account || (SNAP.accounts || [])[0] || "";
+      exchange = (SNAP.exchanges || {})[account] || "";
+    } else {
+      const d = await fetchJson("/api/accounts");
+      const accounts = d.accounts || [];
+      account = accounts[0] || "";
+      exchange = (d.exchanges || {})[account] || "";
+    }
+  } catch (e) { console.warn("account", e); }
+  state.account = account;
+  const titleEl = document.getElementById("titleEl");
+  if (titleEl) {
+    if (account) {
+      titleEl.textContent = "Account " + account + (exchange ? " (" + exchange + ")" : "");
+    } else {
+      titleEl.textContent = "Ambarawa Capital Dashboard";
+    }
+  }
+}
+
+async function loadCoins() {
+  try {
+    const d = await fetchJson("/api/coins");
+    const sel = document.getElementById("coinSel");
+    const cur = state.coin;
+    sel.innerHTML = '<option value="total">Total Equity</option>';
+    (d.coins || []).forEach(a => {
+      const o = document.createElement("option");
+      o.value = a; o.textContent = a;
+      sel.appendChild(o);
+    });
+    if (cur === "total" || (d.coins || []).indexOf(cur) === -1) {
+      sel.value = "total"; state.coin = "total";
+    } else {
+      sel.value = cur;
+    }
+  } catch (e) { console.warn("coins", e); }
+}
+
+function setProfitCard(prefix, data) {
+  const pctEl = document.getElementById(prefix + "Pct");
+  const subEl = document.getElementById(prefix + "Sub");
+  const ecEl = document.getElementById(prefix + "Ec");
+  const ecVal = Number(data.ec) || 0;
+  if (ecEl) {
+    if (ecVal > 0) { ecEl.textContent = "ec: " + fmtUsd(ecVal); ecEl.style.display = ""; }
+    else { ecEl.textContent = "—"; ecEl.style.display = "none"; }
+  }
+  if (data.from == null || data.to == null) {
+    pctEl.textContent = "—";
+    pctEl.className = "stat-big flat";
+    subEl.textContent = "no data";
+    return;
+  }
+  pctEl.textContent = fmtPct(data.pct);
+  const dir = data.pct > 0 ? "up" : (data.pct < 0 ? "down" : "flat");
+  pctEl.className = "stat-big " + dir;
+  subEl.textContent = fmtUsd(data.usd);
+}
+
+// All-Time P&L card (stats-row under the overlay tabs). Realtime: driven by the
+// LIVE equity of the relay WebSocket frame, on the same injection-consistent
+// basis as the swipe / close-on-profit / ECR gates:
+//     eq  = liveEquity − extra_capital
+//     usd = eq − total_capital
+//     pct = usd / total_capital × 100
+// `total_capital` (from) and `extra_capital` (ec) come from /api/stats
+// (window.__atBase / window.__atEc) — static intraday. No REST, no DB: this is
+// pure arithmetic on a frame the page already receives.
+//
+// `fallbackTo` (snapshot mode, before the first WS frame) lets the baked
+// /api/stats payload render the card instead of leaving it blank.
+function renderAllTimeCard(liveEquity, fallbackTo) {
+  const pctEl = document.getElementById("atPct");
+  const subEl = document.getElementById("atSub");
+  const ecEl = document.getElementById("atEc");
+  const liveEl = document.getElementById("atLive");
+  if (!pctEl || !subEl) return;
+  const base = Number(window.__atBase) || 0;
+  const ec = Number(window.__atEc) || 0;
+  if (ecEl) {
+    if (ec > 0) { ecEl.textContent = "ec: " + fmtUsd(ec); ecEl.style.display = ""; }
+    else { ecEl.textContent = "—"; ecEl.style.display = "none"; }
+  }
+  // A funded account should never report equity <= 0 — that signals a relay
+  // read failure (stale/rotated API key → -2015 → empty balances). Render
+  // nothing rather than a bogus ~-100%.
+  if (liveEquity != null && (typeof liveEquity !== "number" || !isFinite(liveEquity) || liveEquity <= 0)) {
+    if (liveEl) liveEl.style.display = "none";
+    pctEl.textContent = "—"; pctEl.className = "stat-big flat";
+    subEl.textContent = "live equity unavailable";
+    return;
+  }
+  if (liveEl) liveEl.style.display = "none";
+  // No open period / no capital → nothing sensible to show (avoid -100%).
+  // Checked before the live marker so the "● realtime" hint only appears on a
+  // card that actually carries a number.
+  if (!(base > 0)) {
+    pctEl.textContent = "—"; pctEl.className = "stat-big flat";
+    subEl.textContent = "no open period";
+    return;
+  }
+  const isLive = liveEquity != null;
+  if (!isLive) {
+    // No live equity yet: fall back to the baked "to" from /api/stats.
+    if (fallbackTo == null) {
+      pctEl.textContent = "—"; pctEl.className = "stat-big flat";
+      subEl.textContent = "no data";
+      return;
+    }
+    liveEquity = Number(fallbackTo);
+  }
+  if (liveEl && isLive) liveEl.style.display = "";
+  const eq = liveEquity - ec;
+  const usd = eq - base;
+  const pct = usd / base * 100;
+  pctEl.textContent = fmtPct(pct);
+  pctEl.className = "stat-big " + (pct > 0 ? "up" : (pct < 0 ? "down" : "flat"));
+  subEl.textContent = fmtUsd(usd) + " · dari " + rtMoney(base);
+}
+
+// Display-only realtime adjustment for the window cards (3 Days / MTD / YTD /
+// All-Time). Each card's `from` is a fixed capital base; its `to` is simply the
+// current account equity — so we recompute `to = liveEquity`,
+// `usd = to − from`, `pct = usd / from` from the live relay frame. No data is
+// written anywhere — this only re-renders DOM text.
+//
+// This replaced the earlier "baked + (liveToday − bakedToday)" delta, which
+// frozen the All-Time card at a stale value whenever the baked snapshot predated
+// the UTC-midnight rollover (its `today.from` baseline no longer matched the
+// relay's, so the guard skipped the update — observed: +0.56% shown as -0.06%).
+function applyLiveEquityToWindowCards(liveEquity, ec) {
+  const snap = window.__statsSnap;
+  if (!snap) return;
+  if (liveEquity == null || typeof liveEquity !== "number" || liveEquity <= 0) return;
+  const eq = liveEquity - (ec || 0);
+  const map = { all: "all_time" };
+  Object.keys(map).forEach(function (prefix) {
+    const c = snap[map[prefix]];
+    if (!c || c.from == null || c.from <= 0) return;
+    const newUsd = eq - c.from;
+    const newPct = newUsd / c.from * 100;
+    setProfitCard(prefix, { pct: newPct, usd: newUsd, from: c.from, to: eq, ec: c.ec });
+    if (prefix === "all") {
+      const ag = window.__allGrossPct;
+      const subEl = document.getElementById("allSub");
+      if (subEl && ag != null) {
+        subEl.textContent = fmtUsd(newUsd) + " · without fee: " + fmtPct(ag);
+      }
+    }
+  });
+}
+
+async function fetchStats() {
+  try {
+    const d = await fetchJson("/api/stats");
+    // Snapshot baseline for the realtime window-card adjustment: keep the baked
+    // stats + the All-Time "without fee" % so applyLiveEquityToWindowCards can adjust.
+    window.__statsSnap = d;
+    window.__allGrossPct = (d.all_time_gross || {}).pct;
+    // All-Time P&L card (the one under the equity/usdt/usage/usdc overlay tabs):
+    // base = the account's total_capital, ec = extra_capital. Both are static
+    // intraday, so they are read once here and the card is then driven by the
+    // LIVE equity from the relay WebSocket (renderAllTimeCard).
+    window.__atBase = (d.all_time && Number(d.all_time.from)) || 0;
+    window.__atEc = (d.all_time && Number(d.all_time.ec)) || 0;
+    const sr = d.success_rate;
+    const srPct = sr.total_sold > 0 ? sr.pct.toFixed(1) + "%" : "—";
+    const srEl = document.getElementById("srPct");
+    srEl.textContent = srPct;
+    srEl.className = "stat-big " + (sr.pct >= 50 ? "up" : "down");
+    document.getElementById("srSub").textContent =
+      sr.total_sold > 0 ? sr.profitable + "/" + sr.total_sold + " blocks profitable" : "no sold blocks";
+    // All-Time P&L card: snapshot render first (it is overwritten by every
+    // relay frame via renderAllTimeCard once the WebSocket is live).
+    renderAllTimeCard(d.all_time && d.all_time.to != null ? d.all_time.to : null, true);
+    setProfitCard("all", d.all_time);
+    // All-Time card: the big % is equity-based (net, with fee). Annotate the
+    // sub with the gross blocks-based % (without fee) for comparison.
+    const ag = d.all_time_gross || {pct: 0, usd: 0};
+    if (d.all_time && d.all_time.to != null) {
+      document.getElementById("allSub").textContent =
+        fmtUsd(d.all_time.usd) + " · without fee: " + fmtPct(ag.pct);
+    }
+
+    // Oldest active block — shown as a sub-line on the Block Success Rate card.
+    const ob = d.oldest_block;
+    const srOldest = document.getElementById("srOldest");
+    if (ob.bot_name == null) {
+      srOldest.textContent = "oldest: none";
+    } else {
+      const label = ob.status === "expired" ? "EXPIRED"
+        : ob.status === "expiring_soon" ? "Expiring soon"
+        : ob.status === "never_expires" ? "Never expires" : "Active";
+      srOldest.textContent = "Oldest: " + ob.bot_name + " #" + ob.block_id
+        + " · " + fmtAge(ob.age_days) + " · " + label;
+    }
+
+    const ath = d.ath;
+    const athLabel = document.getElementById("athLabel");
+    const athVal = document.getElementById("athVal");
+    const athSub = document.getElementById("athSub");
+    // fresh = ATH tercapai < 1 jam yang lalu
+    const athRecent = ath.value != null && ath.age_days != null && ath.age_days < 1 / 24;
+    if (athLabel) {
+      const athScope = ath.period_no != null
+        ? " (Periode " + ath.period_no + ")"
+        : " (" + ath.lookback_days + "d)";
+      athLabel.textContent = (athRecent ? "🔥 " : "") + "ATH Equity" + athScope;
+    }
+    const athEcEl = document.getElementById("athEc");
+    if (ath.value == null) {
+      athVal.textContent = "—";
+      athVal.className = "stat-big flat";
+      athSub.textContent = "no data";
+      if (athEcEl) athEcEl.style.display = "none";
+    } else {
+      athVal.textContent = fmtUsd(ath.value);
+      athVal.className = "stat-big " + (athRecent ? "warn" : "flat");
+      const ageTxt = ath.age_days != null ? " · " + fmtAgeAgo(ath.age_days) : "";
+      athSub.textContent = "at " + fmtTimeLabel(ath.ts) + ageTxt;
+      if (athEcEl) {
+        const ecv = Number(ath.ec) || 0;
+        if (ecv > 0) { athEcEl.textContent = "ec: " + fmtUsd(ecv); athEcEl.style.display = ""; }
+        else { athEcEl.textContent = "—"; athEcEl.style.display = "none"; }
+      }
+    }
+
+    // Max Drawdown card — largest peak-to-trough equity decline (%) of the
+    // account's current open period (raw capital_hourly series).
+    const mdd = d.max_drawdown || {};
+    const maxddLabel = document.getElementById("maxddLabel");
+    const maxddVal = document.getElementById("maxddVal");
+    const maxddSub = document.getElementById("maxddSub");
+    if (maxddLabel) {
+      maxddLabel.textContent = "📉 Max Drawdown"
+        + (mdd.period_no != null ? " (Periode " + mdd.period_no + ")" : "");
+    }
+    if (mdd.pct == null) {
+      maxddVal.textContent = "—";
+      maxddVal.className = "stat-big down";
+      maxddSub.textContent = "no data";
+    } else if (mdd.pct === 0) {
+      maxddVal.textContent = "0.00%";
+      maxddVal.className = "stat-big flat";
+      maxddSub.textContent = "belum ada drawdown";
+    } else {
+      maxddVal.textContent = "-" + mdd.pct.toFixed(2) + "%";
+      maxddVal.className = "stat-big down";
+      maxddSub.textContent = "peak " + fmtUsd(mdd.peak) + " → " + fmtUsd(mdd.trough)
+        + " · " + fmtTimeLabel(mdd.trough_ts);
+    }
+
+    // First Buy Balance card — account equity recorded by the dispatcher when
+    // the account went from fully flat to its first buy of a new cycle.
+    const fbb = d.first_buy_balance || {value: null, ts: null};
+    const fbbVal = document.getElementById("fbbVal");
+    const fbbSub = document.getElementById("fbbSub");
+    if (fbbVal) {
+      if (fbb.value == null) {
+        fbbVal.textContent = "—";
+        fbbVal.className = "stat-big flat";
+        fbbSub.textContent = "belum ada cycle baru";
+      } else {
+        fbbVal.textContent = fmtUsd(fbb.value);
+        fbbVal.className = "stat-big flat";
+        fbbSub.textContent = "saat beli pertama · modal (excl. extra capital) · " + fmtTimeLabel(fbb.ts);
+      }
+    }
+
+    const usdt = d.usdt_total || {value: null, ts: null};
+    const usdtVal = document.getElementById("usdtVal");
+    const usdtSub = document.getElementById("usdtSub");
+    if (usdt.value == null) {
+      usdtVal.textContent = "—";
+      usdtVal.className = "stat-big flat";
+      usdtSub.textContent = "no data";
+    } else {
+      usdtVal.textContent = fmtUsd(usdt.value);
+      usdtVal.className = "stat-big up";   // USDT balance → green
+      usdtSub.textContent = "hourly snapshot · " + fmtTimeLabel(usdt.ts);
+    }
+
+    // Total capital (green) + extra capital (yellow) from accounts.yaml.
+    const tc = d.total_capital_card || {value: 0};
+    const capVal = document.getElementById("capVal");
+    const capSub = document.getElementById("capSub");
+    if (tc.value > 0) {
+      capVal.textContent = fmtUsd(tc.value);
+      capVal.className = "stat-big up";   // total capital → green
+      capSub.textContent = "accounts.yaml";
+    } else {
+      capVal.textContent = "—";
+      capVal.className = "stat-big flat";
+      capSub.textContent = "no single account";
+    }
+    // Block size (accounts.yaml ambarawa_block_size_usdc).
+    const bs = d.block_size_card || {value: 0};
+    const bsVal = document.getElementById("bsVal");
+    const bsSub = document.getElementById("bsSub");
+    if (bs.value > 0) {
+      bsVal.textContent = fmtUsd(bs.value);
+      bsVal.className = "stat-big flat";
+      bsSub.textContent = "per block · accounts.yaml";
+    } else {
+      bsVal.textContent = "—";
+      bsVal.className = "stat-big flat";
+      bsSub.textContent = "not set";
+    }
+    const ec = d.extra_capital_card || {value: 0};
+    const extraVal = document.getElementById("extraVal");
+    const extraSub = document.getElementById("extraSub");
+    if (ec.value > 0) {
+      extraVal.textContent = fmtUsd(ec.value);
+      extraVal.className = "stat-big warn";   // extra capital → yellow
+      extraSub.textContent = "accounts.yaml";
+    } else {
+      extraVal.textContent = "—";
+      extraVal.className = "stat-big flat";
+      extraSub.textContent = "0 / not set";
+    }
+    // Funding USD1 card (live funding-wallet balance, read at generation).
+    const fc = d.funding_card || {value: null, ts: null};
+    const fundVal = document.getElementById("fundVal");
+    const fundSub = document.getElementById("fundSub");
+    const fundPctVal = document.getElementById("fundPctVal");
+    const fundPctSub = document.getElementById("fundPctSub");
+    if (fc.value != null) {
+      fundVal.textContent = fmtUsd(fc.value);
+      fundVal.className = "stat-big up";
+      const fts = fc.ts ? String(fc.ts).slice(0, 16).replace("T", " ") + " UTC" : "—";
+      fundSub.textContent = "live · " + fts;
+    } else {
+      fundVal.textContent = "—";
+      fundVal.className = "stat-big up";
+      fundSub.textContent = "funding wallet unavailable";
+    }
+    // Funding USD1 as a percentage of total_capital (accounts.yaml).
+    if (fc.value != null && tc.value > 0) {
+      const pct = (fc.value / tc.value) * 100;
+      fundPctVal.textContent = pct.toFixed(2) + "%";
+      fundPctVal.className = "stat-big up";
+      fundPctSub.textContent = "of total capital (" + fmtUsd(tc.value) + ")";
+    } else {
+      fundPctVal.textContent = "—";
+      fundPctVal.className = "stat-big up";
+      fundPctSub.textContent = "needs funding + total capital";
+    }
+    // Expose funding value + its % (same as the Funding USD1 card) for the
+    // "Realized profit Periode N (funding USD1)" sub-row in the Periode P&L list.
+    window.__fundingValue = fc.value;
+    window.__fundingPct = (fc.value != null && tc.value > 0) ? (fc.value / tc.value * 100) : null;
+
+    const usage = d.total_usage || {value: null, ts: null};
+    const usageVal = document.getElementById("usageVal");
+    const usageSub = document.getElementById("usageSub");
+    if (usage.value == null) {
+      usageVal.textContent = "—";
+      usageVal.className = "stat-big flat";
+      usageSub.textContent = "no data";
+    } else {
+      usageVal.textContent = fmtUsd(usage.value);
+      usageVal.className = "stat-big warn";   // equity − USDT → yellow
+      usageSub.textContent = "hourly snapshot · " + fmtTimeLabel(usage.ts);
+    }
+  } catch (e) { console.warn("stats", e); }
+}
+
+// Total force-sell (fund_sell) P&L over the selected range, shown red on the
+// Force Sell card. Updates when the range selector changes.
+async function updateForceSell() {
+  const el = document.getElementById("fsVal");
+  const sub = document.getElementById("fsSub");
+  if (!el || !sub) return;
+  try {
+    const d = await fetchJson("/api/equity?coin=total&range=" + state.range);
+    const fs = d.force_sells || [];
+    const total = d.force_sell_total || 0;
+    if (!fs.length) {
+      el.textContent = "—";
+      el.className = "stat-big flat";
+      sub.textContent = "no force sells";
+      return;
+    }
+    el.textContent = fmtUsd(total);
+    el.className = "stat-big down";   // red — forced sells are losses
+    sub.textContent = fs.length + " force sell(s) · " + (RANGE_SUB[state.range] || state.range);
+  } catch (e) { el.textContent = "—"; }
+}
+
+// Buy-history chart (usdc tab): per-coin buy price ladder with markers colored
+// by the block's final outcome. X = entry time, Y = entry price. Green =
+// profitable, red = force sell (fund_sell), blue = active, gray = other loss.
+const BUY_STATUS_COLOR = { active: "#f59e0b", profit: "#16a34a", force_sell: "#dc2626", loss: "#94a3b8", combined: "#64748b" };
+const BUY_STATUS_LABEL = { active: "ACTIVE", profit: "PROFIT", force_sell: "FORCE SELL", loss: "LOSS", combined: "COMBINED" };
+
+async function renderBuys() {
+  const d = await fetchJson("/api/buys?coin=" + encodeURIComponent(state.buyCoin) + "&range=" + state.range);
+  const pts = d.points || [];
+  const sells = d.sells || [];
+  const chg = (pts.length >= 2) ? (pts[pts.length - 1].price - pts[0].price) : 0;
+  const dir = chg > 0 ? "up" : (chg < 0 ? "down" : "flat");
+  pctEl.textContent = pts.length && pts[0].price ? fmtPct(chg / pts[0].price * 100) : "—";
+  pctEl.className = "big " + dir;
+  usdEl.textContent = pts.length ? fmtUsd(chg) : "—";
+  usdEl.className = "usd " + dir;
+  cntEl.textContent = (pts.length || sells.length)
+    ? (pts.length + " buys · " + sells.length + " sells · $" + (d.last != null ? d.last.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—"))
+    : "no buys";
+  subEl.textContent = d.coin + " buy/sell price (entry/sold) · " + (RANGE_SUB[d.range] || d.range);
+  legendEl.textContent = (pts.length || sells.length)
+    ? ("First buy $" + (d.first != null ? d.first.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—")
+       + "  →  Last buy $" + (d.last != null ? d.last.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—"))
+    : "No activity in this range.";
+
+  if (chart) { chart.destroy(); chart = null; }
+  const ctx = document.getElementById("chart").getContext("2d");
+  if (!pts.length && !sells.length) return;
+
+  // Combined timeline: unique entry + sold timestamps, sorted.
+  const times = {};
+  pts.forEach(p => { times[p.ts] = p.label; });
+  sells.forEach(s => { times[s.ts] = s.label; });
+  const tsList = Object.keys(times).sort();
+  const labels = tsList.map(t => times[t]);
+  const tsIdx = {};
+  tsList.forEach((t, i) => { tsIdx[t] = i; });
+
+  const buyData = new Array(labels.length).fill(null);
+  const buyStatus = new Array(labels.length).fill(null);
+  const buyId = new Array(labels.length).fill(null);
+  pts.forEach(p => { const i = tsIdx[p.ts]; if (i != null) { buyData[i] = p.price; buyStatus[i] = p.status; buyId[i] = p.block_id; } });
+
+  const sellData = new Array(labels.length).fill(null);
+  const sellStatus = new Array(labels.length).fill(null);
+  const sellId = new Array(labels.length).fill(null);
+  sells.forEach(s => { const i = tsIdx[s.ts]; if (i != null) { sellData[i] = s.price; sellStatus[i] = s.status; sellId[i] = s.block_id; } });
+
+  const datasets = [{
+    label: "Buy",
+    data: buyData,
+    borderColor: "#94a3b8",
+    backgroundColor: "#94a3b822",
+    fill: false,
+    tension: 0.2,
+    pointRadius: 6,
+    pointHoverRadius: 9,
+    pointBorderWidth: 2,
+    pointStyle: "rectRot",
+    pointBorderColor: buyStatus.map(s => BUY_STATUS_COLOR[s] || "#94a3b8"),
+    pointBackgroundColor: buyStatus.map(s => BUY_STATUS_COLOR[s] || "#94a3b8"),
+    borderWidth: 1.5,
+    spanGaps: true,
+  }, {
+    label: "Sell",
+    data: sellData,
+    showLine: false,
+    pointRadius: 4,
+    pointHoverRadius: 7,
+    pointBorderWidth: 1,
+    pointStyle: "circle",
+    pointBorderColor: sellStatus.map(s => BUY_STATUS_COLOR[s] || "#94a3b8"),
+    pointBackgroundColor: sellStatus.map(s => BUY_STATUS_COLOR[s] || "#94a3b8"),
+    borderWidth: 0,
+    spanGaps: true,
+  }];
+  // Connector: dashed thin line from a block's buy point to its sell point
+  // (only when both endpoints fall inside the range).
+  pts.forEach(p => {
+    if (!p.sold) return;
+    const s = sells.find(x => x.block_id === p.block_id);
+    if (!s) return;
+    const bi = tsIdx[p.ts], si = tsIdx[s.ts];
+    if (bi == null || si == null || bi === si) return;
+    const conn = new Array(labels.length).fill(null);
+    conn[bi] = p.price;
+    conn[si] = s.price;
+    datasets.push({
+      data: conn,
+      showLine: true,
+      spanGaps: true,
+      borderColor: "#475569",
+      borderDash: [4, 3],
+      borderWidth: 1,
+      pointRadius: 0,
+      fill: false,
+      tension: 0,
+    });
+  });
+
+  chart = new Chart(ctx, {
+    type: "line",
+    data: { labels: labels, datasets: datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: "#94a3b8",
+            boxWidth: 12,
+            font: { size: 0.78 * 16 },
+            generateLabels: function() {
+              return [
+                { text: "Buy", fillStyle: "#94a3b8", strokeStyle: "#94a3b8", pointStyle: "rectRot" },
+                { text: "Sell", fillStyle: "#94a3b8", strokeStyle: "#94a3b8", pointStyle: "circle" },
+              ];
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const i = ctx.dataIndex;
+              if (ctx.datasetIndex === 0 && buyId[i] != null) {
+                const st = BUY_STATUS_LABEL[buyStatus[i]] || buyStatus[i];
+                return "Buy #" + buyId[i] + " @" + buyData[i].toLocaleString(undefined,{maximumFractionDigits:2}) + " (" + st + ")";
+              }
+              if (ctx.datasetIndex === 1 && sellId[i] != null) {
+                const st = BUY_STATUS_LABEL[sellStatus[i]] || sellStatus[i];
+                return "Sell #" + sellId[i] + " @" + sellData[i].toLocaleString(undefined,{maximumFractionDigits:2}) + " (" + st + ")";
+              }
+              return "";
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { maxTicksLimit: 12, color: "#94a3b8" }, grid: { color: "#1e293b" } },
+        y: { ticks: { color: "#94a3b8", callback: v => fmtAxisUsd(v) }, grid: { color: "#334155" } }
+      }
+    }
+  });
+}
+
+async function loadBuyCoins() {
+  const sel = document.getElementById("buyCoinSel");
+  if (!sel) return;
+  try {
+    const d = await fetchJson("/api/coins");
+    const list = d.buy_coins || [];
+    if (!list.length) {
+      sel.innerHTML = '<option value="BTC">BTC</option>';
+      state.buyCoin = "BTC";
+      return;
+    }
+    sel.innerHTML = "";
+    list.forEach(c => {
+      const o = document.createElement("option");
+      o.value = c; o.textContent = c;
+      sel.appendChild(o);
+    });
+    state.buyCoin = (list.indexOf("BTC") !== -1) ? "BTC" : list[0];
+    sel.value = state.buyCoin;
+  } catch (e) { console.warn("buycoins", e); }
+}
+
+function resetCharts() {
+  if (chart) { chart.destroy(); chart = null; }
+  if (chart2) { chart2.destroy(); chart2 = null; }
+  const b2 = document.getElementById("chartbox2");
+  if (b2) b2.style.display = "none";
+  const b1 = document.getElementById("chartbox");
+  if (b1) b1.style.height = "";
+}
+
+// Total usage tab: two separate charts stacked vertically — USDT on top
+// (green), Total usage below (yellow). Each has its own Y axis.
+function renderWcSplit(d) {
+  const labels = d.points.map(p => p.label);
+  const mkChart = (canvasId, label, data, color) => new Chart(document.getElementById(canvasId).getContext("2d"), {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: label,
+        data: data,
+        borderColor: color,
+        backgroundColor: color,
+        fill: true,
+        tension: 0.25,
+        pointRadius: 2,
+        pointHoverRadius: 4,
+        borderWidth: 2,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { display: true, labels: { color: "#94a3b8", boxWidth: 12, font: { size: 0.78 * 16 } } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const v = ctx.parsed.y;
+              return (ctx.dataset.label || "") + ": $" + (v != null ? v.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}) : "—");
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { maxTicksLimit: 10, color: "#94a3b8" }, grid: { color: "#1e293b" } },
+        y: { ticks: { color: "#94a3b8", callback: v => fmtAxisUsd(v) }, grid: { color: "#334155" } }
+      }
+    }
+  });
+  chart = mkChart("chart", "USDT", d.points.map(p => (p.usdt || 0)), "#16a34a");
+  chart2 = mkChart("chart2", "Total usage", d.points.map(p => ((p.value != null ? p.value : 0) - (p.usdt || 0))), "#f59e0b");
+}
+
+async function render() {
+  resetCharts();
+  if (state.overlay === "usdc") { return renderBuys(); }
+  const d = await fetchJson("/api/equity?range=" + state.range + "&coin=" + encodeURIComponent(state.coin));
+  // Total usage tab = two separate charts (USDT top, usage bottom) on Total.
+  const split = state.overlay === "wc" && d.coin === "total";
+  deltas = d.points.map(p => p.delta_pct);
+  const color = d.direction === "up" ? "#16a34a" : (d.direction === "down" ? "#dc2626" : "#6b7280");
+  pctEl.textContent = d.count > 0 ? fmtPct(d.change_pct) : "—";
+  pctEl.className = "big " + d.direction;
+  usdEl.textContent = d.count > 0 ? fmtUsd(d.change_usd) : "—";
+  usdEl.className = "usd " + d.direction;
+  cntEl.textContent = d.count > 0 ? (d.count + " pts · $" + (d.last != null ? d.last.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—")) : "no data";
+  const coinLabel = d.coin === "total" ? "Total equity" : d.coin + " value";
+  subEl.textContent = (split
+      ? "USDT (top) · Total usage (bottom) per hour (USDT)"
+      : coinLabel + " per hour (USDT)") + " · " + (RANGE_SUB[d.range] || d.range);
+  legendEl.textContent = d.count > 0
+    ? ("First $" + (d.first != null ? d.first.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—")
+       + "  →  Last $" + (d.last != null ? d.last.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : "—"))
+    : "No data yet. Wait for the first hourly snapshot.";
+
+  if (d.count === 0) return;
+  if (split) {
+    const b1 = document.getElementById("chartbox");
+    const b2 = document.getElementById("chartbox2");
+    if (b1) b1.style.height = "210px";
+    if (b2) b2.style.display = "";
+    renderWcSplit(d);
+    return;
+  }
+  const ctx = document.getElementById("chart").getContext("2d");
+  let datasets = [{
+    label: "Equity",
+    data: d.points.map(p => p.value),
+    borderColor: color,
+    backgroundColor: color + "22",
+    fill: true,
+    tension: 0.25,
+    pointRadius: 2,
+    pointHoverRadius: 4,
+    borderWidth: 2,
+  }];
+  // USDT overlay (cash_usdt) — only on Total Equity view AND when the usdt
+  // sub-tab is active. cash is account-wide, not meaningful per-coin.
+  if (state.overlay === "usdt" && d.coin === "total") {
+    datasets.push({
+      label: "Available USDT",
+      data: d.points.map(p => p.cash),
+      borderColor: "#f59e0b",
+      backgroundColor: "#f59e0b",
+      fill: false,
+      tension: 0.25,
+      borderDash: [6, 4],
+      pointRadius: 1,
+      pointHoverRadius: 4,
+      borderWidth: 2,
+      spanGaps: true,
+    });
+    // Force-sell (fund_sell) markers — red diamond at the nearest snapshot.
+    fsByIndex = {};
+    if (d.force_sells && d.force_sells.length) {
+      d.force_sells.forEach(fs => {
+        if (fs.index != null && fs.index >= 0 && fs.index < d.points.length) fsByIndex[fs.index] = fs;
+      });
+      const markerData = new Array(d.points.length).fill(null);
+      d.force_sells.forEach(fs => {
+        if (fs.index != null && fs.index >= 0 && fs.index < d.points.length) {
+          markerData[fs.index] = (d.points[fs.index].cash != null ? d.points[fs.index].cash : 0);
+        }
+      });
+      datasets.push({
+        label: "Force Sell",
+        data: markerData,
+        borderColor: "#dc2626",
+        backgroundColor: "#dc2626",
+        pointRadius: 6,
+        pointHoverRadius: 9,
+        pointStyle: "rectRot",
+        showLine: false,
+        order: 1,
+      });
+    }
+  } else {
+    fsByIndex = {};
+  }
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: d.points.map(p => p.label),
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { display: datasets.length > 1, labels: { color: "#94a3b8", boxWidth: 12, font: { size: 0.78 * 16 } } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const i = ctx.dataIndex;
+              const v = ctx.parsed.y;
+              if (v == null) return ctx.dataset.label + ": —";
+              const lbl = ctx.dataset.label ? ctx.dataset.label + ": " : "";
+              if (ctx.dataset.label === "Force Sell" && fsByIndex[i]) {
+                return "🔴 Force sell " + fsByIndex[i].coin + " — " + fmtSigned(fsByIndex[i].pnl, 2);
+              }
+              if (ctx.datasetIndex === 0) {
+                const dp = deltas[i];
+                const dStr = (dp != null && i > 0) ? "  (Δ" + (dp >= 0 ? "+" : "") + dp.toFixed(2) + "%)" : "";
+                return lbl + "$" + v.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}) + dStr;
+              }
+              return lbl + "$" + v.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { maxTicksLimit: 12, color: "#94a3b8" }, grid: { color: "#1e293b" } },
+        y: { ticks: { color: "#94a3b8", callback: v => fmtAxisUsd(v) }, grid: { color: "#334155" } }
+      }
+    }
+  });
+}
+
+function fmtSigned(v, dec) {
+  const sign = v < 0 ? "-" : "+";
+  return sign + "$" + Math.abs(v).toFixed(dec);
+}
+function clsSign(v) { return v >= 0 ? "pos" : "neg"; }
+function fmtPctSigned(v) { return (v >= 0 ? "+" : "") + v.toFixed(2) + "%"; }
+
+async function fetchProfit(range) {
+  const d = await fetchJson("/api/profit?range=" + range);
+  renderProfit(d);
+}
+
+function renderProfit(d) {
+  const head = document.getElementById("profitHead");
+  const body = document.getElementById("profitBody");
+  const foot = document.getElementById("profitFoot");
+  const note = document.getElementById("profitNote");
+  head.textContent = "💰 Profit — " + (d.label || d.range || "—");
+  if (!d.rankings || d.rankings.length === 0) {
+    body.innerHTML = '<tr><td colspan="10" class="td-mute" style="text-align:center;padding:26px">No bots with data</td></tr>';
+    foot.innerHTML = "";
+    note.textContent = "";
+    return;
+  }
+  body.innerHTML = d.rankings.map(function(r, i) {
+    const tot = r.realized + r.unrealized;
+    return "<tr>"
+      + "<td>" + (i + 1) + "</td>"
+      + "<td>" + r.base_asset + "</td>"
+      + '<td class="r ' + clsSign(r.realized) + '">' + fmtSigned(r.realized, 4) + "</td>"
+      + '<td class="r ' + clsSign(r.pnl_pct) + '">' + fmtPctSigned(r.pnl_pct) + "</td>"
+      + '<td class="r ' + clsSign(r.unrealized) + '">' + fmtSigned(r.unrealized, 4) + "</td>"
+      + '<td class="r ' + clsSign(r.unrealized_pct) + '">' + fmtPctSigned(r.unrealized_pct) + "</td>"
+      + '<td class="r ' + clsSign(tot) + '">' + fmtSigned(tot, 4) + "</td>"
+      + '<td class="r ' + clsSign(r.total_pct) + '">' + fmtPctSigned(r.total_pct) + "</td>"
+      + '<td class="r">' + r.sold_count + "</td>"
+      + '<td class="r">' + r.active_count + "</td>"
+      + "</tr>";
+  }).join("");
+  const t = d.totals;
+  const totAll = t.realized + t.unrealized;
+  foot.innerHTML = "<tr>"
+    + '<td colspan="2">Σ Total</td>'
+    + '<td class="r ' + clsSign(t.realized) + '">' + fmtSigned(t.realized, 4) + "</td>"
+    + '<td class="r ' + clsSign(t.realized_pct) + '">' + fmtPctSigned(t.realized_pct) + "</td>"
+    + '<td class="r ' + clsSign(t.unrealized) + '">' + fmtSigned(t.unrealized, 4) + "</td>"
+    + '<td class="r ' + clsSign(t.unrealized_pct) + '">' + fmtPctSigned(t.unrealized_pct) + "</td>"
+    + '<td class="r ' + clsSign(totAll) + '">' + fmtSigned(totAll, 4) + "</td>"
+    + '<td class="r ' + clsSign(t.total_pct) + '">' + fmtPctSigned(t.total_pct) + "</td>"
+    + '<td class="r td-mute" colspan="2">' + t.bot_count + " bots</td>"
+    + "</tr>";
+  note.textContent = "Realized = sold blocks in period · Unrealized valued at latest hourly snapshot price (up to 1h stale) · Ranked by realized";
+}
+
+document.getElementById("profitToggle").addEventListener("click", function() {
+  const btn = this;
+  const col = document.getElementById("profitCollapse");
+  profitOpen = !profitOpen;
+  btn.classList.toggle("open", profitOpen);
+  btn.setAttribute("aria-expanded", profitOpen ? "true" : "false");
+  col.classList.toggle("open", profitOpen);
+  if (profitOpen) { fetchProfit(state.range).catch(function(e){ console.error("profit", e); }); }
+});
+
+let blocksOpen = false;
+let blocksFilter = "all";
+let blocksData = null;
+let recentData = null;
+
+function fmtPrice(v) {
+  if (v == null) return "—";
+  const a = Math.abs(v);
+  if (a < 1) return v.toFixed(6);
+  if (a < 100) return v.toFixed(4);
+  return v.toLocaleString(undefined, {maximumFractionDigits:2, minimumFractionDigits:2});
+}
+function fmtTimeLabel(iso) {
+  if (!iso) return "?";
+  try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mi = String(d.getMinutes()).padStart(2, "0");
+    return mm + "-" + dd + " " + hh + ":" + mi;
+  } catch { return iso; }
+}
+function fmtAge(days) {
+  if (days == null) return "—";
+  if (days >= 1) return Math.floor(days) + "d";
+  if (days * 24 >= 1) return Math.floor(days * 24) + "h";
+  if (days * 1440 >= 1) return Math.floor(days * 1440) + "m";
+  return "just now";
+}
+function fmtAgeAgo(days) {
+  const s = fmtAge(days);
+  return s === "—" ? "" : (s === "just now" ? s : s + " ago");
+}
+function fmtTimeAgo(iso) {
+  if (!iso) return "?";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const sec = Math.floor((Date.now() - d.getTime()) / 1000);
+  if (sec < 0) return "just now";
+  if (sec < 60) return "just now";
+  const mins = Math.floor(sec / 60);
+  if (mins < 60) return mins + " min" + (mins === 1 ? "" : "s") + " ago";
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + " hour" + (hrs === 1 ? "" : "s") + " ago";
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return days + " day" + (days === 1 ? "" : "s") + " ago";
+  const weeks = Math.floor(days / 7);
+  if (weeks < 5) return weeks + " week" + (weeks === 1 ? "" : "s") + " ago";
+  const months = Math.floor(days / 30);
+  if (months < 12) return months + " month" + (months === 1 ? "" : "s") + " ago";
+  const years = Math.floor(days / 365);
+  return years + " year" + (years === 1 ? "" : "s") + " ago";
+}
+
+async function fetchBlocks() {
+  const url = "/api/blocks" + (state.period ? "?period=" + encodeURIComponent(state.period) : "");
+  blocksData = await fetchJson(url);
+  renderBlocks();
+}
+
+async function renderPeriods() {
+  try {
+    const d = await fetchJson("/api/periods");
+    const list = d.periods || [];
+    const cur = d.current || {};
+    const acct = state.account || (list.length ? list[0].account : "");
+    const my = list.filter(function(p) { return p.account === acct; });
+    const open = my.find(function(p) { return p.status === "open"; }) || null;
+    // Periode card + banner
+    const perVal = document.getElementById("perVal");
+    const perSub = document.getElementById("perSub");
+    const banner = document.getElementById("periodBanner");
+    if (!open) {
+      perVal.textContent = "—";
+      perVal.className = "stat-big flat";
+      perSub.textContent = "tidak ada periode open";
+      banner.textContent = "🆕 Belum ada periode open — akun mulai dari awal. Buka periode: ./scripts/periode_open.sh";
+      banner.style.display = "";
+    } else {
+      perVal.textContent = "Periode " + open.period_no;
+      perVal.className = "stat-big " + (open.period_realized >= 0 ? "up" : "down");
+      const capTxt = open.start_equity != null ? "$" + Number(open.start_equity).toFixed(2) : "?";
+      perSub.textContent = "start " + (open.start_date || "?") +
+        " · capital " + capTxt +
+        " · realized " + fmtSigned(open.period_realized, 4) + " · " + open.bought + " blk";
+      banner.style.display = "none";
+    }
+    // Period dropdown (blocks filter) — default = the active open period
+    const sel = document.getElementById("periodSel");
+    const prev = state.period;
+    sel.innerHTML = '<option value="">Semua</option>' + my.map(function(p) {
+      const label = "Periode " + p.period_no + (p.end_date ? " (closed " + p.end_date + ")" : " (open)");
+      return '<option value="' + p.period_no + '">' + label + '</option>';
+    }).join("");
+    const defaultPeriod = open ? String(open.period_no) : "";
+    state.period = (prev && my.some(function(p) { return String(p.period_no) === prev; })) ? prev : defaultPeriod;
+    sel.value = state.period;
+    if (blocksData && state.period !== prev) { fetchBlocks().catch(function(e){ console.error("blocks", e); }); }
+  } catch (e) { console.error("periods", e); }
+}
+
+function renderBlocks() {
+  const d = blocksData;
+  if (!d) return;
+  const head = document.getElementById("blocksHead");
+  const list = document.getElementById("blocksList");
+  const note = document.getElementById("blocksNote");
+  const t = d.totals || {};
+  const expDays = t.expired_days_threshold;
+  const expTxt = expDays && expDays > 0 ? " · expiry after " + expDays + "d" : "";
+  head.textContent = "📦 Blocks — " + (t.bot_count || 0) + " bots · " + (t.active_blocks || 0) + " active · unrealized " + fmtSigned(t.unrealized_total || 0, 4) + expTxt;
+
+  let bots = (d.bots || []).slice();
+  if (blocksFilter === "active") bots = bots.filter(function(b) { return b.active_count > 0; });
+  else if (blocksFilter === "idle") bots = bots.filter(function(b) { return b.active_count === 0; });
+
+  if (bots.length === 0) {
+    list.innerHTML = '<div class="blocks-empty">No bots match this filter.</div>';
+    note.textContent = "";
+    return;
+  }
+  list.innerHTML = bots.map(renderBotSection).join("");
+  note.textContent = "Valued at latest hourly snapshot price (up to 1h stale) · Sorted by worst unrealized P&L · Recent sold = last 3";
+}
+
+function renderBotSection(b) {
+  const upnlCls = b.unrealized_total >= 0 ? "pos" : "neg";
+  const realCls = b.realized_pnl >= 0 ? "pos" : "neg";
+  const header = '<div class="blocks-bot-head">'
+    + '<span class="blocks-bot-name">' + b.bot_name + ' · ' + b.base_asset + '</span>'
+    + '<span class="blocks-bot-stats">'
+      + '<span>' + b.active_count + ' active / ' + b.sold_count + ' sold</span>'
+      + '<span class="upnl ' + upnlCls + '">unreal ' + fmtSigned(b.unrealized_total, 4) + '</span>'
+      + '<span class="' + realCls + '">realized ' + fmtSigned(b.realized_pnl, 4) + '</span>'
+    + '</span>'
+  + '</div>';
+
+  let body;
+  if (b.active_count === 0) {
+    body = '<div class="blocks-empty">Idle (no active blocks) · start price ' + fmtPrice(b.start_price) + ' · current ' + fmtPrice(b.current_price) + '</div>';
+  } else {
+    body = '<table class="blocks-table">'
+      + '<thead><tr>'
+        + '<th>#</th><th>Mode</th>'
+        + '<th class="r">Entry</th><th class="r">Now</th><th class="r">Unreal</th>'
+        + '<th class="r">Max ↑</th><th class="r">Min ↓</th>'
+        + '<th class="r">Value</th><th class="r">Age</th><th>Time</th>'
+      + '</tr></thead>'
+      + '<tbody>' + b.active_blocks.map(renderActiveRow).join('') + '</tbody>'
+    + '</table>';
+  }
+
+  let recent = "";
+  if (b.recent_sold && b.recent_sold.length > 0) {
+    recent = '<div class="blocks-recent">'
+      + '<div class="blocks-recent-title">Recent sold (last ' + b.recent_sold.length + ')</div>'
+      + '<table class="blocks-table">'
+        + '<thead><tr>'
+          + '<th>#</th><th>Reason</th>'
+          + '<th class="r">Entry</th><th class="r">Sold</th><th class="r">P&L</th>'
+          + '<th class="r">Age</th><th>Sold at</th>'
+        + '</tr></thead>'
+        + '<tbody>' + b.recent_sold.map(renderSoldRow).join('') + '</tbody>'
+      + '</table>'
+    + '</div>';
+  }
+
+  return '<div class="blocks-bot">' + header + body + recent + '</div>';
+}
+
+function renderActiveRow(blk) {
+  let modeCell;
+  if (blk.tp_mode === "trailing") {
+    modeCell = blk.trail_active
+      ? '<span class="badge badge-trail-on">TRAIL ON</span>'
+      : '<span class="badge badge-mode">trail</span>';
+  } else {
+    modeCell = '<span class="badge badge-mode">fixed</span>';
+  }
+  let badge = "";
+  if (blk.status === "expired") badge = ' <span class="badge badge-expired">EXPIRED</span>';
+  else if (blk.status === "expiring_soon") badge = ' <span class="badge badge-soon">SOON</span>';
+  const upnlCls = (blk.unreal_usd == null) ? "td-mute" : (blk.unreal_usd >= 0 ? "pos" : "neg");
+  const maxCls = (blk.max_pct == null) ? "td-mute" : (blk.max_pct >= 0 ? "pos" : "neg");
+  const minCls = (blk.min_pct == null) ? "td-mute" : (blk.min_pct >= 0 ? "pos" : "neg");
+  const unrealCell = blk.unreal_usd == null
+    ? '<span class="td-mute">—</span>'
+    : fmtSigned(blk.unreal_usd, 4) + '<br><span class="blocks-sub">' + fmtPctSigned(blk.unreal_pct) + '</span>';
+  const maxCell = blk.max_price == null
+    ? '<span class="td-mute">—</span>'
+    : fmtPrice(blk.max_price) + '<br><span class="blocks-sub">' + fmtPctSigned(blk.max_pct) + '</span>';
+  const minCell = blk.min_price == null
+    ? '<span class="td-mute">—</span>'
+    : fmtPrice(blk.min_price) + '<br><span class="blocks-sub">' + fmtPctSigned(blk.min_pct) + '</span>';
+  return '<tr>'
+    + '<td>' + blk.id + badge + '</td>'
+    + '<td>' + modeCell + '</td>'
+    + '<td class="r">' + fmtPrice(blk.entry_price) + '</td>'
+    + '<td class="r">' + fmtPrice(blk.now_price) + '</td>'
+    + '<td class="r ' + upnlCls + '">' + unrealCell + '</td>'
+    + '<td class="r ' + maxCls + '">' + maxCell + '</td>'
+    + '<td class="r ' + minCls + '">' + minCell + '</td>'
+    + '<td class="r">$' + (blk.value || 0).toFixed(2) + '</td>'
+    + '<td class="r">' + (blk.age_days != null ? fmtAge(blk.age_days) : '—') + '</td>'
+    + '<td>' + fmtTimeLabel(blk.entry_time) + '</td>'
+  + '</tr>';
+}
+
+let snapData = [];
+let snapBoundary = "all";
+
+async function renderSnapshots() {
+  try {
+    const url = "/api/period_snapshots" + (state.account ? "?account=" + encodeURIComponent(state.account) : "");
+    const d = await fetchJson(url);
+    snapData = d.snapshots || [];
+    const sel = document.getElementById("snapPeriodSel");
+    const periods = {};
+    snapData.forEach(function(s){ periods[s.period_no] = 1; });
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Semua</option>' + Object.keys(periods).sort().reverse().map(function(p){ return '<option value="' + p + '">Periode ' + p + '</option>'; }).join("");
+    if (cur && periods[cur]) sel.value = cur;
+    drawSnap();
+  } catch (e) { console.error("snapshots", e); }
+}
+
+function snapRows() {
+  const per = document.getElementById("snapPeriodSel").value;
+  let rows = snapData;
+  if (per) rows = rows.filter(function(s){ return String(s.period_no) === per; });
+  if (snapBoundary !== "all") rows = rows.filter(function(s){ return s.boundary === snapBoundary; });
+  return rows;
+}
+
+function drawSnap() {
+  const list = document.getElementById("snapList");
+  const pre = document.getElementById("snapPre");
+  const note = document.getElementById("snapNote");
+  pre.textContent = "";
+  let rows = snapRows();
+  if (!rows.length) { list.innerHTML = '<div class="blocks-empty">Belum ada snapshot (terjadi saat periode open/close).</div>'; note.textContent=""; return; }
+  // latest row = highest period/boundary/version
+  const latest = rows.slice().sort(function(a,b){ return (b.period_no-a.period_no) || (a.boundary===b.boundary?0:(a.boundary==="open"?-1:1)) || (b.version-a.version); })[0];
+  const batch = rows.filter(function(s){ return s.period_no===latest.period_no && s.boundary===latest.boundary && s.version===latest.version; });
+  const groupKey = latest.period_no + " [" + latest.boundary + "] v" + latest.version;
+  list.innerHTML = '<div class="snap-head">Periode ' + groupKey + ' · ' + batch.length + ' file</div>'
+    + '<div class="snap-files">' + batch.map(function(s){
+        return '<button class="snap-file" data-idx="' + snapData.indexOf(s) + '">' + s.env_name + '</button>';
+      }).join(" ") + '</div>';
+  list.querySelectorAll(".snap-file").forEach(function(b){
+    b.addEventListener("click", function(){
+      const s = snapData[parseInt(b.dataset.idx, 10)];
+      pre.textContent = (s ? s.content : "");
+      pre.classList.add("open");
+      b.classList.add("active");
+    });
+  });
+  note.textContent = "klik file untuk lihat isi (menampilkan versi terakhir di filter saat ini).";
+}
+
+function snapDiff() {
+  const pre = document.getElementById("snapPre");
+  const per = document.getElementById("snapPeriodSel").value;
+  const open = snapRows().filter(function(s){ return s.boundary==="open" && (!per || String(s.period_no)===per); });
+  const close = snapRows().filter(function(s){ return s.boundary==="close" && (!per || String(s.period_no)===per); });
+  if (!open.length || !close.length) { pre.textContent = "Butuh snapshot open & close untuk periode ini."; pre.classList.add("open"); return; }
+  const ov = open[0].version, cv = close[0].version;
+  const byName = function(rows, v){ const m={}; rows.forEach(function(s){ if(s.version===v) m[s.env_name]=s.content; }); return m; };
+  const o = byName(open, ov), c = byName(close, cv);
+  let out = "";
+  Object.keys(o).concat(Object.keys(c)).sort().forEach(function(name){
+    if (!(name in o)) { out += "\n[" + name + "] hanya di CLOSE (ditambahkan)\n"; return; }
+    if (!(name in c)) { out += "\n[" + name + "] hanya di OPEN (dihapus)\n"; return; }
+    if (o[name] === c[name]) return;
+    out += "\n── " + name + " (BERUBAH) ──\n";
+    const al = o[name].split("\n"), bl = c[name].split("\n");
+    const n = Math.max(al.length, bl.length);
+    for (let i=0;i<n;i++){
+      const a = i<al.length ? al[i] : "", b = i<bl.length ? bl[i] : "";
+      if (a !== b) out += "- " + a + "\n+ " + b + "\n";
+    }
+  });
+  pre.textContent = out || "open v" + ov + " dan close v" + cv + " IDENTIK.";
+  pre.classList.add("open");
+}
+
+async function renderPeriodPnl() {
+  try {
+    const d = await fetchJson("/api/periods");
+    const list = d.periods || [];
+    const acct = state.account || (list.length ? list[0].account : "");
+    const my = list.filter(function(p){ return p.account === acct; });
+    const body = document.getElementById("pnlBody");
+    const foot = document.getElementById("pnlFoot");
+    if (!my.length) {
+      body.innerHTML = '<tr><td colspan="11" class="blocks-empty">Belum ada periode.</td></tr>';
+      foot.innerHTML = "";
+      document.getElementById("pnlNote").textContent = "";
+      return;
+    }
+    const fv = window.__fundingValue;
+    const fp = window.__fundingPct;
+    body.innerHTML = my.map(function(p){
+      const net = p.net != null ? p.net : 0;
+      const netCls = net > 0 ? "pos" : (net < 0 ? "neg" : "");
+      const netPct = p.net_pct != null ? (p.net_pct > 0 ? "+" : "") + p.net_pct.toFixed(2) + "%" : "—";
+      const eq = p.end_equity != null ? "$" + p.end_equity.toFixed(2) : "—";
+      const days = p.days != null ? p.days + "d" : "—";
+      const succ = p.success_pct != null ? p.success_pct.toFixed(0) + "%" : "—";
+      const dates = (p.start_date || "?") + " → " + (p.end_date || "sekarang");
+      const dd = p.max_dd_pct;
+      const ddTxt = dd != null ? (dd > 0 ? "-" + dd.toFixed(2) + "%" : "0.00%") : "—";
+      let row = '<tr>'
+        + '<td>Periode ' + p.period_no + '</td>'
+        + '<td>' + p.status + '</td>'
+        + '<td>' + dates + '</td>'
+        + '<td class="r">' + p.bought + '</td>'
+        + '<td class="r">' + p.sold + '</td>'
+        + '<td class="r">' + days + '</td>'
+        + '<td class="r">' + succ + '</td>'
+        + '<td class="r">' + eq + '</td>'
+        + '<td class="r ' + netCls + '">' + (net>0?"+":"") + net.toFixed(2) + '</td>'
+        + '<td class="r ' + netCls + '">' + netPct + '</td>'
+        + '<td class="r ' + (dd != null && dd > 0 ? "neg" : "") + '" title="Max drawdown equity periode (snapshot per jam)">' + ddTxt + '</td>'
+        + '</tr>';
+      // Running period only: indented line with the funding-wallet USD1 (the
+      // realized profit parked in funding) + its % of total capital. Always
+      // shown for the open period (even when the live funding read is
+      // unavailable) so it is never silently hidden.
+      if (p.status === "open") {
+        row += '<tr class="pnl-sub">'
+          + '<td colspan="8" class="pnl-sub-label">↳ Realized profit Periode ' + p.period_no + ' (funding USD1)</td>'
+          + '<td class="r up">' + (fv != null ? fmtUsd(fv) : "—") + '</td>'
+          + '<td class="r up">' + (fp != null ? fp.toFixed(2) + "%" : "—") + '</td>'
+          + '<td></td>'
+          + '</tr>';
+      }
+      return row;
+    }).join("");
+    // Footer: sum Net P/L across every period of the selected account, plus the
+    // running period's realized profit parked in funding USD1 (when open). The
+    // TOTAL % is intentionally left blank. Red = loss, green = profit.
+    let tNet = 0, hasNet = false, hasOpen = false;
+    my.forEach(function(p){
+      if (p.net != null) { tNet += p.net; hasNet = true; }
+      if (p.status === "open") { hasOpen = true; }
+    });
+    // TOTAL Net P/L also includes the running period's realized profit parked in
+    // funding USD1 (window.__fundingValue). The TOTAL % is intentionally blank.
+    const tNetAdj = (hasOpen && fv != null) ? tNet + fv : tNet;
+    const tCls = tNetAdj > 0 ? "pos" : (tNetAdj < 0 ? "neg" : "");
+    const tNetTxt = hasNet ? (tNetAdj > 0 ? "+" : "") + tNetAdj.toFixed(2) : "—";
+    foot.innerHTML = '<tr>'
+      + '<td>TOTAL</td>'
+      + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td>'
+      + '<td class="r ' + tCls + '">' + tNetTxt + '</td>'
+      + '<td class="r ' + tCls + '">—</td>'
+      + '<td></td>'
+      + '</tr>';
+    const cap = my[0].start_equity_eff != null ? "$" + Number(my[0].start_equity_eff).toFixed(2) : "?";
+    document.getElementById("pnlNote").textContent =
+      "Net P/L (periode tutup) = profit yang diparkir ke funding (USD1/USDC); periode rugi = equity akhir − start_equity. Net P/L (periode berjalan) = equity live − extra_capital − start_equity (" + cap + "). Merah = rugi. Max DD = penurunan equity terbesar dari puncak (snapshot per jam, tanpa koreksi injeksi).";
+  } catch (e) { console.error("pnl", e); }
+}
+
+document.getElementById("pnlToggle").addEventListener("click", function() {
+  const col = document.getElementById("pnlCollapse");
+  const open = this.classList.toggle("open");
+  this.setAttribute("aria-expanded", open ? "true" : "false");
+  col.classList.toggle("open", open);
+  if (open) renderPeriodPnl().catch(function(e){ console.error("pnl", e); });
+});
+
+document.getElementById("snapToggle").addEventListener("click", function() {
+  const col = document.getElementById("snapCollapse");
+  const open = this.classList.toggle("open");
+  this.setAttribute("aria-expanded", open ? "true" : "false");
+  col.classList.toggle("open", open);
+  if (open && !snapData.length) renderSnapshots().catch(function(e){ console.error("snap", e); });
+});
+document.getElementById("snapBoundarySeg").addEventListener("click", function(e) {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#snapBoundarySeg button").forEach(function(x){ x.classList.remove("active"); });
+  b.classList.add("active");
+  snapBoundary = b.dataset.b;
+  drawSnap();
+});
+document.getElementById("snapPeriodSel").addEventListener("change", function(){ drawSnap(); });
+document.getElementById("snapDiffBtn").addEventListener("click", function(){ snapDiff(); });
+
+function renderSoldRow(blk) {
+  const pnlCls = blk.realized_pnl >= 0 ? "pos" : "neg";  return '<tr>'
+    + '<td>' + blk.id + '</td>'
+    + '<td><span class="badge badge-mode">' + (blk.sold_reason_label || blk.sold_reason || '?') + '</span></td>'
+    + '<td class="r">' + fmtPrice(blk.entry_price) + '</td>'
+    + '<td class="r">' + fmtPrice(blk.sold_price) + '</td>'
+    + '<td class="r ' + pnlCls + '">' + fmtSigned(blk.realized_pnl, 4) + '</td>'
+    + '<td class="r">' + (blk.age_days != null ? fmtAge(blk.age_days) : '—') + '</td>'
+    + '<td title="' + fmtTimeLabel(blk.sold_time) + '">' + fmtTimeAgo(blk.sold_time) + '</td>'
+  + '</tr>';
+}
+
+document.getElementById("blocksToggle").addEventListener("click", function() {
+  const btn = this;
+  const col = document.getElementById("blocksCollapse");
+  blocksOpen = !blocksOpen;
+  btn.classList.toggle("open", blocksOpen);
+  btn.setAttribute("aria-expanded", blocksOpen ? "true" : "false");
+  col.classList.toggle("open", blocksOpen);
+  if (blocksOpen) {
+    if (!blocksData) {
+      fetchBlocks().catch(function(e){ console.error("blocks", e); });
+    } else {
+      renderBlocks();
+    }
+  }
+});
+
+document.getElementById("blocksFilterSeg").addEventListener("click", function(e) {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#blocksFilterSeg button").forEach(function(x) { x.classList.remove("active"); });
+  b.classList.add("active");
+  blocksFilter = b.dataset.filter;
+  if (blocksData) renderBlocks();
+});
+
+async function fetchRecent() {
+  recentData = await fetchJson("/api/recent_sells");
+  renderRecent();
+}
+
+function renderRecent() {
+  const d = recentData;
+  if (!d) return;
+  const body = document.getElementById("recentBody");
+  const foot = document.getElementById("recentFoot");
+  const rows = d.rows || [];
+  const tot = d.totals || {};
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="12" class="blocks-empty">Belum ada realized di periode ini.</td></tr>';
+    foot.innerHTML = "";
+  } else {
+    body.innerHTML = rows.map(function(r){
+      const pnlCls = r.realized_pnl > 0 ? "pos" : (r.realized_pnl < 0 ? "neg" : "");
+      const pctTxt = r.pnl_pct != null ? (r.pnl_pct > 0 ? "+" : "") + r.pnl_pct.toFixed(2) + "%" : "—";
+      return '<tr>'
+        + '<td title="' + fmtTimeLabel(r.sold_time) + '">' + fmtTimeAgo(r.sold_time) + '</td>'
+        + '<td>' + r.coin + '</td>'
+        + '<td class="r">' + fmtPrice(r.entry_price) + '</td>'
+        + '<td class="r">' + fmtPrice(r.sold_price) + '</td>'
+        + '<td class="r">' + fmtPrice(r.mark_price) + '</td>'
+        + '<td class="r">' + rtQty(r.qty) + '</td>'
+        + '<td class="r">' + rtMoney(r.cost) + '</td>'
+        + '<td class="r">' + (r.proceeds != null ? rtMoney(r.proceeds) : '—') + '</td>'
+        + '<td class="r ' + pnlCls + '">' + fmtSigned(r.realized_pnl, 4) + '</td>'
+        + '<td class="r ' + pnlCls + '">' + pctTxt + '</td>'
+        + '<td><span class="badge badge-mode">' + (r.sold_reason_label || r.sold_reason || '?') + '</span></td>'
+        + '<td class="r">' + (r.age_days != null ? fmtAge(r.age_days) : '—') + '</td>'
+        + '</tr>';
+    }).join("");
+    const tCls = tot.total_pnl > 0 ? "pos" : (tot.total_pnl < 0 ? "neg" : "");
+    const wr = tot.win_rate != null ? tot.win_rate.toFixed(0) + "%" : "—";
+    foot.innerHTML = '<tr>'
+      + '<td>TOTAL (' + (tot.count || 0) + ')</td>'
+      + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td>'
+      + '<td class="r ' + tCls + '">' + fmtSigned(tot.total_pnl || 0, 4) + '</td>'
+      + '<td class="r ' + tCls + '">' + wr + '</td>'
+      + '<td></td><td></td>'
+      + '</tr>';
+  }
+  document.getElementById("recentNote").textContent =
+    "Realized periode aktif, 40 terbaru. Amount = P&L (USDT), % = amount / modal ×100. Hijau profit, merah rugi. Age = durasi hold (masuk→exit).";
+}
+
+document.getElementById("recentToggle").addEventListener("click", function() {
+  const btn = this;
+  const col = document.getElementById("recentCollapse");
+  const open = btn.classList.toggle("open");
+  btn.setAttribute("aria-expanded", open ? "true" : "false");
+  col.classList.toggle("open", open);
+  if (open) fetchRecent().catch(function(e){ console.error("recent", e); });
+});
+
+document.getElementById("rangeSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#rangeSeg button").forEach(x => x.classList.remove("active"));
+  b.classList.add("active");
+  state.range = b.dataset.range;
+  render().catch(err => console.error(err));
+  updateForceSell().catch(err => console.error("forceSell", err));
+  if (profitOpen) { fetchProfit(state.range).catch(function(e){ console.error("profit", e); }); }
+});
+document.getElementById("coinSel").addEventListener("change", e => {
+  state.coin = e.target.value;
+  // The [equity]/[usdt] overlay sub-tab only applies to the Total Equity
+  // view (cash_usdt is account-wide). Hide it for per-coin selections.
+  const oc = document.getElementById("overlayControls");
+  if (oc) oc.style.display = (state.coin === "total") ? "" : "none";
+  render().catch(err => console.error(err));
+});
+document.getElementById("overlaySeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#overlaySeg button").forEach(x => x.classList.remove("active"));
+  b.classList.add("active");
+  state.overlay = b.dataset.overlay;
+  const bc = document.getElementById("buyCoinControls");
+  if (bc) bc.style.display = (state.overlay === "usdc") ? "" : "none";
+  render().catch(err => console.error(err));
+});
+document.getElementById("buyCoinSel").addEventListener("change", e => {
+  state.buyCoin = e.target.value;
+  render().catch(err => console.error(err));
+});
+document.getElementById("periodSel").addEventListener("change", e => {
+  state.period = e.target.value;
+  fetchBlocks().catch(err => console.error("blocks", err));
+});
+
+let _spotWs = null;
+function rtMoney(v) { if (v == null || isNaN(v)) return "—"; return "$" + Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function rtQty(v) { if (v == null) return "—"; return Number(v).toLocaleString(undefined,{maximumFractionDigits:4,minimumFractionDigits:0}); }
+function rtEsc(s) { return String(s).replace(/[&<>"']/g, function(m){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]; }); }
+function spotBadge(state, txt) {
+  const b = document.getElementById("spotLiveBadge");
+  if (!b) return;
+  b.textContent = txt;
+  b.style.color = state === "live" ? "#16a34a" : (state === "off" ? "#94a3b8" : "#f59e0b");
+}
+function renderSpotData(f) {
+  const has = f && typeof f.equity === "number";
+  const setBig = function(id, val, signedMode) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!has) { el.textContent = "—"; el.className = "stat-big flat"; return; }
+    if (signedMode) { el.textContent = fmtUsd(val); el.className = "stat-big " + (val>0?"up":(val<0?"down":"flat")); }
+    else { el.textContent = rtMoney(val); el.className = "stat-big " + (val<0?"down":"flat"); }
+  };
+  setBig("spotEqVal", has ? f.equity : null, false);
+  setBig("spotCashVal", has ? f.cash : null, false);
+  // Unrealized PnL = sum of each coin's unrealized (qty_active vs avg entry).
+  const unr = has ? (f.coins || []).reduce(function(s,c){ return s + (c.unrealized || 0); }, 0) : null;
+  setBig("spotUpnlVal", unr, true);
+  const usub = document.getElementById("spotUpnlSub");
+  if (usub) usub.textContent = has ? "qty active vs avg entry · live" : "—";
+
+  const ec = window.__atEc || 0;
+  // Guard: a funded account should never report equity <= 0 — that signals a
+  // relay read failure (stale/rotated API key → -2015 → empty balances). Skip
+  // the live overwrite in that case so the baked snapshot cards are not wiped
+  // into ~-100% / -99.98%.
+  const eqOk = has && f.equity > 0;
+  // All-Time P&L card (under the overlay tabs) — realtime from this frame's
+  // LIVE equity, on the injection-consistent basis (equity − extra_capital −
+  // total_capital). See renderAllTimeCard.
+  renderAllTimeCard(has ? f.equity : null, null);
+  // Move the Periode/All-Time card in realtime by recomputing it from the
+  // LIVE equity — independent of the All-Time P&L card above.
+  // The card's `from` is a fixed capital base; its `to` is the current equity
+  // minus extra_capital, so `to = f.equity - ec` is always correct. (Replaces
+  // the fragile baked+delta approach that froze the card when the baked
+  // snapshot predated the UTC-midnight rollover — see
+  // applyLiveEquityToWindowCards.)
+  if (eqOk) {
+    applyLiveEquityToWindowCards(f.equity, ec);
+  }
+  const subC = document.getElementById("spotCashSub");
+  if (subC) subC.textContent = has ? "stablecoin free · live" : "—";
+
+  document.getElementById("spotCount").textContent = has ? "(" + f.coins.length + ")" : "";
+  const body = document.getElementById("spotRows");
+  const foot = document.getElementById("spotFoot");
+  if (!body || !foot) return;
+  body.innerHTML = ""; foot.innerHTML = "";
+  const coins = has ? (f.coins || []) : [];
+  if (!coins.length) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td"); td.colSpan = 7; td.className = "td-mute";
+    td.textContent = has ? "Tidak ada coin tersimpan." : "Menunggu data live…";
+    tr.appendChild(td); body.appendChild(tr);
+  } else {
+    coins.forEach(function (c) {
+      const tr = document.createElement("tr");
+      const unreal = c.unrealized;
+      const unrealStr = (unreal == null) ? '<td class="r td-mute">—</td>'
+        : '<td class="r ' + clsSign(unreal) + '">' + fmtSigned(unreal, 2) + "</td>";
+      tr.innerHTML =
+        "<td>" + rtEsc(String(c.coin)) + "</td>" +
+        '<td class="r">' + rtQty(c.balance) + "</td>" +
+        '<td class="r">' + (c.qty_active > 0 ? rtQty(c.qty_active) : "—") + "</td>" +
+        '<td class="r">' + (c.avg_entry ? fmtPrice(c.avg_entry) : "—") + "</td>" +
+        '<td class="r">' + (c.mark ? fmtPrice(c.mark) : "—") + "</td>" +
+        '<td class="r">' + rtMoney(c.value) + "</td>" + unrealStr;
+      body.appendChild(tr);
+    });
+    const tValue = coins.reduce((s,c)=>s+(c.value||0),0);
+    const tUnr = coins.reduce((s,c)=>s+(c.unrealized||0),0);
+    const tr = document.createElement("tr");
+    tr.innerHTML = "<td>TOTAL</td><td class='r'></td><td class='r'></td><td class='r'></td><td class='r'></td>"
+      + '<td class="r">' + rtMoney(tValue) + "</td>"
+      + '<td class="r ' + (tUnr>0?"pos":(tUnr<0?"neg":"td-mute")) + '">' + (tUnr? fmtSigned(tUnr,2):"—") + "</td>";
+    foot.appendChild(tr);
+  }
+}
+function renderSpotLive() {
+  const wrap = document.getElementById("spotLiveWrap");
+  if (!wrap) return;
+  const acct = SNAP ? (SNAP.account || ((SNAP.accounts || [])[0])) : "";
+  if (!acct) { spotBadge("off", "no account"); return; }
+  if (_spotWs) { try { _spotWs.close(); } catch (_) {} _spotWs = null; }
+  let base = new URLSearchParams(location.search).get("ws") || "wss://ws.kebonjeruk.xyz/ws";
+  base += (base.indexOf("?") >= 0 ? "&" : "?") + "market=spot&account=" + encodeURIComponent(acct);
+  let ws;
+  try { ws = new WebSocket(base); } catch (e) { return; }
+  _spotWs = ws;
+  ws.onopen = function () { spotBadge("live", "● LIVE"); };
+  ws.onmessage = function (ev) { try { renderSpotData(JSON.parse(ev.data)); } catch (e) { console.warn("spot ws frame", e); } };
+  ws.onclose = function () { spotBadge("off", "· snapshot/offline — reconnect…"); _spotWs = null; setTimeout(renderSpotLive, 4000); };
+  ws.onerror = function () { try { ws.close(); } catch (_) {} };
+}
+(function () {
+  const btn = document.getElementById("spotToggle");
+  const col = document.getElementById("spotCollapse");
+  if (btn && col) {
+    btn.addEventListener("click", function () {
+      const open = btn.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      col.classList.toggle("open", open);
+      const ch = document.getElementById("spotChevron");
+      if (ch) ch.textContent = open ? "▾" : "▸";
+    });
+  }
+})();
+
+(async function init() {
+  await resolveAccount();
+  await loadCoins();
+  await loadBuyCoins();
+   await fetchStats();
+   renderSpotLive();
+   await render();
+  await updateForceSell();
+  await renderPeriods();
+  await renderSnapshots();
+  await renderPeriodPnl();
+  // Auto-expand the Periode P&L card so per-period profit/loss is visible
+  // without clicking (closed accounts especially).
+  try {
+    const pnlBtn = document.getElementById("pnlToggle");
+    pnlBtn.classList.add("open");
+    pnlBtn.setAttribute("aria-expanded", "true");
+    document.getElementById("pnlCollapse").classList.add("open");
+  } catch (e) { console.warn("pnl autopen", e); }
+  if (SNAP) {
+    legendEl.textContent += "  ·  📸 snapshot " + (SNAP.generated_at || "");
+  } else {
+    setInterval(fetchStats, 60000);
+  }
+})().catch(err => { legendEl.textContent = "Error: " + err; console.error(err); });
+</script>
+</body>
+</html>
